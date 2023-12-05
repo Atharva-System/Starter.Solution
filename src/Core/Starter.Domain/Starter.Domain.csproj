@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <PackageReference Include="MediatR" Version="12.2.0" />
+    <PackageReference Include="MediatR" />
   </ItemGroup>
 
 </Project>

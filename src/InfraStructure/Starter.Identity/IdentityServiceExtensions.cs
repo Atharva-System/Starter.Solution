@@ -47,6 +47,7 @@ public static class IdentityServiceExtensions
                 {
                     o.RequireHttpsMetadata = false;
                     o.SaveToken = false;
+#pragma warning disable CS8604 // Possible null reference argument.
                     o.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,
@@ -58,6 +59,7 @@ public static class IdentityServiceExtensions
                         ValidAudience = configuration["JwtSettings:Audience"],
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:Key"]))
                     };
+#pragma warning restore CS8604 // Possible null reference argument.
 
                     o.Events = new JwtBearerEvents()
                     {

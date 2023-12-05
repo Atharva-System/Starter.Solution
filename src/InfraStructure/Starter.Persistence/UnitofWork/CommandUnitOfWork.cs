@@ -14,7 +14,9 @@ public class CommandUnitOfWork : ICommandUnitOfWork
     private Hashtable _repositories;
 
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     public CommandUnitOfWork(AppDbContext appDbContext)
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     {
         _appDbContext = appDbContext;
     }
@@ -44,7 +46,9 @@ public class CommandUnitOfWork : ICommandUnitOfWork
             _repositories.Add(type, repositoryInstance);
         }
         // Ensure _repositories[type] is not null before returning
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
         return (ICommandRepository<TEntity>)_repositories[type] ?? new CommandRepository<TEntity>(_appDbContext);
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
     }
 
     public void Dispose()

@@ -33,7 +33,9 @@ public class QueryRepository<T> : IQueryRepository<T> where T : BaseEntity, new(
 
     }
 
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
     public async Task<IEnumerable<T>> GetAllWithIncludeAsync(bool isChangeTracking = false, Expression<Func<T, bool>> predicate = null, params Expression<Func<T, object>>[] includes)
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
     {
         IQueryable<T> query = context.Set<T>();
 
@@ -77,7 +79,9 @@ public class QueryRepository<T> : IQueryRepository<T> where T : BaseEntity, new(
         {
             query = query.Where(predicate);
         }
+#pragma warning disable CS8603 // Possible null reference return.
         return await query.SingleOrDefaultAsync();
+#pragma warning restore CS8603 // Possible null reference return.
     }
 
     public async Task<T> GetByIdAsync(string id, bool isChangeTracking = false)
@@ -92,7 +96,9 @@ public class QueryRepository<T> : IQueryRepository<T> where T : BaseEntity, new(
             query = query.Where(e => e.Id == Guid.Parse(id));
         }
 
+#pragma warning disable CS8603 // Possible null reference return.
         return await query.SingleOrDefaultAsync();
+#pragma warning restore CS8603 // Possible null reference return.
     }
 
     public async Task<T> GetWithIncludeAsync(bool isChangeTracking, Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes)
@@ -122,7 +128,9 @@ public class QueryRepository<T> : IQueryRepository<T> where T : BaseEntity, new(
             }
         }
 
+#pragma warning disable CS8603 // Possible null reference return.
         return await query.SingleOrDefaultAsync();
+#pragma warning restore CS8603 // Possible null reference return.
 
     }
 }

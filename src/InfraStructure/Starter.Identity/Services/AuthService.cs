@@ -15,31 +15,19 @@ using System.Text;
 
 namespace Starter.Identity.Services;
 
-public class AuthService : IAuthService
+public class AuthService(UserManager<ApplicationUser> userManager,
+                        IOptions<JwtSettings> jwtSettings,
+                        IUserClaimsPrincipalFactory<ApplicationUser> userClaimsPrincipalFactory,
+                        SignInManager<ApplicationUser> signInManager,
+                        IAuthorizationService authorizationService)  : IAuthService
 {
-    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IAuthorizationService _authorizationService = authorizationService;
+    private readonly UserManager<ApplicationUser> _userManager = userManager;
+    private readonly JwtSettings _jwtSettings = jwtSettings.Value;
+    private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
+    private readonly IUserClaimsPrincipalFactory<ApplicationUser> _userClaimsPrincipalFactory = userClaimsPrincipalFactory;
 
-    private readonly SignInManager<ApplicationUser> _signInManager;
-
-    private readonly IUserClaimsPrincipalFactory<ApplicationUser> _userClaimsPrincipalFactory;
-
-    private readonly IAuthorizationService _authorizationService;
-
-
-    private readonly JwtSettings _jwtSettings;
-
-    public AuthService(UserManager<ApplicationUser> userManager,
-            IOptions<JwtSettings> jwtSettings,
-              IUserClaimsPrincipalFactory<ApplicationUser> userClaimsPrincipalFactory,
-            SignInManager<ApplicationUser> signInManager, IAuthorizationService authorizationService)
-    {
-        _userManager = userManager;
-        _jwtSettings = jwtSettings.Value;
-        _signInManager = signInManager;
-        _userClaimsPrincipalFactory = userClaimsPrincipalFactory;
-        _authorizationService = authorizationService;
-    }
-
+    #region Public Methods
     public async Task<string?> GetUserNameAsync(string userId)
     {
         var user = await _userManager.Users.FirstAsync(u => u.Id == userId);
@@ -51,27 +39,24 @@ public class AuthService : IAuthService
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
 
-        if (user == null)
-        {
-            throw new NotFoundException("User ", request.Email);
-        }
+        _ = user ?? throw new NotFoundException("User ", request.Email);
 
-        var result = await _signInManager.PasswordSignInAsync(user?.UserName, request.Password, false, lockoutOnFailure: false);
+        var result = await _signInManager.PasswordSignInAsync(user?.UserName!, request.Password, false, lockoutOnFailure: false);
 
         if (!result.Succeeded)
         {
             throw new AuthenticationException($"Please provide valid credentials");
         }
 
-        JwtSecurityToken jwtSecurityToken = await GenerateToken(user);
+        JwtSecurityToken jwtSecurityToken = await GenerateToken(user!);
 
         AuthenticationResponse response = new AuthenticationResponse
         {
-            Id = user.Id,
+            Id = user?.Id!,
             Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
             RefreshToken = GenerateRefreshToken(),
-            Email = user.Email,
-            UserName = user.UserName
+            Email = user?.Email!,
+            UserName = user?.UserName!
         };
 
         return response;
@@ -139,7 +124,9 @@ public class AuthService : IAuthService
 
         return result.Succeeded;
     }
+    #endregion
 
+    #region Private Methods
     private async Task<JwtSecurityToken> GenerateToken(ApplicationUser user)
     {
         var userClaims = await _userManager.GetClaimsAsync(user);
@@ -154,9 +141,9 @@ public class AuthService : IAuthService
 
         var claims = new[]
         {
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+                new Claim(JwtRegisteredClaimNames.Sub, user.UserName!),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email!),
                 new Claim("uid", user.Id)
             }
         .Union(userClaims)
@@ -174,7 +161,7 @@ public class AuthService : IAuthService
         return jwtSecurityToken;
     }
 
-    public string GenerateRefreshToken()
+    private string GenerateRefreshToken()
     {
         var numbers = new byte[32];
         using RandomNumberGenerator randomNumber = RandomNumberGenerator.Create();
@@ -182,4 +169,5 @@ public class AuthService : IAuthService
         return Convert.ToBase64String(numbers);
 
     }
+    #endregion
 }

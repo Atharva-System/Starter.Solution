@@ -1,7 +1,70 @@
 <Project>
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
-	</PropertyGroup>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <!--Starter.API Package References-->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageVersion>
+    <PackageVersion Include="Serilog" Version="3.1.1" />
+    <PackageVersion Include="Serilog.AspNetCore" Version="8.0.0" />
+    <PackageVersion Include="Serilog.Extensions.Logging" Version="8.0.0" />
+    <PackageVersion Include="Serilog.Settings.Configuration" Version="8.0.0" />
+    <PackageVersion Include="Serilog.Sinks.File" Version="5.0.0" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+  <!--Starter.API Package References-->
+
+  <!--Starter.Application Package References-->
+  <ItemGroup>
+    <PackageVersion Include="AutoMapper" Version="12.0.1" />
+    <PackageVersion Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageVersion Include="FluentValidation" Version="11.8.1" />
+    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.8.1" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
+  </ItemGroup>
+  <!--Starter.Application Package References-->
+
+  <!--Starter.Domain Package References-->
+  <ItemGroup>
+    <PackageVersion Include="MediatR" Version="12.2.0" />
+  </ItemGroup>
+  <!--Starter.Domain Package References-->
+
+  <!--Starter.Identity Package References-->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageVersion>
+  </ItemGroup>
+  <!--Starter.Identity Package References-->
+
+  <!--Starter.InfraStructure Package References-->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+  </ItemGroup>
+  <!--Starter.InfraStructure Package References-->
+
+  <!--Starter.Persistence Package References-->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+    <!--<PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />-->
+    <!--<PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageVersion>-->
+  </ItemGroup>
+  <!--Starter.Persistence Package References-->
+  
 </Project>

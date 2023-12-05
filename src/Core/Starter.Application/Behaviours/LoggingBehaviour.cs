@@ -20,7 +20,9 @@ public class LoggingBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest,
         IList<PropertyInfo> props = new List<PropertyInfo>(myType.GetProperties());
         foreach (PropertyInfo prop in props)
         {
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
             object propValue = prop.GetValue(request, null);
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
             _logger.LogInformation("{Property} : {@Value}", prop.Name, propValue);
         }
 

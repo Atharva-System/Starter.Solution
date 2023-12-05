@@ -13,7 +13,9 @@ namespace Starter.Identity.Migrations
 {
     [DbContext(typeof(AppIdentityDbContext))]
     [Migration("20231129095551_initial")]
+#pragma warning disable CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
     partial class initial
+#pragma warning restore CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
