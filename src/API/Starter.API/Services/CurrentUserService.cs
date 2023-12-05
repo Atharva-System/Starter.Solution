@@ -1,16 +1,11 @@
-﻿using Starter.Application.Contracts.Application;
-using System.Security.Claims;
+﻿using System.Security.Claims;
+using Starter.Application.Contracts.Application;
 
 namespace Starter.API.Services;
 
-public class CurrentUserService : ICurrentUserService
+public class CurrentUserService(IHttpContextAccessor httpContextAccessor) : ICurrentUserService
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
-
-    public CurrentUserService(IHttpContextAccessor httpContextAccessor)
-    {
-        _httpContextAccessor = httpContextAccessor;
-    }
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 
     public string? UserId => _httpContextAccessor.HttpContext?.User?.FindFirstValue("uid");
 }

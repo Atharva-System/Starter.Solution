@@ -30,8 +30,6 @@ public class CommandUnitOfWork : ICommandUnitOfWork
         return await _appDbContext.SaveChangesAsync(cancellationToken);
     }
 
-
-
     public ICommandRepository<TEntity> CommandRepository<TEntity>() where TEntity : BaseEntity, new()
     {
         if (_repositories == null) _repositories = new Hashtable();

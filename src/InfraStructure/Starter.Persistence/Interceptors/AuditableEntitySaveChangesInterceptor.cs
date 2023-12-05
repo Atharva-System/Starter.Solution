@@ -5,18 +5,12 @@ using Starter.Domain.Common;
 
 namespace Starter.Persistence.Interceptors;
 
-public class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
-{
-    private readonly ICurrentUserService _currentUserService;
-    private readonly IDateTimeService _dateTime;
-
-    public AuditableEntitySaveChangesInterceptor(
+public class AuditableEntitySaveChangesInterceptor(
         ICurrentUserService currentUserService,
-        IDateTimeService dateTime)
-    {
-        _currentUserService = currentUserService;
-        _dateTime = dateTime;
-    }
+        IDateTimeService dateTime) : SaveChangesInterceptor
+{
+    private readonly ICurrentUserService _currentUserService = currentUserService;
+    private readonly IDateTimeService _dateTime = dateTime;
 
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
     {

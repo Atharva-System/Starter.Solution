@@ -1,18 +1,13 @@
-﻿using Starter.Application.Exceptions;
-using System.Net;
+﻿using System.Net;
 using System.Security.Authentication;
 using System.Text.Json;
+using Starter.Application.Exceptions;
 
 namespace Starter.API.Middlewares;
 
-public class ExceptionHandlerMiddleware
+public class ExceptionHandlerMiddleware(RequestDelegate next)
 {
-    private readonly RequestDelegate _next;
-
-    public ExceptionHandlerMiddleware(RequestDelegate next)
-    {
-        _next = next;
-    }
+    private readonly RequestDelegate _next = next;
 
     public async Task Invoke(HttpContext context)
     {

@@ -2,14 +2,10 @@
 using Starter.Domain.Events;
 
 namespace Starter.Application.Features.Todos.EventHandlers;
-public class TodoItemCreatedEventHandler : INotificationHandler<TodoItemCreatedEvent>
-{
-    private readonly ILogger<TodoItemCreatedEventHandler> _logger;
 
-    public TodoItemCreatedEventHandler(ILogger<TodoItemCreatedEventHandler> logger)
-    {
-        _logger = logger;
-    }
+public class TodoItemCreatedEventHandler(ILogger<TodoItemCreatedEventHandler> logger) : INotificationHandler<TodoItemCreatedEvent>
+{
+    private readonly ILogger<TodoItemCreatedEventHandler> _logger = logger;
 
     public Task Handle(TodoItemCreatedEvent notification, CancellationToken cancellationToken)
     {

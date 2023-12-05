@@ -4,14 +4,10 @@ using Starter.Persistence.Database;
 
 namespace Starter.Persistence.Repositories.Base;
 
-public class CommandRepository<T> : ICommandRepository<T> where T : BaseEntity, new()
+public class CommandRepository<T>(AppDbContext context) : ICommandRepository<T> where T : BaseEntity, new()
 {
 
-    private readonly AppDbContext _appDbContext;
-    public CommandRepository(AppDbContext context)
-    {
-        _appDbContext = context;
-    }
+    private readonly AppDbContext _appDbContext = context;
 
     public async Task<T> AddAsync(T entity)
     {

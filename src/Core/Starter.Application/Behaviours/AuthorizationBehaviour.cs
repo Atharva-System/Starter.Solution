@@ -1,32 +1,21 @@
-﻿using Starter.Application.Contracts.Application;
+﻿using System.Reflection;
+using Starter.Application.Contracts.Application;
 using Starter.Application.Contracts.Identity;
 using Starter.Application.Exceptions;
 using Starter.Application.Security;
-using System.Reflection;
 
 namespace Starter.Application.Behaviours;
 
-public class AuthorizationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : notnull
-{
-    private readonly ICurrentUserService _user;
-    private readonly IAuthService _authService;
-
-
-    public AuthorizationBehaviour(
+public class AuthorizationBehaviour<TRequest, TResponse>(
         ICurrentUserService user,
-        IAuthService identityService)
-    {
-        _user = user;
-        _authService = identityService;
+        IAuthService identityService) : IPipelineBehavior<TRequest, TResponse> where TRequest : notnull
+{
+    private readonly ICurrentUserService _user = user;
+    private readonly IAuthService _authService = identityService;
 
-
-    }
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-
-
-
         var authorizeAttributes = request.GetType().GetCustomAttributes<AuthorizeAttribute>();
 
         if (authorizeAttributes.Any())
