@@ -8,5 +8,7 @@ public class ApplicationUser : IdentityUser
     public string? LastName { get; set; }
     public DateTime? Birthdate { get; set; }
 
+    public string? RefreshToken { get; set; }
+    public DateTime RefreshTokenExpiryTime { get; set; }
 
 }

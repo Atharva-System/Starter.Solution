@@ -23,4 +23,10 @@ public class AuthController(ILogger<AuthController> logger, IAuthService authSer
     {
         return Ok(await _authService.RegisterAsync(request));
     }
+
+    [HttpPost("refreshToken")]
+    public async Task<ActionResult<RefreshTokenResponse>> RefreshTokenAsync(RefreshTokenRequest request)
+    {
+        return Ok(await _authService.RefreshTokenAsync(request));
+    }
 }

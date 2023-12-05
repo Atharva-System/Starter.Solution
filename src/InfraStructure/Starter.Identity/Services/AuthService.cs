@@ -19,7 +19,7 @@ public class AuthService(UserManager<ApplicationUser> userManager,
                         IOptions<JwtSettings> jwtSettings,
                         IUserClaimsPrincipalFactory<ApplicationUser> userClaimsPrincipalFactory,
                         SignInManager<ApplicationUser> signInManager,
-                        IAuthorizationService authorizationService)  : IAuthService
+                        IAuthorizationService authorizationService) : IAuthService
 {
     private readonly IAuthorizationService _authorizationService = authorizationService;
     private readonly UserManager<ApplicationUser> _userManager = userManager;
@@ -50,14 +50,20 @@ public class AuthService(UserManager<ApplicationUser> userManager,
 
         JwtSecurityToken jwtSecurityToken = await GenerateToken(user!);
 
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+        user.RefreshToken = GenerateRefreshToken();
+        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(1);
+        await _userManager.UpdateAsync(user);
+
         AuthenticationResponse response = new AuthenticationResponse
         {
             Id = user?.Id!,
             Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
-            RefreshToken = GenerateRefreshToken(),
+            RefreshToken = user.RefreshToken,
             Email = user?.Email!,
             UserName = user?.UserName!
         };
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
         return response;
     }
@@ -101,6 +107,36 @@ public class AuthService(UserManager<ApplicationUser> userManager,
         }
     }
 
+    public async Task<RefreshTokenResponse> RefreshTokenAsync(RefreshTokenRequest request)
+    {
+        var userPrincipal = GetPrincipalFromExpiredToken(request.Token);
+        string? userEmail = userPrincipal?.FindFirstValue(JwtRegisteredClaimNames.Email);
+
+        if (string.IsNullOrEmpty(userEmail))
+        {
+            throw new AuthenticationException("Authentication Failed.");
+        }
+
+        var user = await _userManager.FindByEmailAsync(userEmail);
+
+        _ = user ?? throw new NotFoundException("User ", userEmail);
+
+        if (user.RefreshToken != request.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+        {
+            throw new AuthenticationException("Invalid Refresh Token.");
+        }
+
+        JwtSecurityToken jwtSecurityToken = await GenerateToken(user!);
+
+        if (string.IsNullOrEmpty(user.RefreshToken) || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+        {
+            user.RefreshToken = GenerateRefreshToken();
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(1);
+            await _userManager.UpdateAsync(user);
+        }
+
+        return new RefreshTokenResponse(new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken), user.RefreshToken, user.RefreshTokenExpiryTime);
+    }
 
     public async Task<bool> IsInRoleAsync(string userId, string role)
     {
@@ -168,6 +204,31 @@ public class AuthService(UserManager<ApplicationUser> userManager,
         randomNumber.GetBytes(numbers);
         return Convert.ToBase64String(numbers);
 
+    }
+
+    private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
+    {
+        var tokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key)),
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            RoleClaimType = ClaimTypes.Role,
+            ClockSkew = TimeSpan.Zero,
+            ValidateLifetime = false
+        };
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
+        if (securityToken is not JwtSecurityToken jwtSecurityToken ||
+            !jwtSecurityToken.Header.Alg.Equals(
+                SecurityAlgorithms.HmacSha256,
+                StringComparison.InvariantCultureIgnoreCase))
+        {
+            throw new Exception("Invalid Token.");
+        }
+
+        return principal;
     }
     #endregion
 }
