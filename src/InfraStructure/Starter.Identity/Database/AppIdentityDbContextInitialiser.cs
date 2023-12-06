@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -10,9 +9,9 @@ namespace Starter.Identity.Database;
 
 public static class InitialiserExtensions
 {
-    public static async Task InitialiseDatabaseAsync(this WebApplication app)
+    public static async Task InitialiseDatabaseAsync(this IServiceProvider services)
     {
-        using var scope = app.Services.CreateScope();
+        using var scope = services.CreateScope();
 
         var initialiser = scope.ServiceProvider.GetRequiredService<AppIdentityDbContextInitialiser>();
 

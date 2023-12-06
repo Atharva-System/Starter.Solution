@@ -1,4 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Authentication;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -7,11 +12,6 @@ using Starter.Application.Contracts.Identity;
 using Starter.Application.Exceptions;
 using Starter.Application.Models.Authentication;
 using Starter.Identity.Models;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Authentication;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace Starter.Identity.Services;
 
@@ -52,7 +52,7 @@ public class AuthService(UserManager<ApplicationUser> userManager,
 
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
         user.RefreshToken = GenerateRefreshToken();
-        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(1);
+        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenExpirationInDays);
         await _userManager.UpdateAsync(user);
 
         AuthenticationResponse response = new AuthenticationResponse
@@ -131,7 +131,7 @@ public class AuthService(UserManager<ApplicationUser> userManager,
         if (string.IsNullOrEmpty(user.RefreshToken) || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
         {
             user.RefreshToken = GenerateRefreshToken();
-            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(1);
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenExpirationInDays);
             await _userManager.UpdateAsync(user);
         }
 
@@ -225,7 +225,7 @@ public class AuthService(UserManager<ApplicationUser> userManager,
                 SecurityAlgorithms.HmacSha256,
                 StringComparison.InvariantCultureIgnoreCase))
         {
-            throw new Exception("Invalid Token.");
+            throw new UnauthorizedAccessException("Invalid Token.");
         }
 
         return principal;
