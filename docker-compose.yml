@@ -1,7 +1,7 @@
 version: '3.4'
 
 services:
-  starter.api:
+  starter.webapi:
     image: ${DOCKER_REGISTRY-}starter.api
     build:
       context: .
@@ -9,7 +9,7 @@ services:
     ports:
       - "10001:8080"
     depends_on:
-      - "sqlserver"
+      - "starter.sqlserver"
   
   starter.angular:
     image: ${DOCKER_REGISTRY-}starter.angular
@@ -29,10 +29,11 @@ services:
     ports:
       - "10003:80"
 
-  sqlserver:
-    image: mcr.microsoft.com/azure-sql-edge
+  starter.sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: starter.sqlserver
     ports:
       - "1433:1433"
     environment:
-      - SA_PASSWORD=STARTER
+      - SA_PASSWORD=Your!Strong#Password
       - ACCEPT_EULA=Y

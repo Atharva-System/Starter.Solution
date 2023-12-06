@@ -18,7 +18,6 @@ public static class StartupExtensions
     {
         AddSwagger(builder.Services);
 
-
         builder.Services.AddApplicationServices();
         builder.Services.AddInfrastructureSharedServices(builder.Configuration);
         builder.Services.AddPersistenceServices(builder.Configuration);
@@ -44,16 +43,16 @@ public static class StartupExtensions
     public static WebApplication ConfigurePipeline(this WebApplication app)
     {
 
-        if (app.Environment.IsDevelopment())
+        //if (app.Environment.IsDevelopment())
+        //{
+        app.UseSwagger();
+        app.UseSwaggerUI(c =>
         {
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Starter API");
-            });
-        }
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", "Starter API");
+        });
+        //}
 
-        app.UseHttpsRedirection();
+        // app.UseHttpsRedirection();
 
         //app.UseRouting();
 
