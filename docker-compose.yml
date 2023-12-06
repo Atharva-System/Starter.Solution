@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  starter.api:
+    image: ${DOCKER_REGISTRY-}starterapi
+    build:
+      context: .
+      dockerfile: src/API/Starter.API/Dockerfile

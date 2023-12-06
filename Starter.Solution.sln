@@ -42,6 +42,8 @@ Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "Angular.Starter", "src\UI\A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazor.Starter", "src\UI\Blazor\Blazor.Starter.csproj", "{EB2AD66F-27C6-486E-B2A3-B27239F6FACF}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{F4FA8369-D9AA-4BC1-9851-3FE6072F7FA3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -80,6 +82,10 @@ Global
 		{EB2AD66F-27C6-486E-B2A3-B27239F6FACF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB2AD66F-27C6-486E-B2A3-B27239F6FACF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB2AD66F-27C6-486E-B2A3-B27239F6FACF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4FA8369-D9AA-4BC1-9851-3FE6072F7FA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4FA8369-D9AA-4BC1-9851-3FE6072F7FA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4FA8369-D9AA-4BC1-9851-3FE6072F7FA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4FA8369-D9AA-4BC1-9851-3FE6072F7FA3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
