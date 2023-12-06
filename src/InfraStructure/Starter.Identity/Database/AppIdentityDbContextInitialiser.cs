@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Starter.Domain.Constant;
+using Starter.Identity.Authorization;
 using Starter.Identity.Models;
 
 namespace Starter.Identity.Database;
@@ -21,7 +22,7 @@ public static class InitialiserExtensions
     }
 }
 
-public class AppIdentityDbContextInitialiser(ILogger<AppIdentityDbContextInitialiser> logger, AppIdentityDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+public class AppIdentityDbContextInitialiser(ILogger<AppIdentityDbContextInitialiser> logger, AppIdentityDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
 {
     private readonly ILogger<AppIdentityDbContextInitialiser> _logger = logger;
     private readonly AppIdentityDbContext _context = context;
@@ -65,24 +66,39 @@ public class AppIdentityDbContextInitialiser(ILogger<AppIdentityDbContextInitial
 
     public async Task TrySeedAsync()
     {
-        // Default roles
-        var administratorRole = new IdentityRole(Roles.Administrator);
 
-        if (_roleManager.Roles.All(r => r.Name != administratorRole.Name))
-        {
-            await _roleManager.CreateAsync(administratorRole);
-        }
+
+        //seed user, roles and role claims
+        await new RoleClaimSeeder(_roleManager, _userManager, configuration).SeedRoleClaimsAsync();
+
+
+
+
+        // Default roles
+        //var administratorRole = new IdentityRole(Roles.Administrator);
+
+        //if (_roleManager.Roles.All(r => r.Name != administratorRole.Name))
+        //{
+        //    await _roleManager.CreateAsync(administratorRole);
+
+        //    var adminRole = await _roleManager.FindByNameAsync(administratorRole.Name);
+
+        //    await _roleManager.AddClaimAsync(adminRole, new Claim(CustomClaimTypes.Permission, Permissions.Todo.Create));
+
+        //}
 
         // Default users
-        var administrator = new ApplicationUser { UserName = "me@starter.com", Email = "me@starter.com" };
+        //        var administrator = new ApplicationUser { UserName = configuration.GetSection("AppSettings")["UserEmail"], Email = configuration.GetSection("AppSettings")["UserEmail"] };
 
-        if (_userManager.Users.All(u => u.UserName != administrator.UserName))
-        {
-            await _userManager.CreateAsync(administrator, "Starter1!");
-            if (!string.IsNullOrWhiteSpace(administratorRole.Name))
-            {
-                await _userManager.AddToRolesAsync(administrator, new[] { administratorRole.Name });
-            }
-        }
+        //        if (_userManager.Users.All(u => u.UserName != administrator.UserName))
+        //        {
+        //#pragma warning disable CS8604 // Possible null reference argument.
+        //            _ = await _userManager.CreateAsync(administrator, configuration.GetSection("AppSettings")["UserPassword"]);
+        //#pragma warning restore CS8604 // Possible null reference argument.
+        //            if (!string.IsNullOrWhiteSpace(administratorRole.Name))
+        //            {
+        //                await _userManager.AddToRolesAsync(administrator, new[] { administratorRole.Name });
+        //            }
+        //        }
     }
 }

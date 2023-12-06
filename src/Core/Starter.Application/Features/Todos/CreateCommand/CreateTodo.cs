@@ -1,12 +1,10 @@
-﻿using Starter.Application.Security;
-using Starter.Application.UnitOfWork;
+﻿using Starter.Application.UnitOfWork;
 using Starter.Domain.Entities;
-using Starter.Domain.Enums;
 using Starter.Domain.Events;
 
 namespace Starter.Application.Features.Todos.Create;
 
-[Authorize(ModuleType = nameof(ModuleTypes.TodoItem), Actions = "Create")]
+//[Authorize(ModuleType = nameof(ModuleTypes.TodoItem), Actions = "Create")]
 public record CreateTodoItemCommand : IRequest<int>
 {
 

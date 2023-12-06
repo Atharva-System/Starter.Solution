@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using System.Text;
+using System.Text.Json;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -7,12 +10,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Starter.Application.Contracts.Identity;
 using Starter.Application.Models.Authentication;
-using Starter.Domain.Constant;
+using Starter.Identity.Authorization;
 using Starter.Identity.Database;
 using Starter.Identity.Models;
 using Starter.Identity.Services;
-using System.Text;
-using System.Text.Json;
 
 namespace Starter.Identity;
 
@@ -34,8 +35,23 @@ public static class IdentityServiceExtensions
 
         services.AddTransient<IAuthService, AuthService>();
 
-        services.AddAuthorization(options =>
-           options.AddPolicy(Policies.CanPurge, policy => policy.RequireRole(Roles.Administrator)));
+
+
+
+        // Register Authorization Handlers
+        services.AddSingleton<IAuthorizationHandler, ResourceOperationAuthorizationHandler>();
+
+        // Register Authorization Policy Provider
+        services.AddSingleton<IAuthorizationPolicyProvider, ResourceOperationAuthorizationPolicyProvider>();
+
+        services.AddScoped<IAuthorizationHandler, ResourceOperationAuthorizationHandler>();
+
+
+
+
+
+        //services.AddAuthorization(options =>
+        //   options.AddPolicy(Policies.CanPurge, policy => policy.RequireRole(Roles.Administrator)));
 
 
         services.AddAuthentication(options =>
