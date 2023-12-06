@@ -1,6 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <Compile Remove="Features\Todos\List\**" />
+    <EmbeddedResource Remove="Features\Todos\List\**" />
+    <None Remove="Features\Todos\List\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" />
     <PackageReference Include="FluentValidation" />
@@ -10,10 +16,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Starter.Domain\Starter.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Features\Todos\List\" />
   </ItemGroup>
 
 </Project>
