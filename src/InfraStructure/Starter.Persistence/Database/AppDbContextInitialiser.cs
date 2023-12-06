@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Starter.Domain.Entities;
@@ -7,9 +6,9 @@ using Starter.Domain.Entities;
 namespace Starter.Persistence.Database;
 public static class AppDBInitialiserExtensions
 {
-    public static async Task InitialiseAppDatabaseAsync(this WebApplication app)
+    public static async Task InitialiseAppDatabaseAsync(this IServiceProvider services)
     {
-        using var scope = app.Services.CreateScope();
+        using var scope = services.CreateScope();
 
         var initialiser = scope.ServiceProvider.GetRequiredService<AppDbContextInitialiser>();
 
