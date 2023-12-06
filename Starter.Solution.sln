@@ -32,17 +32,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 		Directory.Packages.props = Directory.Packages.props
 		README.md = README.md
+		Docker.Help.md = Docker.Help.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Angular", "Angular", "{7758A3B5-29D5-4060-9C9E-1BFDF8802CE6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Blazor", "Blazor", "{6B2BE1C4-FEB9-40C1-ADC3-8E308BCF68E0}"
 EndProject
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "Angular.Starter", "src\UI\Angular\Angular.Starter.esproj", "{75A7C4A0-23E6-4BF2-9078-44962E324C61}"
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "Starter.Angular", "src\UI\Angular\Starter.Angular.esproj", "{75A7C4A0-23E6-4BF2-9078-44962E324C61}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{F4FA8369-D9AA-4BC1-9851-3FE6072F7FA3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor.Starter", "src\UI\Blazor\Blazor.Starter.csproj", "{57FA91E7-7E70-42D9-9D5D-E1A2B532A0E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Starter.Blazor", "src\UI\Blazor\Starter.Blazor.csproj", "{57FA91E7-7E70-42D9-9D5D-E1A2B532A0E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -79,7 +80,6 @@ Global
 		{75A7C4A0-23E6-4BF2-9078-44962E324C61}.Release|Any CPU.Build.0 = Release|Any CPU
 		{75A7C4A0-23E6-4BF2-9078-44962E324C61}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{F4FA8369-D9AA-4BC1-9851-3FE6072F7FA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F4FA8369-D9AA-4BC1-9851-3FE6072F7FA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4FA8369-D9AA-4BC1-9851-3FE6072F7FA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F4FA8369-D9AA-4BC1-9851-3FE6072F7FA3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{57FA91E7-7E70-42D9-9D5D-E1A2B532A0E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
