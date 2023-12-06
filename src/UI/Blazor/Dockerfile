@@ -1,5 +1,6 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src/blazor
+COPY ["Directory.Packages.props", "."]
 COPY ["src/UI/Blazor/Starter.Blazor.csproj", "."]
 RUN dotnet restore "./Starter.Blazor.csproj"
 COPY ["src/UI/Blazor", "."]
