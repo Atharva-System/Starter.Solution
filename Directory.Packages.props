@@ -66,5 +66,11 @@
     </PackageVersion>-->
   </ItemGroup>
   <!--Starter.Persistence Package References-->
-  
+
+  <!--Blazor.Starter Package References-->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.13" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.13" PrivateAssets="all" />
+  </ItemGroup>
+  <!--Blazor.Starter Package References-->
 </Project>
