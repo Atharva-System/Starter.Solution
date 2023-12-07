@@ -31,8 +31,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		Directory.Packages.props = Directory.Packages.props
-		README.md = README.md
 		Docker.Help.md = Docker.Help.md
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Angular", "Angular", "{7758A3B5-29D5-4060-9C9E-1BFDF8802CE6}"
@@ -45,11 +45,13 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Starter.Blazor", "src\UI\Blazor\Starter.Blazor.csproj", "{57FA91E7-7E70-42D9-9D5D-E1A2B532A0E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Starter.UnitTests", "tests\Starter.UnitTests\Starter.UnitTests.csproj", "{55E04F67-009F-4BF9-A21F-3BECF3E3F0C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Starter.UnitTests", "tests\Starter.UnitTests\Starter.UnitTests.csproj", "{55E04F67-009F-4BF9-A21F-3BECF3E3F0C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Starter.IntegrationTests", "tests\Starter.IntegrationTests\Starter.IntegrationTests.csproj", "{06D80C83-4DC0-4275-A880-20680215C18C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Starter.IntegrationTests", "tests\Starter.IntegrationTests\Starter.IntegrationTests.csproj", "{06D80C83-4DC0-4275-A880-20680215C18C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Starter.FunctionalTests", "tests\Starter.FunctionalTests\Starter.FunctionalTests.csproj", "{B91EA69E-E7A4-4068-99C2-A383AD2E9F14}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Starter.FunctionalTests", "tests\Starter.FunctionalTests\Starter.FunctionalTests.csproj", "{B91EA69E-E7A4-4068-99C2-A383AD2E9F14}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Starter.ArhitectureTests", "tests\Starter.ArhitectureTests\Starter.ArhitectureTests.csproj", "{E613FC08-C1E0-449C-A2D5-0825992168DD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -104,6 +106,10 @@ Global
 		{B91EA69E-E7A4-4068-99C2-A383AD2E9F14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B91EA69E-E7A4-4068-99C2-A383AD2E9F14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B91EA69E-E7A4-4068-99C2-A383AD2E9F14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E613FC08-C1E0-449C-A2D5-0825992168DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E613FC08-C1E0-449C-A2D5-0825992168DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E613FC08-C1E0-449C-A2D5-0825992168DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E613FC08-C1E0-449C-A2D5-0825992168DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -126,6 +132,7 @@ Global
 		{55E04F67-009F-4BF9-A21F-3BECF3E3F0C8} = {98B193AE-D6CE-4BF2-BB61-6B494DDB59D3}
 		{06D80C83-4DC0-4275-A880-20680215C18C} = {98B193AE-D6CE-4BF2-BB61-6B494DDB59D3}
 		{B91EA69E-E7A4-4068-99C2-A383AD2E9F14} = {98B193AE-D6CE-4BF2-BB61-6B494DDB59D3}
+		{E613FC08-C1E0-449C-A2D5-0825992168DD} = {98B193AE-D6CE-4BF2-BB61-6B494DDB59D3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1B0E8F69-3461-4C6F-9EDE-5C0269B198AA}

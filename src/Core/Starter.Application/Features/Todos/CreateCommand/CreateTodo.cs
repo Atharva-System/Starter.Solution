@@ -5,9 +5,8 @@ using Starter.Domain.Events;
 namespace Starter.Application.Features.Todos.Create;
 
 //[Authorize(ModuleType = nameof(ModuleTypes.TodoItem), Actions = "Create")]
-public record CreateTodoItemCommand : IRequest<int>
+public sealed record CreateTodoItemCommand : IRequest<int>
 {
-
 
     public string? Title { get; init; }
 
