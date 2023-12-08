@@ -12,7 +12,7 @@ using Starter.Identity.Database;
 namespace Starter.Identity.Migrations
 {
     [DbContext(typeof(AppIdentityDbContext))]
-    [Migration("20231208060010_initial_indentity_db")]
+    [Migration("20231208070859_initial_indentity_db")]
     partial class initial_indentity_db
     {
         /// <inheritdoc />

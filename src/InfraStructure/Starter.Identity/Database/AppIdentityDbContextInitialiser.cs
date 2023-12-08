@@ -36,13 +36,19 @@ public class AppIdentityDbContextInitialiser(ILogger<AppIdentityDbContextInitial
     public async Task InitialiseAsync()
     {
         var pendingMigrations = await _context.Database.GetPendingMigrationsAsync();
+
         if (pendingMigrations.Any())
         {
+            Console.WriteLine("Applying pending migrations:");
+            foreach (var migration in pendingMigrations)
+            {
+                Console.WriteLine($" - {migration}");
+            }
 
             try
             {
                 await _context.Database.MigrateAsync();
-
+                Console.WriteLine("Migrations applied successfully.");
             }
             catch (Exception ex)
             {
@@ -50,10 +56,16 @@ public class AppIdentityDbContextInitialiser(ILogger<AppIdentityDbContextInitial
                 throw;
             }
         }
+        else
+        {
+            Console.WriteLine("No pending migrations.");
+        }
+
         var lastAppliedMigration = (await _context.Database.GetAppliedMigrationsAsync()).Last();
 
         Console.WriteLine($"You're on schema version: {lastAppliedMigration}");
     }
+
 
     public async Task SeedAsync()
     {

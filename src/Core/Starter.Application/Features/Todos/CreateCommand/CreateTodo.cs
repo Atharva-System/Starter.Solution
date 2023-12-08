@@ -4,11 +4,8 @@ using Starter.Domain.Events;
 
 namespace Starter.Application.Features.Todos.Create;
 
-//[Authorize(ModuleType = nameof(ModuleTypes.TodoItem), Actions = "Create")]
-public record CreateTodoItemCommand : IRequest<int>
+public sealed record CreateTodoItemCommand : IRequest<int>
 {
-
-
     public string? Title { get; init; }
 
     public int Priority { get; init; }
@@ -31,7 +28,6 @@ public class CreateTodoItemCommandHandler(ICommandUnitOfWork command) : IRequest
         await _commandUnitofWork.CommandRepository<TodoItem>().AddAsync(entity);
 
         return await _commandUnitofWork.SaveAsync(cancellationToken);
-
 
     }
 }
