@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Starter.Application.Features.Common;
 using Starter.Application.Features.Todos.Create;
 using Starter.Identity.Authorizations;
 using Starter.Identity.Authorizations.Permissions;
@@ -17,7 +18,7 @@ namespace Starter.API.Controllers
     {
         [HttpPost("Create")]
         [MustHavePermission(Action.Create, Resource.Todo)]
-        public async Task<int> CreateTodoItem(ISender sender, CreateTodoItemCommand command)
+        public async Task<ApiResponse<int>> CreateTodoItem(ISender sender, CreateTodoItemCommand command)
         {
             return await sender.Send(command);
         }
