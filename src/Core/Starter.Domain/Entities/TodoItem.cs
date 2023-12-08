@@ -1,7 +1,7 @@
 ﻿
 namespace Starter.Domain.Entities;
 
-public class TodoItem : BaseAuditableEntity
+public sealed class TodoItem : BaseAuditableEntity
 {
     //public Guid ListId { get; set; }
 

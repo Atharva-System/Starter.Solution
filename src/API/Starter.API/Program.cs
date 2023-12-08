@@ -22,7 +22,6 @@ var app = builder
 
 app.UseSerilogRequestLogging();
 
-
 //Clear migration
 
 //if (app.Environment.IsDevelopment())

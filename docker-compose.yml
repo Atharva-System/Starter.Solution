@@ -1,0 +1,39 @@
+version: '3.4'
+
+services:
+  starter.webapi:
+    image: ${DOCKER_REGISTRY-}starter.api
+    build:
+      context: .
+      dockerfile: src/API/Starter.API/Dockerfile
+    ports:
+      - "10001:8080"
+    depends_on:
+      - "starter.sqlserver"
+  
+  starter.angular:
+    image: ${DOCKER_REGISTRY-}starter.angular
+    container_name: starter.angular
+    build:
+      context: .
+      dockerfile: src/UI/Angular/Dockerfile
+    ports:
+      - "10002:80"
+
+  starter.blazor:
+    image: ${DOCKER_REGISTRY-}starter.blazor
+    container_name: starter.blazor
+    build:
+      context: .
+      dockerfile: src/UI/Blazor/Dockerfile
+    ports:
+      - "10003:80"
+
+  starter.sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: starter.sqlserver
+    ports:
+      - "1433:1433"
+    environment:
+      - SA_PASSWORD=Your!Strong#Password
+      - ACCEPT_EULA=Y

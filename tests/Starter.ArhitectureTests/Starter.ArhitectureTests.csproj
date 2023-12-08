@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="NetArchTest.Rules" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="coverlet.collector" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\API\Starter.API\Starter.API.csproj" />
+    <ProjectReference Include="..\..\src\Core\Starter.Application\Starter.Application.csproj" />
+    <ProjectReference Include="..\..\src\Core\Starter.Domain\Starter.Domain.csproj" />
+    <ProjectReference Include="..\..\src\InfraStructure\Starter.Identity\Starter.Identity.csproj" />
+    <ProjectReference Include="..\..\src\InfraStructure\Starter.InfraStructure\Starter.InfraStructure.csproj" />
+    <ProjectReference Include="..\..\src\InfraStructure\Starter.Persistence\Starter.Persistence.csproj" />
+  </ItemGroup>
+
+</Project>
