@@ -51,7 +51,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Starter.IntegrationTests", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Starter.FunctionalTests", "tests\Starter.FunctionalTests\Starter.FunctionalTests.csproj", "{B91EA69E-E7A4-4068-99C2-A383AD2E9F14}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Starter.ArhitectureTests", "tests\Starter.ArhitectureTests\Starter.ArhitectureTests.csproj", "{E613FC08-C1E0-449C-A2D5-0825992168DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Starter.ArhitectureTests", "tests\Starter.ArhitectureTests\Starter.ArhitectureTests.csproj", "{E613FC08-C1E0-449C-A2D5-0825992168DD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -84,6 +84,8 @@ Global
 		{C4C2853F-7CF0-486D-9357-63738D708981}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4C2853F-7CF0-486D-9357-63738D708981}.Release|Any CPU.Build.0 = Release|Any CPU
 		{75A7C4A0-23E6-4BF2-9078-44962E324C61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75A7C4A0-23E6-4BF2-9078-44962E324C61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75A7C4A0-23E6-4BF2-9078-44962E324C61}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{75A7C4A0-23E6-4BF2-9078-44962E324C61}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75A7C4A0-23E6-4BF2-9078-44962E324C61}.Release|Any CPU.Build.0 = Release|Any CPU
 		{75A7C4A0-23E6-4BF2-9078-44962E324C61}.Release|Any CPU.Deploy.0 = Release|Any CPU
