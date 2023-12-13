@@ -1,11 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Starter.Application.Contracts.Persistence.Repositoris.TodoRepository;
 using Starter.Application.UnitOfWork;
 using Starter.Persistence.Database;
 using Starter.Persistence.Interceptors;
-using Starter.Persistence.Repositories.Todos;
 using Starter.Persistence.UnitofWork;
 
 namespace Starter.Persistence;
@@ -30,9 +28,10 @@ public static class PersistenceServiceExtensions
 
         services.AddScoped<AppDbContextInitialiser>();
 
-        services.AddScoped<ITodoCommandRepository, TodoCommandRepository>();
+        //services.AddScoped<ITodoCommandRepository, TodoCommandRepository>();
 
         services.AddScoped<ICommandUnitOfWork, CommandUnitOfWork>();
+        services.AddScoped<IQueryUnitOfWork, QueryUnitOfWork>();
 
 
         return services;

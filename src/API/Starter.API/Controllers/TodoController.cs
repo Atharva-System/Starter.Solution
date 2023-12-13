@@ -6,21 +6,16 @@ using Starter.Identity.Authorizations;
 using Starter.Identity.Authorizations.Permissions;
 using Action = Starter.Identity.Authorizations.Action;
 
-namespace Starter.API.Controllers
-{
-    [Route("api/[controller]")]
-    [ApiController]
-    //[Authorize]
-    //[Authorize(Policy = Policies.CanPurge)]
-    //[Authorize(Policy = "ResourceOperationCreate")]
+namespace Starter.API.Controllers;
 
-    public class TodoController : ControllerBase
+[Route("api/[controller]")]
+[ApiController]
+public class TodoController : ControllerBase
+{
+    [HttpPost("Create")]
+    [MustHavePermission(Action.Create, Resource.Todo)]
+    public async Task<ApiResponse<int>> CreateTodoItem(ISender sender, CreateTodoItemCommandReqeust command)
     {
-        [HttpPost("Create")]
-        [MustHavePermission(Action.Create, Resource.Todo)]
-        public async Task<ApiResponse<int>> CreateTodoItem(ISender sender, CreateTodoItemCommand command)
-        {
-            return await sender.Send(command);
-        }
+        return await sender.Send(command);
     }
 }

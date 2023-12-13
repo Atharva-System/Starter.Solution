@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Starter.Domain.Events;
 
-namespace Starter.Application.Features.Todos.EventHandlers;
+namespace Starter.Application.Features.Todos.DomainEventHandlers;
 
 public class TodoItemCreatedEventHandler(ILogger<TodoItemCreatedEventHandler> logger) : INotificationHandler<TodoItemCreatedEvent>
 {

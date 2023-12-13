@@ -1,28 +1,32 @@
 ﻿using Starter.Application.Features.Common;
 using Starter.Application.UnitOfWork;
 using Starter.Domain.Entities;
+using Starter.Domain.Enums;
 using Starter.Domain.Events;
 
 namespace Starter.Application.Features.Todos.Create;
 
-public sealed record CreateTodoItemCommand : IRequest<ApiResponse<int>>
+public sealed record CreateTodoItemCommandReqeust : IRequest<ApiResponse<int>>
 {
     public string? Title { get; init; }
 
     public int Priority { get; init; }
 }
 
-public class CreateTodoItemCommandHandler(ICommandUnitOfWork command) : IRequestHandler<CreateTodoItemCommand, ApiResponse<int>>
+public class CreateTodoItemCommandHandler(ICommandUnitOfWork command) : IRequestHandler<CreateTodoItemCommandReqeust, ApiResponse<int>>
 {
     private readonly ICommandUnitOfWork _commandUnitofWork = command;
 
-    public async Task<ApiResponse<int>> Handle(CreateTodoItemCommand request, CancellationToken cancellationToken)
+    public async Task<ApiResponse<int>> Handle(CreateTodoItemCommandReqeust request, CancellationToken cancellationToken)
     {
         var entity = new TodoItem
         {
             Title = request.Title,
-            Done = false
+            Done = false,
+            Priority = (PriorityLevel)request.Priority
         };
+
+        //var validator = new CreateTodoItemCommandValidator(_commandUnitofWork);
 
         entity.AddDomainEvent(new TodoItemCreatedEvent(entity));
 
