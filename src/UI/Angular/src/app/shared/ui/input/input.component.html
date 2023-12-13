@@ -1,0 +1,17 @@
+<div [ngClass]="isSubmit ? (control.errors ? 'has-error' : '') : ''">
+  <input
+    class="form-input"
+    [id]="id"
+    [type]="type"
+    [placeholder]="placeholder"
+    [disabled]="disable"
+    [formControl]="control"
+    [(ngModel)]="value"
+  />
+  @if (isSubmit && control.errors?.["required"]) {
+    <p class="mt-1 text-danger">This can not be empty</p>
+  }
+  @if (isSubmit && control.errors?.["email"]) {
+    <p class="mt-1 text-danger">Email is invalid</p>
+  }
+</div>
