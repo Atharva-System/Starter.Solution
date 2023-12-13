@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Starter.Identity.Database;
 
@@ -11,9 +12,16 @@ using Starter.Identity.Database;
 namespace Starter.Identity.Migrations
 {
     [DbContext(typeof(AppIdentityDbContext))]
-    partial class AppIdentityDbContextModelSnapshot : ModelSnapshot
+<<<<<<<< HEAD:src/InfraStructure/Starter.Identity/Migrations/20231206124931_Initial_db.Designer.cs
+    [Migration("20231206124931_Initial_db")]
+    partial class Initial_db
+========
+    [Migration("20231208070859_initial_indentity_db")]
+    partial class initial_indentity_db
+>>>>>>>> dev:src/InfraStructure/Starter.Identity/Migrations/20231208070859_initial_indentity_db.Designer.cs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

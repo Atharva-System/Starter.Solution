@@ -30,7 +30,7 @@ public class AuditableEntitySaveChangesInterceptor(
     {
         if (context == null) return;
 
-        DateTime now = _dateTime.Now.UtcDateTime;
+        DateTimeOffset now = _dateTime.Now;
 
         foreach (var entry in context.ChangeTracker.Entries<BaseAuditableEntity>())
         {

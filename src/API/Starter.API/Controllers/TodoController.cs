@@ -1,23 +1,21 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Starter.Application.Features.Common;
 using Starter.Application.Features.Todos.Create;
+using Starter.Identity.Authorizations;
+using Starter.Identity.Authorizations.Permissions;
+using Action = Starter.Identity.Authorizations.Action;
 
-namespace Starter.API.Controllers
+namespace Starter.API.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class TodoController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    //[Authorize]
-    //[Authorize(Policy = Policies.CanPurge)]
-    [Authorize(Policy = "ResourceOperationCreate")]
-
-    public class TodoController : ControllerBase
+    [HttpPost("Create")]
+    [MustHavePermission(Action.Create, Resource.Todo)]
+    public async Task<ApiResponse<int>> CreateTodoItem(ISender sender, CreateTodoItemCommandReqeust command)
     {
-
-        [HttpPost("CreateTODO")]
-        public async Task<int> CreateTodoItem(ISender sender, CreateTodoItemCommand command)
-        {
-            return await sender.Send(command);
-        }
+        return await sender.Send(command);
     }
 }
