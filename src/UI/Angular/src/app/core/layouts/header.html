@@ -57,8 +57,7 @@
     <div
       class="flex items-center space-x-1.5 ltr:ml-auto rtl:mr-auto rtl:space-x-reverse dark:text-[#d0d2d6] sm:flex-1 ltr:sm:ml-0 sm:rtl:mr-0 lg:space-x-2"
     >
-      <div class="sm:ltr:mr-auto sm:rtl:ml-auto">
-      </div>
+      <div class="sm:ltr:mr-auto sm:rtl:ml-auto"></div>
       <div>
         @if (store.theme === 'light') {
         <a
@@ -373,9 +372,10 @@
             </li>
             <li class="border-t border-white-light dark:border-white-light/10">
               <a
-                routerLink="/auth/boxed-signin"
+                href="javascript:;"
                 *hlMenuItem="let menuItem"
                 class="!py-3 text-danger"
+                (click)="signOut()"
               >
                 <svg
                   class="h-4.5 w-4.5 shrink-0 rotate-90 ltr:mr-2 rtl:ml-2"
@@ -481,7 +481,7 @@
       </a>
       <ul class="sub-menu">
         <li>
-          <a routerLink="/apps/todolist" routerLinkActive="active"
+          <a [routerLink]="routes.todo" routerLinkActive="active"
             >{{ 'todo_list' | translate }}</a
           >
         </li>

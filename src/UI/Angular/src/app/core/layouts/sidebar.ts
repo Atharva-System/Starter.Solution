@@ -5,6 +5,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { NgClass } from '@angular/common';
 import { slideDownUp } from '../../shared/services/animations.service';
+import { appPaths } from '../../shared/constants/routes';
 
 @Component({
   selector: 'sidebar',
@@ -20,6 +21,9 @@ import { slideDownUp } from '../../shared/services/animations.service';
   ],
 })
 export class SidebarComponent {
+  routes = {
+    todo: appPaths.todo,
+  };
   active = false;
   store: any;
   activeDropdown: string[] = [];

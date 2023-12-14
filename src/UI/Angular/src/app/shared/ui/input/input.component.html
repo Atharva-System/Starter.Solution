@@ -14,4 +14,35 @@
   @if (isSubmit && control.errors?.["email"]) {
     <p class="mt-1 text-danger">Email is invalid</p>
   }
+  @if (isSubmit && control.errors?.["minlength"]) {
+    <p class="mt-1 text-danger">
+      Minimum length should be
+      {{ this.control.errors.minlength.requiredLength }} characters
+    </p>
+  }
+  @if (isSubmit && control.errors?.["maxlength"]) {
+    <p class="mt-1 text-danger">
+      Maximum length should be
+      {{ control.errors["maxlength"].requiredLength }} characters
+    </p>
+  }
+  @if (isSubmit && control.errors?.["min"]) {
+    <p class="mt-1 text-danger">
+      Minimum value is {{ control.errors["min"].min }}
+    </p>
+  }
+  @if (isSubmit && control.errors?.["max"]) {
+    <p class="mt-1 text-danger">
+      Maximum value is {{ control.errors["max"].max }}
+    </p>
+  }
+  <!-- @if (control.errors["pattern"]) {
+    <p class="mt-1 text-danger">Invalid pattern, please check the format</p>
+  }
+  @if (isSubmit && control.errors?.["pattern"] && type == "password") {
+    <p class="mt-1 text-danger">
+      Password requirements: At least one uppercase letter (A-Z), one lowercase
+      letter (a-z), and one non-alphanumeric character.
+    </p>
+  } -->
 </div>

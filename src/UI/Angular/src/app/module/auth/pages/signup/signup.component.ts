@@ -13,6 +13,8 @@ import { InputComponent } from '../../../../shared/ui/input/input.component';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 import { AnchorComponent } from '../../../../shared/ui/anchor/anchor.component';
 import { AuthService } from '../../services/auth.service';
+import { FieldValidation } from '../../../../shared/constants/constants';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-signup',
@@ -44,9 +46,36 @@ export class SignupComponent {
 
   initForm() {
     this.formSignup = this.fb.group({
-      name: ['', Validators.required],
-      email: ['', Validators.compose([Validators.required, Validators.email])],
-      password: ['', Validators.required],
+      firstName: [
+        '',
+        Validators.compose([
+          Validators.required,
+          Validators.maxLength(FieldValidation.firstNameMaxLength),
+        ]),
+      ],
+      lastName: [
+        '',
+        Validators.compose([
+          Validators.required,
+          Validators.maxLength(FieldValidation.lastNameMaxLength),
+        ]),
+      ],
+      email: [
+        '',
+        Validators.compose([
+          Validators.required,
+          Validators.email,
+          Validators.maxLength(FieldValidation.emailMaxLength),
+        ]),
+      ],
+      password: [
+        '',
+        Validators.compose([
+          Validators.required,
+          Validators.minLength(FieldValidation.passwordMinLength),
+          // Validators.pattern(Regex.passwordValidationPattern),
+        ]),
+      ],
     });
   }
 
@@ -54,8 +83,14 @@ export class SignupComponent {
     this.isSubmitFormSignup = true;
     if (this.formSignup.valid) {
       const formValues = this.formSignup.value;
-      console.log('Form Values:', formValues);
-      this.alertService.showMessage('Form submitted successfully.');
+      this.authService.signup(formValues).subscribe(
+        (res: any) => {
+          this.isSubmitFormSignup = false;
+          this.alertService.showMessage('User registered successfully.');
+          this.formSignup.reset();
+        },
+        (error) => {},
+      );
     }
   }
 }

@@ -45,7 +45,7 @@ public class AuthService(UserManager<ApplicationUser> userManager,
 
         if (!result.Succeeded)
         {
-            throw new AuthenticationException($"Please provide valid credentials");
+            throw new Exception($"Please provide valid credentials");
         }
 
         JwtSecurityToken jwtSecurityToken = await GenerateToken(user!);
@@ -70,11 +70,11 @@ public class AuthService(UserManager<ApplicationUser> userManager,
 
     public async Task<RegistrationResponse> RegisterAsync(RegistrationRequest request)
     {
-        var existingUser = await _userManager.FindByNameAsync(request.UserName);
+        var existingEmail = await _userManager.FindByEmailAsync(request.Email);
 
-        if (existingUser != null)
+        if (existingEmail != null)
         {
-            throw new Exception($"Username '{request.UserName}' already exists.");
+            throw new Exception($"Email '{request.Email}' already exists.");
         }
 
         var user = new ApplicationUser
@@ -82,11 +82,9 @@ public class AuthService(UserManager<ApplicationUser> userManager,
             Email = request.Email,
             FirstName = request.FirstName,
             LastName = request.LastName,
-            UserName = request.UserName,
+            UserName = request.Email,
             EmailConfirmed = true
         };
-
-        var existingEmail = await _userManager.FindByEmailAsync(request.Email);
 
         if (existingEmail == null)
         {
@@ -94,11 +92,14 @@ public class AuthService(UserManager<ApplicationUser> userManager,
 
             if (result.Succeeded)
             {
+
+                await _userManager.AddToRoleAsync(user, Constants.IdentityRole.Administrator);
+
                 return new RegistrationResponse() { UserId = user.Id };
             }
             else
             {
-                throw new Exception($"{result.Errors}");
+                throw new Exception($"{string.Join(",", result.Errors.Select(p => p.Description))}");
             }
         }
         else
@@ -177,6 +178,7 @@ public class AuthService(UserManager<ApplicationUser> userManager,
 
         var claims = new[]
         {
+                new Claim(JwtRegisteredClaimNames.Name, user.FirstName+" "+ user.LastName),
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserName!),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email!),
@@ -203,7 +205,6 @@ public class AuthService(UserManager<ApplicationUser> userManager,
         using RandomNumberGenerator randomNumber = RandomNumberGenerator.Create();
         randomNumber.GetBytes(numbers);
         return Convert.ToBase64String(numbers);
-
     }
 
     private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)

@@ -10,14 +10,25 @@
       (ngSubmit)="submitFormSignup()"
       novalidate
     >
-      <div>
-        <label for="name">Name</label>
-        <app-input
-          formControlName="name"
-          [control]="formSignup.controls['name']"
-          [isSubmit]="isSubmitFormSignup"
-          placeholder="Enter Name"
-        ></app-input>
+      <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+        <div>
+          <label for="firstName">First Name</label>
+          <app-input
+            formControlName="firstName"
+            [control]="formSignup.controls['firstName']"
+            [isSubmit]="isSubmitFormSignup"
+            placeholder="Enter First Name"
+          ></app-input>
+        </div>
+        <div>
+          <label for="lastName">Last Name</label>
+          <app-input
+            formControlName="lastName"
+            [control]="formSignup.controls['lastName']"
+            [isSubmit]="isSubmitFormSignup"
+            placeholder="Enter Last Name"
+          ></app-input>
+        </div>
       </div>
       <div>
         <label for="email">Email</label>

@@ -14,9 +14,9 @@ public class RegistrationRequest
     [EmailAddress]
     public string Email { get; set; } = string.Empty;
 
-    [Required]
-    [MinLength(6)]
-    public string UserName { get; set; } = string.Empty;
+    //[Required]
+    //[MinLength(6)]
+    //public string UserName { get; set; } = string.Empty;
 
     [Required]
     [MinLength(6)]

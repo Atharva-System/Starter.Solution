@@ -13,6 +13,8 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { MenuModule } from 'headlessui-angular';
 import { FormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
+import { AuthenticationService } from '../services/authentication.service';
+import { appPaths } from '../../shared/constants/routes';
 
 @Component({
   selector: 'header',
@@ -39,11 +41,15 @@ import { NgClass } from '@angular/common';
   ],
 })
 export class HeaderComponent {
+  routes = {
+    todo: '/' + appPaths.todo,
+  };
   appSetting = inject(AppService);
   router = inject(Router);
   translate = inject(TranslateService);
   storeData = inject(Store<any>);
   sanitizer = inject(DomSanitizer);
+  authenticationService = inject(AuthenticationService);
 
   constructor() {
     this.initStore();
@@ -171,5 +177,9 @@ export class HeaderComponent {
       this.storeData.dispatch({ type: 'toggleRTL', payload: 'ltr' });
     }
     window.location.reload();
+  }
+
+  signOut() {
+    this.authenticationService.signOut();
   }
 }

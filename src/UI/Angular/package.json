@@ -37,6 +37,8 @@
     "file-upload-with-preview": "^6.0.2",
     "flatpickr": "^4.6.13",
     "headlessui-angular": "^0.0.7",
+    "jest-editor-support": "*",
+    "jwt-decode": "^4.0.0",
     "ng-apexcharts": "^1.8.0",
     "ng2-flatpickr": "^9.0.0",
     "ng2-nouislider": "^2.0.0",
@@ -56,8 +58,7 @@
     "swiper": "^11.0.5",
     "tslib": "^2.6.2",
     "xlsx": "^0.18.5",
-    "zone.js": "~0.14.2",
-    "jest-editor-support": "*"
+    "zone.js": "~0.14.2"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^17.0.6",
