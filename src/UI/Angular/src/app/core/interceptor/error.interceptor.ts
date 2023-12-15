@@ -20,10 +20,11 @@ export class ErrorInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<any>> {
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
-        this.alertService.showMessage(
-          error.error.Messages[0],
-          AlertNotification.type.error,
-        );
+        if (error && error.error && error.error.Messages.length > 0)
+          this.alertService.showMessage(
+            error.error.Messages[0],
+            AlertNotification.type.error,
+          );
         return throwError(() => error);
       }),
     );
