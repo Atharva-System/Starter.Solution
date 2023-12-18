@@ -36,6 +36,7 @@ public static class IdentityServiceExtensions
           .AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
         services.AddTransient<IAuthService, AuthService>();
+        services.AddScoped<IUsersService, UsersService>();
 
         services.AddAuthentication(options =>
          {
