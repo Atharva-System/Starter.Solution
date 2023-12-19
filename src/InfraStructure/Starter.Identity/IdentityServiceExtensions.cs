@@ -35,8 +35,6 @@ public static class IdentityServiceExtensions
           .AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>()
           .AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
-        services.AddTransient<IAuthService, AuthService>();
-
         services.AddAuthentication(options =>
          {
              options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
