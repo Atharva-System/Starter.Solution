@@ -2,7 +2,7 @@
 using Starter.Application.Models.Users;
 
 namespace Starter.Application.Contracts.Identity;
-public interface IUsersService
+public interface IUsersService : ITransientService
 {
     Task<ApiResponse<UserDetailsDto>> GetUserDetailsAsync (string userId, CancellationToken cancellationToken);
 }

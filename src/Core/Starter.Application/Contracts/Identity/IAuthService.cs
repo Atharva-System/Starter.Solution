@@ -2,7 +2,7 @@
 
 namespace Starter.Application.Contracts.Identity;
 
-public interface IAuthService
+public interface IAuthService : ITransientService
 {
     Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest request);
     Task<RegistrationResponse> RegisterAsync(RegistrationRequest request);
