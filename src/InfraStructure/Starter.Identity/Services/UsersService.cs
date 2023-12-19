@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Starter.Application.Contracts.Application;
 using Starter.Application.Contracts.Identity;
 using Starter.Application.Contracts.Responses;
@@ -6,11 +7,17 @@ using Starter.Application.Exceptions;
 using Starter.Application.Features.Common;
 using Starter.Application.Models.Users;
 using Starter.Identity.Database;
+using Starter.Identity.Models;
 
 namespace Starter.Identity.Services;
-public partial class UsersService(AppIdentityDbContext db, ICurrentUserService currentUserService) : IUsersService
+public partial class UsersService(UserManager<ApplicationUser> userManager,
+                                  RoleManager<ApplicationRole> roleManager,
+                                  AppIdentityDbContext db,
+                                  ICurrentUserService currentUserService) : IUsersService
 {
     private readonly AppIdentityDbContext _db = db;
+    private readonly UserManager<ApplicationUser> _userManager = userManager;
+    private readonly RoleManager<ApplicationRole> _roleManager = roleManager;
     private readonly ICurrentUserService _currentUserService = currentUserService;
 
     public async Task<ApiResponse<UserDetailsDto>> GetUserDetailsAsync(string userId, CancellationToken cancellationToken)
@@ -67,5 +74,49 @@ public partial class UsersService(AppIdentityDbContext db, ICurrentUserService c
         int count = usersList.ApplySpecificationCount(spec);
 
         return new PagedApiResponse<UserListDto>(count, filter.PageNumber, filter.PageSize) { Data = users };
+    }
+
+    public async Task<ApiResponse<string>> UpdateAsync(UpdateUserDto request)
+    {
+        var user = await _userManager.FindByIdAsync(request.Id);
+
+        _ = user ?? throw new NotFoundException("UserId ", request.Id);
+
+        var existingEmail = await _userManager.FindByEmailAsync(request.Email!);
+
+        if (existingEmail != null && existingEmail.Id != request.Id)
+        {
+            throw new Exception($"Email '{request.Email}' already exists.");
+        }
+
+        user.FirstName = request.FirstName;
+        user.LastName = request.LastName;
+
+        if (request.Email != user.Email)
+        {
+            user.UserName = user.Email = request.Email;
+            user.NormalizedUserName = user.NormalizedEmail = request.Email!.ToUpper();
+        }
+
+        //var newRole = await _roleManager.FindByIdAsync(request.RoleId) ?? throw new NotFoundException("RoleId ", request.RoleId);
+
+        //var currentRoles = await _userManager.GetRolesAsync(user);
+        //await _userManager.RemoveFromRolesAsync(user, currentRoles);
+        //await _userManager.AddToRoleAsync(user, newRole.Name);
+
+        var result = await _userManager.UpdateAsync(user);
+
+        if (!result.Succeeded)
+        {
+            throw new Exception($"Failed to update user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+        }
+
+        return new ApiResponse<string> 
+        { 
+            Success = result.Succeeded,
+            Data = "User updated successfully.",
+            StatusCode = result.Succeeded ? HttpStatusCodes.OK : HttpStatusCodes.BadRequest,
+            Message = result.Succeeded ? $"User {ConstantMessages.UpdatedSuccessfully}" : $"{ConstantMessages.FailedToCreate} user."
+        };
     }
 }

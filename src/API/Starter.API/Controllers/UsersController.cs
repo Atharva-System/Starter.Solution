@@ -28,4 +28,20 @@ public class UsersController(IUsersService userService) : ControllerBase
     {
         return await _usersService.SearchAsync(filter, cancellationToken);
     }
+
+    [HttpPut("{id}")]
+    [MustHavePermission(Action.Update, Resource.Users)]
+    public async Task<ApiResponse<string>> UpdateAsync(string id, UpdateUserDto request)
+    {
+        if (id != request.Id)
+        {
+            return new ApiResponse<string>
+            {
+                Success = false,
+                Data = "The provided ID in the route does not match the ID in the request body.",
+                StatusCode = HttpStatusCodes.BadRequest
+            };
+        }
+        return await _usersService.UpdateAsync(request);
+    }
 }
