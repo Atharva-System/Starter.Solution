@@ -1,6 +1,7 @@
 ﻿using Serilog;
 using Starter.API;
 using Starter.Identity.Database;
+using Starter.InfraStructure;
 using Starter.Persistence.Database;
 
 Log.Logger = new LoggerConfiguration()
@@ -32,5 +33,7 @@ app.UseSerilogRequestLogging();
 //Seed data 
 await app.Services.InitialiseDatabaseAsync();
 await app.Services.InitialiseAppDatabaseAsync();
+
+app.UseHangfire(builder.Configuration);
 
 app.Run();
