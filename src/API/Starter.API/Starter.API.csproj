@@ -28,5 +28,9 @@
 		<ProjectReference Include="..\..\InfraStructure\Starter.InfraStructure\Starter.InfraStructure.csproj" />
 		<ProjectReference Include="..\..\InfraStructure\Starter.Persistence\Starter.Persistence.csproj" />
 	</ItemGroup>
-
+  <ItemGroup>
+    <None Include="EmailTemplates\*.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

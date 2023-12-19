@@ -48,7 +48,12 @@
   <!--Starter.Identity Package References-->
   <!--Starter.InfraStructure Package References-->
   <ItemGroup>
+    <PackageVersion Include="Hangfire" Version="1.8.6" />
+    <PackageVersion Include="IdentityStream.Hangfire.Console" Version="2.0.0" />
+    <PackageVersion Include="MailKit" Version="4.3.0" />
+    <PackageVersion Include="MimeKit" Version="4.3.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+    <PackageVersion Include="RazorEngineCore" Version="2023.11.2" />
   </ItemGroup>
   <!--Starter.InfraStructure Package References-->
   <!--Starter.Persistence Package References-->

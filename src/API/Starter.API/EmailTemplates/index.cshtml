@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@Model?.Subject</title>
+</head>
+<body style="text-align: left; font-family: Arial">
+    <div style="width: 600px;  margin: 0 auto;">
+        <div style=" max-width: 600px ; background-color: #ffffff;">
+            <!-- -------------- Logo Section  Start ------------------ -->
+            <table style="vertical-align: middle; background-color: #ffffff !important; padding: 15px 24px;">
+                <tbody style="background-color: #fff !important;">
+                    <tr>
+                        <td>
+                            <img src="@Model?.DomainLogo" style="width: 190px !important;text-align: center;" alt="Logo" t-attf-src="" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <!--------------------------- Logo Section End ----------->
+            <!-- ---------- Main Section Start ------------ -->
+            <table style="padding: 32px 24px;">
+                <tbody>
+                    <tr>
+                        <td>
+                            <h1 style="margin: 0; margin-bottom: 24px; color: #303030; font-size: 36px; font-weight: 500; letter-spacing: -0.72px; line-height: 44px; text-transform: capitalize;"> hey&nbsp; @Model?.HeyUserName,</h1>
+                        </td>
+                    </tr>
+                    @{
+#nullable disable
+                        foreach (var item in Model?.RowData)
+                        {
+                            <tr>
+                                <td>
+                                    <p style="margin-top: 0; margin-bottom: 36px; font-size: 18px; line-height: 28px; color: #344054;">
+                                        @item
+                                    </p>
+                                </td>
+                            </tr>
+                        }
+#nullable restore
+                    }
+                    @if (@Model?.HasButton)
+                    {
+                        <tr>
+                            <td>
+                                <a href="@Model?.ButtonAnchorUrl" style="padding: 10px 18px; background-color: #414141; color: #ffffff; text-decoration: none; border-radius: 8px; box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);">
+                                    @Model?.ButtonText
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <!-- -----------------------   Main Section End  ------------------- -->
+        <!-- ------------------   Footer Section Start     ------------------ -->
+        <div style="background-color: #ffffff; max-width: 600px; padding: 32px 24px; border-bottom-left-radius: 4px; border-bottom-right-radius: 4px ;">
+            <table style="width: 100%; text-align: left">
+                <tbody>
+                    @if (!string.IsNullOrEmpty(@Model?.YourDomain))
+                    {
+                        <tr>
+                            <td>
+                                <p style="color: #667085; font-size: 14px; line-height: 20px; margin-top: 12px; margin-bottom: 0;">
+                                    © @Model?.YourDomain
+                                </p>
+                            </td>
+                        </tr>
+                    }
+                    <tr>
+                        <td>
+                            <img src="@Model?.DomainLogo" style="width: 150px !important;text-align: center; margin-top: 32px;" alt="Logo" t-attf-src="" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- ----------------  Footer Section End  ----------------- -->
+    </div>
+
+</body>
+</html>
