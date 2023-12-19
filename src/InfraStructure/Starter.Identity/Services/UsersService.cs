@@ -6,7 +6,7 @@ using Starter.Application.Models.Users;
 using Starter.Identity.Database;
 
 namespace Starter.Identity.Services;
-public class UsersService(AppIdentityDbContext db) : IUsersService
+public partial class UsersService(AppIdentityDbContext db) : IUsersService
 {
     private readonly AppIdentityDbContext _db = db;
     public async Task<ApiResponse<UserDetailsDto>> GetUserDetailsAsync(string userId, CancellationToken cancellationToken)
