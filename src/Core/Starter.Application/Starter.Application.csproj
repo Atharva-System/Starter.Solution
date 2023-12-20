@@ -18,4 +18,8 @@
     <ProjectReference Include="..\Starter.Domain\Starter.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\Users\DomainEventHandlers\" />
+  </ItemGroup>
+
 </Project>

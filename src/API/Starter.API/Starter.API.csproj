@@ -33,4 +33,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Content Remove="EmailTemplates\InviteUser.cshtml" />
+  </ItemGroup>
 </Project>

@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@Model.Subject</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        p {
+            color: #555;
+        }
+
+        .button {
+            display: inline-block;
+            font-size: 16px;
+            padding: 10px 20px;
+            text-decoration: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>@Model.Subject</h1>
+        <p>Hello @Model.HeyUserName,</p>
+        <p>Your domain: @Model.YourDomain</p>
+
+        <!-- Button Section -->
+        @if (Model.HasButton)
+        {
+            <p>
+                <a class="button" href="@Model.ButtonAnchorUrl">@Model.ButtonText</a>
+            </p>
+            <p>If the button above doesn't work, you can also copy and paste the following link into your browser:</p>
+            <p>@Model.ButtonAnchorUrl</p>
+        }
+        <p>Thank you!</p>
+    </div>
+</body>
+</html>
