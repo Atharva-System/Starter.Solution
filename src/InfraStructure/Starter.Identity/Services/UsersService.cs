@@ -119,4 +119,28 @@ public partial class UsersService(UserManager<ApplicationUser> userManager,
             Message = result.Succeeded ? $"User {ConstantMessages.UpdatedSuccessfully}" : $"{ConstantMessages.FailedToCreate} user."
         };
     }
+
+    public async Task<ApiResponse<string>> DeleteAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+
+        _ = user ?? throw new NotFoundException("UserId ", userId);
+
+        if (user.IsSuperAdmin == true && user.Email == "me@starter.com")
+        {
+            throw new Exception($"Not allowed to deleted '{userId}' member.");
+        }
+
+        //Add code for transaction exist delete
+
+        var result = await _userManager.DeleteAsync(user);
+
+        return new ApiResponse<string>
+        {
+            Success = result.Succeeded,
+            Data = "User deleted successfully.",
+            StatusCode = result.Succeeded ? HttpStatusCodes.OK : HttpStatusCodes.BadRequest,
+            Message = result.Succeeded ? $"User {ConstantMessages.DeletedSuccessfully}" : $"{ConstantMessages.FailedToCreate} user."
+        };
+    }
 }
