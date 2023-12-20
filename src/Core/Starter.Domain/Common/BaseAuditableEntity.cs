@@ -1,6 +1,8 @@
-﻿namespace Starter.Domain.Common;
+﻿using Starter.Domain.Common.Contracts;
 
-public abstract class BaseAuditableEntity : BaseEntity
+namespace Starter.Domain.Common;
+
+public abstract class BaseAuditableEntity : BaseEntity, IAuditableEntity
 {
     public DateTimeOffset CreatedOn { get; set; } = DateTimeOffset.UtcNow;
 

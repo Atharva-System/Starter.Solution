@@ -17,5 +17,5 @@ public class UserListDto
 
     public string FullName { get; set; } = default!;
 
-    public DateTime? CreatedOn { get; set; }
+    public DateTimeOffset? CreatedOn { get; set; }
 }

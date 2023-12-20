@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Starter.Application.Contracts.Application;
 using Starter.Application.Contracts.Identity;
 using Starter.Application.Contracts.Responses;
@@ -13,12 +14,14 @@ namespace Starter.Identity.Services;
 public partial class UsersService(UserManager<ApplicationUser> userManager,
                                   RoleManager<ApplicationRole> roleManager,
                                   AppIdentityDbContext db,
-                                  ICurrentUserService currentUserService) : IUsersService
+                                  ICurrentUserService currentUserService,
+                                  IConfiguration configuration) : IUsersService
 {
     private readonly AppIdentityDbContext _db = db;
     private readonly UserManager<ApplicationUser> _userManager = userManager;
     private readonly RoleManager<ApplicationRole> _roleManager = roleManager;
     private readonly ICurrentUserService _currentUserService = currentUserService;
+    private readonly IConfiguration _configuration = configuration;
 
     public async Task<ApiResponse<UserDetailsDto>> GetUserDetailsAsync(string userId, CancellationToken cancellationToken)
     {
@@ -126,7 +129,7 @@ public partial class UsersService(UserManager<ApplicationUser> userManager,
 
         _ = user ?? throw new NotFoundException("UserId ", userId);
 
-        if (user.IsSuperAdmin == true && user.Email == "me@starter.com")
+        if (user.IsSuperAdmin == true && user.Email == _configuration["AppSettings:UserEmail"])
         {
             throw new Exception($"Not allowed to deleted '{userId}' member.");
         }

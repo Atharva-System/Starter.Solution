@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Starter.Application.Contracts.Application;
-using Starter.Domain.Common;
+using Starter.Domain.Common.Contracts;
 
 namespace Starter.Identity.Interceptors;
 public class AuditableEntitySaveChangesInterceptor(
@@ -31,7 +31,7 @@ public class AuditableEntitySaveChangesInterceptor(
 
         DateTimeOffset now = _dateTime.Now;
 
-        foreach(var entry in context.ChangeTracker.Entries<BaseAuditableEntity>())
+        foreach(var entry in context.ChangeTracker.Entries<IAuditableEntity>())
         {
             if (entry.State == EntityState.Added)
             {
