@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Starter.Application.Contracts.Identity;
 using Starter.Application.Models.Authentication;
 
@@ -29,4 +31,40 @@ public class AuthController(ILogger<AuthController> logger, IAuthService authSer
     {
         return Ok(await _authService.RefreshTokenAsync(request));
     }
+    [Authorize]
+    [HttpPost("changePassword")]
+    public async Task<ActionResult<ChangePasswordResponse>> ChangePasswordAsync(ChangePasswordRequest request)
+    {
+        var userId = User.FindFirstValue("uid");
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized();
+        }
+
+        try
+        {
+            var response = await _authService.ChangePasswordAsync(userId, request.CurrentPassword, request.NewPassword, request.ConfirmPassword);
+
+            if (response.Success)
+            {
+                return Ok(response); 
+            }
+            else
+            {
+                return BadRequest(response); 
+            }
+        }
+        catch (Exception ex)
+        {
+            var errorResponse = new ChangePasswordResponse
+            {
+                Success = false,
+                Message = ex.Message
+            };
+
+            return BadRequest(errorResponse); 
+        }
+    }
+
+
 }

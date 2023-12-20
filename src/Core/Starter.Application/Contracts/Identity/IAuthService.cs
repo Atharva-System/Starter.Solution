@@ -10,4 +10,5 @@ public interface IAuthService : ITransientService
     Task<bool> IsInRoleAsync(string userId, string role);
     Task<bool> AuthorizeAsync(string userId, string policyName);
     Task<string?> GetUserNameAsync(string userId);
+    Task<ChangePasswordResponse> ChangePasswordAsync(string userId, string currentPassword, string newPassword, string confirmPassword);
 }
