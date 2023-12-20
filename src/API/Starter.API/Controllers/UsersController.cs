@@ -1,7 +1,5 @@
 ﻿using MediatR;
-using System;
 using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Asn1.Cmp;
 using Starter.Application.Contracts.Identity;
 using Starter.Application.Contracts.Responses;
 using Starter.Application.Features.Common;
@@ -9,7 +7,6 @@ using Starter.Application.Models.Users;
 using Starter.Identity.Authorizations;
 using Starter.Identity.Authorizations.Permissions;
 using Action = Starter.Identity.Authorizations.Action;
-using Microsoft.Extensions.Configuration;
 using Starter.InfraStructure.Cors;
 using Starter.Application.Features.Users.Invite;
 
@@ -52,5 +49,21 @@ public class UsersController(IUsersService userService, IConfiguration configura
     public async Task<IPagedDataResponse<UserListDto>> GetListAsync(UserListFilter filter, CancellationToken cancellationToken)
     {
         return await _usersService.SearchAsync(filter, cancellationToken);
+    }
+
+    [HttpPut("{id}")]
+    [MustHavePermission(Action.Update, Resource.Users)]
+    public async Task<ApiResponse<string>> UpdateAsync(string id, UpdateUserDto request)
+    {
+        if (id != request.Id)
+        {
+            return new ApiResponse<string>
+            {
+                Success = false,
+                Data = "The provided ID in the route does not match the ID in the request body.",
+                StatusCode = HttpStatusCodes.BadRequest
+            };
+        }
+        return await _usersService.UpdateAsync(request);
     }
 }

@@ -8,6 +8,7 @@ public interface IUsersService : ITransientService
 {
     Task<ApiResponse<UserDetailsDto>> GetUserDetailsAsync (string userId, CancellationToken cancellationToken);
     Task<ApiResponse<string>> CreateInvitationAsync(CreateUserInvitation request, string origin);
-    Task<ApiResponse<UserDetailsDto>> GetUserDetailsAsync(string userId, CancellationToken cancellationToken);
     Task<IPagedDataResponse<UserListDto>> SearchAsync(UserListFilter filter, CancellationToken cancellationToken);
+    Task<ApiResponse<string>> UpdateAsync (UpdateUserDto request);
+    Task<bool> ExistsUserWithEmailAsync(string email);
 }
