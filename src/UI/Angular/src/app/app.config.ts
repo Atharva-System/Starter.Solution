@@ -1,6 +1,5 @@
 import { ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
-import { routes } from './app.route';
 import {
   HttpClientModule,
   HttpClient,
@@ -17,6 +16,7 @@ import { ErrorInterceptor } from './core/interceptor/error.interceptor';
 import { AppService } from './shared/services/app.service';
 import { indexReducer } from './shared/store/index.reducer';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [

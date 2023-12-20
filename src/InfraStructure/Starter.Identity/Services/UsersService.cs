@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Starter.Application.Contracts.Application;
 using Starter.Application.Contracts.Identity;
 using Starter.Application.Contracts.Mailing;
@@ -15,12 +16,18 @@ namespace Starter.Identity.Services;
 public partial class UsersService(UserManager<ApplicationUser> userManager,
                                   RoleManager<ApplicationRole> roleManager,
                                   AppIdentityDbContext db,
-                                  ICurrentUserService currentUserService, IEmailTemplateService templateService, IMailService mailService, IJobService jobService) : IUsersService
+                                  ICurrentUserService currentUserService,
+                                  IConfiguration configuration,
+                                  ICurrentUserService currentUserService, 
+                                  IEmailTemplateService templateService,
+                                  IMailService mailService, 
+                                  IJobService jobService) : IUsersService
 {
     private readonly AppIdentityDbContext _db = db;
     private readonly UserManager<ApplicationUser> _userManager = userManager;
     private readonly RoleManager<ApplicationRole> _roleManager = roleManager;
     private readonly ICurrentUserService _currentUserService = currentUserService;
+    private readonly IConfiguration _configuration = configuration;
     private readonly IJobService _jobService = jobService;
     private readonly IMailService _mailService = mailService;
     private readonly IEmailTemplateService _templateService = templateService;
@@ -123,6 +130,30 @@ public partial class UsersService(UserManager<ApplicationUser> userManager,
             Data = "User updated successfully.",
             StatusCode = result.Succeeded ? HttpStatusCodes.OK : HttpStatusCodes.BadRequest,
             Message = result.Succeeded ? $"User {ConstantMessages.UpdatedSuccessfully}" : $"{ConstantMessages.FailedToCreate} user."
+        };
+    }
+
+    public async Task<ApiResponse<string>> DeleteAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+
+        _ = user ?? throw new NotFoundException("UserId ", userId);
+
+        if (user.IsSuperAdmin == true && user.Email == _configuration["AppSettings:UserEmail"])
+        {
+            throw new Exception($"Not allowed to deleted '{userId}' member.");
+        }
+
+        //Add code for transaction exist delete
+
+        var result = await _userManager.DeleteAsync(user);
+
+        return new ApiResponse<string>
+        {
+            Success = result.Succeeded,
+            Data = "User deleted successfully.",
+            StatusCode = result.Succeeded ? HttpStatusCodes.OK : HttpStatusCodes.BadRequest,
+            Message = result.Succeeded ? $"User {ConstantMessages.DeletedSuccessfully}" : $"{ConstantMessages.FailedToCreate} user."
         };
     }
 

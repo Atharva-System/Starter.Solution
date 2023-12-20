@@ -9,3 +9,11 @@
 @import 'flatpickr/dist/flatpickr.min.css';
 @import 'nouislider/dist/nouislider.min.css';
 @import 'tailwind.css';
+
+.d-block{
+    display: block;
+}
+
+.d-none{
+    display: none;
+}

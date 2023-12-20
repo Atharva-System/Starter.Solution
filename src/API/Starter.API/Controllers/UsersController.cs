@@ -66,4 +66,11 @@ public class UsersController(IUsersService userService, IConfiguration configura
         }
         return await _usersService.UpdateAsync(request);
     }
+
+    [HttpDelete("{id}")]
+    [MustHavePermission(Action.Delete, Resource.Users)]
+    public async Task<ApiResponse<string>> DeleteAsync(string id)
+    {
+        return await _usersService.DeleteAsync(id);
+    }
 }
