@@ -1,32 +1,539 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Blazor.Starter</title>
-    <base href="/" />
-    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Starter.Blazor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="favicon.png" />
     <link rel="stylesheet" href="css/app.css" />
-    <link rel="icon" type="image/png" href="favicon.png" />
-    <link href="Blazor.Starter.styles.css" rel="stylesheet" />
+    <link href="Starter.Blazor.styles.css" rel="stylesheet" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" media="screen" href="assets/css/perfect-scrollbar.min.css" />
+    <link rel="stylesheet" type="text/css" href="assets/css/quill.snow.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="assets/css/style.css" />
+    <link defer rel="stylesheet" type="text/css" media="screen" href="assets/css/animate.css" />
+    <script src="assets/js/perfect-scrollbar.min.js"></script>
+    <script defer src="assets/js/popper.min.js"></script>
+    <script defer src="assets/js/tippy-bundle.umd.min.js"></script>
+    <script defer src="assets/js/sweetalert.min.js"></script>
+    
+
 </head>
 
-<body>
-    <div id="app">
-        <svg class="loading-progress">
-            <circle r="40%" cx="50%" cy="50%" />
-            <circle r="40%" cx="50%" cy="50%" />
-        </svg>
-        <div class="loading-progress-text"></div>
-    </div>
+<body x-data="main" class="relative overflow-x-hidden font-nunito text-sm font-normal antialiased"
+      :class="[ $store.app.sidebar ? 'toggle-sidebar' : '', $store.app.theme === 'dark' || $store.app.isDarkMode ?  'dark' : '', $store.app.menu, $store.app.layout,$store.app.rtlClass]">
+    
+        <div id="app" class="relative">
+            <svg class="loading-progress">
+                <circle r="40%" cx="50%" cy="50%" />
+                <circle r="40%" cx="50%" cy="50%" />
+            </svg>
+            <div class="loading-progress-text"></div>
+        </div>
 
-    <div id="blazor-error-ui">
-        An unhandled error has occurred.
-        <a href="" class="reload">Reload</a>
-        <a class="dismiss">🗙</a>
-    </div>
-    <script src="_framework/blazor.webassembly.js"></script>
+        <div id="blazor-error-ui">
+            An unhandled error has occurred.
+            <a href="" class="reload">Reload</a>
+            <a class="dismiss">🗙</a>
+        </div>
+        <script src="_framework/blazor.webassembly.js"></script>
+
+        <script src="assets/js/alpine-collaspe.min.js"></script>
+        <script src="assets/js/alpine-persist.min.js"></script>
+        <script defer src="assets/js/alpine-ui.min.js"></script>
+        <script defer src="assets/js/alpine-focus.min.js"></script>
+        <script defer src="assets/js/alpine.min.js"></script>
+        <script src="assets/js/custom.js"></script>
+        <script>
+            document.addEventListener('alpine:init', () => {
+                // main section
+                Alpine.data('scrollToTop', () => ({
+                    showTopButton: false,
+                    init() {
+                        window.onscroll = () => {
+                            this.scrollFunction();
+                        };
+                    },
+
+                    scrollFunction() {
+                        if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+                            this.showTopButton = true;
+                        } else {
+                            this.showTopButton = false;
+                        }
+                    },
+
+                    goToTop() {
+                        document.body.scrollTop = 0;
+                        document.documentElement.scrollTop = 0;
+                    },
+                }));
+
+                // theme customization
+                Alpine.data('customizer', () => ({
+                    showCustomizer: false,
+                }));
+
+                // sidebar section
+                Alpine.data('sidebar', () => ({
+                    init() {
+                        const selector = document.querySelector('.sidebar ul a[href="' + window.location.pathname + '"]');
+                        if (selector) {
+                            selector.classList.add('active');
+                            const ul = selector.closest('ul.sub-menu');
+                            if (ul) {
+                                let ele = ul.closest('li.menu').querySelectorAll('.nav-link');
+                                if (ele) {
+                                    ele = ele[0];
+                                    setTimeout(() => {
+                                        ele.click();
+                                    });
+                                }
+                            }
+                        }
+                    },
+                }));
+
+                // header section
+                Alpine.data('header', () => ({
+                    init() {
+                        const selector = document.querySelector('ul.horizontal-menu a[href="' + window.location.pathname + '"]');
+                        if (selector) {
+                            selector.classList.add('active');
+                            const ul = selector.closest('ul.sub-menu');
+                            if (ul) {
+                                let ele = ul.closest('li.menu').querySelectorAll('.nav-link');
+                                if (ele) {
+                                    ele = ele[0];
+                                    setTimeout(() => {
+                                        ele.classList.add('active');
+                                    });
+                                }
+                            }
+                        }
+                    },
+
+                    notifications: [
+                        {
+                            id: 1,
+                            profile: 'user-profile.jpeg',
+                            message: '<strong class="text-sm mr-1">John Doe</strong>invite you to <strong>Prototyping</strong>',
+                            time: '45 min ago',
+                        },
+                        {
+                            id: 2,
+                            profile: 'profile-34.jpeg',
+                            message: '<strong class="text-sm mr-1">Adam Nolan</strong>mentioned you to <strong>UX Basics</strong>',
+                            time: '9h Ago',
+                        },
+                        {
+                            id: 3,
+                            profile: 'profile-16.jpeg',
+                            message: '<strong class="text-sm mr-1">Anna Morgan</strong>Upload a file',
+                            time: '9h Ago',
+                        },
+                    ],
+
+                    messages: [
+                        {
+                            id: 1,
+                            image: '<span class="grid place-content-center w-9 h-9 rounded-full bg-success-light dark:bg-success text-success dark:text-success-light"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></span>',
+                            title: 'Congratulations!',
+                            message: 'Your OS has been updated.',
+                            time: '1hr',
+                        },
+                        {
+                            id: 2,
+                            image: '<span class="grid place-content-center w-9 h-9 rounded-full bg-info-light dark:bg-info text-info dark:text-info-light"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span>',
+                            title: 'Did you know?',
+                            message: 'You can switch between artboards.',
+                            time: '2hr',
+                        },
+                        {
+                            id: 3,
+                            image: '<span class="grid place-content-center w-9 h-9 rounded-full bg-danger-light dark:bg-danger text-danger dark:text-danger-light"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></span>',
+                            title: 'Something went wrong!',
+                            message: 'Send Reposrt',
+                            time: '2days',
+                        },
+                        {
+                            id: 4,
+                            image: '<span class="grid place-content-center w-9 h-9 rounded-full bg-warning-light dark:bg-warning text-warning dark:text-warning-light"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">    <circle cx="12" cy="12" r="10"></circle>    <line x1="12" y1="8" x2="12" y2="12"></line>    <line x1="12" y1="16" x2="12.01" y2="16"></line></svg></span>',
+                            title: 'Warning',
+                            message: 'Your password strength is low.',
+                            time: '5days',
+                        },
+                    ],
+
+                    languages: [
+                        {
+                            id: 1,
+                            key: 'Chinese',
+                            value: 'zh',
+                        },
+                        {
+                            id: 2,
+                            key: 'Danish',
+                            value: 'da',
+                        },
+                        {
+                            id: 3,
+                            key: 'English',
+                            value: 'en',
+                        },
+                        {
+                            id: 4,
+                            key: 'French',
+                            value: 'fr',
+                        },
+                        {
+                            id: 5,
+                            key: 'German',
+                            value: 'de',
+                        },
+                        {
+                            id: 6,
+                            key: 'Greek',
+                            value: 'el',
+                        },
+                        {
+                            id: 7,
+                            key: 'Hungarian',
+                            value: 'hu',
+                        },
+                        {
+                            id: 8,
+                            key: 'Italian',
+                            value: 'it',
+                        },
+                        {
+                            id: 9,
+                            key: 'Japanese',
+                            value: 'ja',
+                        },
+                        {
+                            id: 10,
+                            key: 'Polish',
+                            value: 'pl',
+                        },
+                        {
+                            id: 11,
+                            key: 'Portuguese',
+                            value: 'pt',
+                        },
+                        {
+                            id: 12,
+                            key: 'Russian',
+                            value: 'ru',
+                        },
+                        {
+                            id: 13,
+                            key: 'Spanish',
+                            value: 'es',
+                        },
+                        {
+                            id: 14,
+                            key: 'Swedish',
+                            value: 'sv',
+                        },
+                        {
+                            id: 15,
+                            key: 'Turkish',
+                            value: 'tr',
+                        },
+                        {
+                            id: 16,
+                            key: 'Arabic',
+                            value: 'ae',
+                        },
+                    ],
+
+                    removeNotification(value) {
+                        this.notifications = this.notifications.filter((d) => d.id !== value);
+                    },
+
+                    removeMessage(value) {
+                        this.messages = this.messages.filter((d) => d.id !== value);
+                    },
+                }));
+                //calendar
+                Alpine.data('calendar', () => ({
+                    defaultParams: {
+                        id: null,
+                        title: '',
+                        start: '',
+                        end: '',
+                        description: '',
+                        type: 'primary',
+                    },
+                    params: {
+                        id: null,
+                        title: '',
+                        start: '',
+                        end: '',
+                        description: '',
+                        type: 'primary',
+                    },
+                    isAddEventModal: false,
+                    minStartDate: '',
+                    minEndDate: '',
+                    calendar: null,
+                    now: new Date(),
+                    events: [],
+                    init() {
+                        this.events = [
+                            {
+                                id: 1,
+                                title: 'All Day Event',
+                                start: this.now.getFullYear() + '-' + this.getMonth(this.now) + '-01T14:30:00',
+                                end: this.now.getFullYear() + '-' + this.getMonth(this.now) + '-02T14:30:00',
+                                className: 'danger',
+                                description:
+                                    'Aenean fermentum quam vel sapien rutrum cursus. Vestibulum imperdiet finibus odio, nec tincidunt felis facilisis eu.',
+                            },
+                            {
+                                id: 2,
+                                title: 'Site Visit',
+                                start: this.now.getFullYear() + '-' + this.getMonth(this.now) + '-07T19:30:00',
+                                end: this.now.getFullYear() + '-' + this.getMonth(this.now) + '-08T14:30:00',
+                                className: 'primary',
+                                description: 'Etiam a odio eget enim aliquet laoreet. Vivamus auctor nunc ultrices varius lobortis.',
+                            },
+                            {
+                                id: 3,
+                                title: 'Product Lunching Event',
+                                start: this.now.getFullYear() + '-' + this.getMonth(this.now) + '-17T14:30:00',
+                                end: this.now.getFullYear() + '-' + this.getMonth(this.now) + '-18T14:30:00',
+                                className: 'info',
+                                description:
+                                    'Proin et consectetur nibh. Mauris et mollis purus. Ut nec tincidunt lacus. Nam at rutrum justo, vitae egestas dolor.',
+                            },
+                            {
+                                id: 4,
+                                title: 'Meeting',
+                                start: this.now.getFullYear() + '-' + this.getMonth(this.now) + '-12T10:30:00',
+                                end: this.now.getFullYear() + '-' + this.getMonth(this.now) + '-13T10:30:00',
+                                className: 'danger',
+                                description: 'Mauris ut mauris aliquam, fringilla sapien et, dignissim nisl. Pellentesque ornare velit non mollis fringilla.',
+                            },
+                            {
+                                id: 5,
+                                title: 'Lunch',
+                                start: this.now.getFullYear() + '-' + this.getMonth(this.now) + '-12T15:00:00',
+                                end: this.now.getFullYear() + '-' + this.getMonth(this.now) + '-13T15:00:00',
+                                className: 'info',
+                                description: 'Integer fermentum bibendum elit in egestas. Interdum et malesuada fames ac ante ipsum primis in faucibus.',
+                            },
+                            {
+                                id: 6,
+                                title: 'Conference',
+                                start: this.now.getFullYear() + '-' + this.getMonth(this.now) + '-12T21:30:00',
+                                end: this.now.getFullYear() + '-' + this.getMonth(this.now) + '-13T21:30:00',
+                                className: 'success',
+                                description:
+                                    'Curabitur facilisis vel elit sed dapibus. Nunc sagittis ex nec ante facilisis, sed sodales purus rhoncus. Donec est sapien, porttitor et feugiat sed, eleifend quis sapien. Sed sit amet maximus dolor.',
+                            },
+                            {
+                                id: 7,
+                                title: 'Happy Hour',
+                                start: this.now.getFullYear() + '-' + this.getMonth(this.now) + '-12T05:30:00',
+                                end: this.now.getFullYear() + '-' + this.getMonth(this.now) + '-13T05:30:00',
+                                className: 'info',
+                                description:
+                                    ' odio lectus, porttitor molestie scelerisque blandit, hendrerit sed ex. Aenean malesuada iaculis erat, vitae blandit nisl accumsan ut.',
+                            },
+                            {
+                                id: 8,
+                                title: 'Dinner',
+                                start: this.now.getFullYear() + '-' + this.getMonth(this.now) + '-12T20:00:00',
+                                end: this.now.getFullYear() + '-' + this.getMonth(this.now) + '-13T20:00:00',
+                                className: 'danger',
+                                description:
+                                    'Sed purus urna, aliquam et pharetra ut, efficitur id mi. Pellentesque ut convallis velit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                            },
+                            {
+                                id: 9,
+                                title: 'Birthday Party',
+                                start: this.now.getFullYear() + '-' + this.getMonth(this.now) + '-27T20:00:00',
+                                end: this.now.getFullYear() + '-' + this.getMonth(this.now) + '-28T20:00:00',
+                                className: 'success',
+                                description:
+                                    'Sed purus urna, aliquam et pharetra ut, efficitur id mi. Pellentesque ut convallis velit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                            },
+                            {
+                                id: 10,
+                                title: 'New Talent Event',
+                                start: this.now.getFullYear() + '-' + this.getMonth(this.now, 1) + '-24T08:12:14',
+                                end: this.now.getFullYear() + '-' + this.getMonth(this.now, 1) + '-27T22:20:20',
+                                className: 'danger',
+                                description:
+                                    'Sed purus urna, aliquam et pharetra ut, efficitur id mi. Pellentesque ut convallis velit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                            },
+                            {
+                                id: 11,
+                                title: 'Other new',
+                                start: this.now.getFullYear() + '-' + this.getMonth(this.now, -1) + '-13T08:12:14',
+                                end: this.now.getFullYear() + '-' + this.getMonth(this.now, -1) + '-16T22:20:20',
+                                className: 'primary',
+                                description:
+                                    'Pellentesque ut convallis velit. Sed purus urna, aliquam et pharetra ut, efficitur id mi. Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                            },
+                            {
+                                id: 13,
+                                title: 'Upcoming Event',
+                                start: this.now.getFullYear() + '-' + this.getMonth(this.now, 1) + '-15T08:12:14',
+                                end: this.now.getFullYear() + '-' + this.getMonth(this.now, 1) + '-18T22:20:20',
+                                className: 'primary',
+                                description:
+                                    'Pellentesque ut convallis velit. Sed purus urna, aliquam et pharetra ut, efficitur id mi. Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                            },
+                        ];
+                        var calendarEl = document.getElementById('calendar');
+                        this.calendar = new FullCalendar.Calendar(calendarEl, {
+                            initialView: 'dayGridMonth',
+                            headerToolbar: {
+                                left: 'prev,next today',
+                                center: 'title',
+                                right: 'dayGridMonth,timeGridWeek,timeGridDay',
+                            },
+                            editable: true,
+                            dayMaxEvents: true,
+                            selectable: true,
+                            droppable: true,
+                            eventClick: (event) => {
+                                this.editEvent(event);
+                            },
+                            select: (event) => {
+                                this.editDate(event);
+                            },
+                            events: this.events,
+                        });
+                        this.calendar.render();
+
+                        this.$watch('$store.app.sidebar', () => {
+                            setTimeout(() => {
+                                this.calendar.render();
+                            }, 300);
+                        });
+                    },
+
+                    getMonth(dt, add = 0) {
+                        let month = dt.getMonth() + 1 + add;
+                        return dt.getMonth() < 10 ? '0' + month : month;
+                    },
+
+                    editEvent(data) {
+                        this.params = JSON.parse(JSON.stringify(this.defaultParams));
+                        if (data) {
+                            let obj = JSON.parse(JSON.stringify(data.event));
+                            this.params = {
+                                id: obj.id ? obj.id : null,
+                                title: obj.title ? obj.title : null,
+                                start: this.dateFormat(obj.start),
+                                end: this.dateFormat(obj.end),
+                                type: obj.classNames ? obj.classNames[0] : 'primary',
+                                description: obj.extendedProps ? obj.extendedProps.description : '',
+                            };
+                            this.minStartDate = new Date();
+                            this.minEndDate = this.dateFormat(obj.start);
+                        } else {
+                            this.minStartDate = new Date();
+                            this.minEndDate = new Date();
+                        }
+
+                        this.isAddEventModal = true;
+                    },
+
+                    editDate(data) {
+                        let obj = {
+                            event: {
+                                start: data.start,
+                                end: data.end,
+                            },
+                        };
+                        this.editEvent(obj);
+                    },
+
+                    dateFormat(dt) {
+                        dt = new Date(dt);
+                        const month = dt.getMonth() + 1 < 10 ? '0' + (dt.getMonth() + 1) : dt.getMonth() + 1;
+                        const date = dt.getDate() < 10 ? '0' + dt.getDate() : dt.getDate();
+                        const hours = dt.getHours() < 10 ? '0' + dt.getHours() : dt.getHours();
+                        const mins = dt.getMinutes() < 10 ? '0' + dt.getMinutes() : dt.getMinutes();
+                        dt = dt.getFullYear() + '-' + month + '-' + date + 'T' + hours + ':' + mins;
+                        return dt;
+                    },
+
+                    saveEvent() {
+                        if (!this.params.title) {
+                            return true;
+                        }
+                        if (!this.params.start) {
+                            return true;
+                        }
+                        if (!this.params.end) {
+                            return true;
+                        }
+
+                        if (this.params.id) {
+                            //update event
+                            let event = this.events.find((d) => d.id == this.params.id);
+                            event.title = this.params.title;
+                            event.start = this.params.start;
+                            event.end = this.params.end;
+                            event.description = this.params.description;
+                            event.className = this.params.type;
+                        } else {
+                            //add event
+                            let maxEventId = 0;
+                            if (this.events) {
+                                maxEventId = this.events.reduce((max, character) => (character.id > max ? character.id : max), this.events[0].id);
+                            }
+
+                            let event = {
+                                id: maxEventId + 1,
+                                title: this.params.title,
+                                start: this.params.start,
+                                end: this.params.end,
+                                description: this.params.description,
+                                className: this.params.type,
+                            };
+                            this.events.push(event);
+                        }
+                        this.calendar.getEventSources()[0].refetch(); //refresh Calendar
+                        this.showMessage('Event has been saved successfully.');
+                        this.isAddEventModal = false;
+                    },
+
+                    startDateChange(event) {
+                        const dateStr = event.target.value;
+                        if (dateStr) {
+                            this.minEndDate = this.dateFormat(dateStr);
+                            this.params.end = '';
+                        }
+                    },
+
+                    showMessage(msg = '', type = 'success') {
+                        const toast = window.Swal.mixin({
+                            toast: true,
+                            position: 'top',
+                            showConfirmButton: false,
+                            timer: 3000,
+                        });
+                        toast.fire({
+                            icon: type,
+                            title: msg,
+                            padding: '10px 20px',
+                        });
+                    },
+                }));
+            });
+        </script>
 </body>
 
 </html>
