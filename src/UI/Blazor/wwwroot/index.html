@@ -7,7 +7,6 @@
     <title>Starter.Blazor</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/x-icon" href="favicon.png" />
-    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="css/app.css" />
     <link href="Starter.Blazor.styles.css" rel="stylesheet" />
 
@@ -26,11 +25,10 @@
 
 </head>
 
-<body x-data="main"
-      class="relative overflow-x-hidden font-nunito text-sm font-normal antialiased"
+<body x-data="main" class="relative overflow-x-hidden font-nunito text-sm font-normal antialiased"
       :class="[ $store.app.sidebar ? 'toggle-sidebar' : '', $store.app.theme === 'dark' || $store.app.isDarkMode ?  'dark' : '', $store.app.menu, $store.app.layout,$store.app.rtlClass]">
-    <div class="relative">
-        <div id="app">
+    
+        <div id="app" class="relative">
             <svg class="loading-progress">
                 <circle r="40%" cx="50%" cy="50%" />
                 <circle r="40%" cx="50%" cy="50%" />
@@ -42,7 +40,6 @@
             An unhandled error has occurred.
             <a href="" class="reload">Reload</a>
             <a class="dismiss">🗙</a>
-        </div>
         </div>
         <script src="_framework/blazor.webassembly.js"></script>
 
