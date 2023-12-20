@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Starter.Domain.Common.Contracts;
 
 namespace Starter.Identity.Models;
 
-public class ApplicationUser : IdentityUser
+public class ApplicationUser : IdentityUser, IAuditableEntity
 {
 
     public string? FirstName { get; set; }
@@ -10,10 +11,10 @@ public class ApplicationUser : IdentityUser
     public string? ImageUrl { get; set; }
     public string? RefreshToken { get; set; }
     public DateTime RefreshTokenExpiryTime { get; set; }
-    public Guid CreatedBy { get; set; }
-    public DateTime CreatedOn { get; private set; }
-    public Guid LastModifiedBy { get; set; }
-    public DateTime? LastModifiedOn { get; set; }
+    public string? CreatedBy { get; set; }
+    public DateTimeOffset CreatedOn { get; set; }
+    public string? ModifiedBy { get; set; }
+    public DateTimeOffset ModifiedOn { get; set; }
     public DateTime? DeletedOn { get; set; }
     public Guid? DeletedBy { get; set; }
     public bool IsActive { get; set; } = true;

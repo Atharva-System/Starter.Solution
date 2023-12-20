@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Starter.Application.Contracts.Application;
 using Starter.Application.Contracts.Identity;
 using Starter.Application.Contracts.Responses;
@@ -13,12 +14,14 @@ namespace Starter.Identity.Services;
 public partial class UsersService(UserManager<ApplicationUser> userManager,
                                   RoleManager<ApplicationRole> roleManager,
                                   AppIdentityDbContext db,
-                                  ICurrentUserService currentUserService) : IUsersService
+                                  ICurrentUserService currentUserService,
+                                  IConfiguration configuration) : IUsersService
 {
     private readonly AppIdentityDbContext _db = db;
     private readonly UserManager<ApplicationUser> _userManager = userManager;
     private readonly RoleManager<ApplicationRole> _roleManager = roleManager;
     private readonly ICurrentUserService _currentUserService = currentUserService;
+    private readonly IConfiguration _configuration = configuration;
 
     public async Task<ApiResponse<UserDetailsDto>> GetUserDetailsAsync(string userId, CancellationToken cancellationToken)
     {
@@ -118,6 +121,30 @@ public partial class UsersService(UserManager<ApplicationUser> userManager,
             Data = "User updated successfully.",
             StatusCode = result.Succeeded ? HttpStatusCodes.OK : HttpStatusCodes.BadRequest,
             Message = result.Succeeded ? $"User {ConstantMessages.UpdatedSuccessfully}" : $"{ConstantMessages.FailedToCreate} user."
+        };
+    }
+
+    public async Task<ApiResponse<string>> DeleteAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+
+        _ = user ?? throw new NotFoundException("UserId ", userId);
+
+        if (user.IsSuperAdmin == true && user.Email == _configuration["AppSettings:UserEmail"])
+        {
+            throw new Exception($"Not allowed to deleted '{userId}' member.");
+        }
+
+        //Add code for transaction exist delete
+
+        var result = await _userManager.DeleteAsync(user);
+
+        return new ApiResponse<string>
+        {
+            Success = result.Succeeded,
+            Data = "User deleted successfully.",
+            StatusCode = result.Succeeded ? HttpStatusCodes.OK : HttpStatusCodes.BadRequest,
+            Message = result.Succeeded ? $"User {ConstantMessages.DeletedSuccessfully}" : $"{ConstantMessages.FailedToCreate} user."
         };
     }
 }

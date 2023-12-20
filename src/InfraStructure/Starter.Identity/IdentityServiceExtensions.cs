@@ -8,12 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Starter.Application.Contracts.Identity;
 using Starter.Application.Models.Authentication;
 using Starter.Identity.Authorizations.Permissions;
 using Starter.Identity.Database;
+using Starter.Identity.Interceptors;
 using Starter.Identity.Models;
-using Starter.Identity.Services;
 
 namespace Starter.Identity;
 
@@ -23,9 +22,15 @@ public static class IdentityServiceExtensions
     {
         services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
 
-        services.AddDbContext<AppIdentityDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
-                b => b.MigrationsAssembly(typeof(AppIdentityDbContext).Assembly.FullName)));
+        services.AddDbContext<AppIdentityDbContext>((sp,options) =>
+        {
+            options.AddInterceptors(sp.GetRequiredService<AuditableEntitySaveChangesInterceptor>());
 
+            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
+                b => b.MigrationsAssembly(typeof(AppIdentityDbContext).Assembly.FullName));
+        });
+
+        services.AddScoped<AuditableEntitySaveChangesInterceptor>();
 
         services.AddScoped<AppIdentityDbContextInitialiser>();
 
