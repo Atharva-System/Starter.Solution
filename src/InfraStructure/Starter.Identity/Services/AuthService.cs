@@ -161,9 +161,56 @@ public class AuthService(UserManager<ApplicationUser> userManager,
 
         return result.Succeeded;
     }
-    #endregion
+    public async Task<ChangePasswordResponse> ChangePasswordAsync(string userId, string currentPassword, string newPassword, string confirmPassword)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
 
-    #region Private Methods
+        if (user == null)
+        {
+            throw new NotFoundException("User", userId);
+        }
+        if (newPassword != confirmPassword)
+        {
+            return new ChangePasswordResponse
+            {
+                Success = false,
+                Message = "New password does not match the confirmed password."
+            };
+        }
+
+        var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+
+        if (!result.Succeeded)
+        {
+            return new ChangePasswordResponse
+            {
+                Success = false,
+                Message = $"Failed to change password: {string.Join(",", result.Errors.Select(p => p.Description))}"
+            };
+        }
+
+        return new ChangePasswordResponse
+        {
+            Success = true,
+            Message = "Password changed successfully"
+        };
+    }
+
+#endregion
+
+#region Private Methods
+
+private async Task<bool> ValidateCurrentPasswordAsync(string userId, string currentPassword)
+{
+    var user = await _userManager.FindByIdAsync(userId);
+    
+    if (user == null)
+    {
+        throw new NotFoundException("User", userId);
+    }
+
+    return await _userManager.CheckPasswordAsync(user, currentPassword);
+}
     private async Task<JwtSecurityToken> GenerateToken(ApplicationUser user)
     {
         var userClaims = await _userManager.GetClaimsAsync(user);
