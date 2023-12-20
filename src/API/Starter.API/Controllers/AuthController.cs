@@ -31,11 +31,15 @@ public class AuthController(ILogger<AuthController> logger, IAuthService authSer
     {
         return Ok(await _authService.RefreshTokenAsync(request));
     }
-
+    [Authorize]
     [HttpPost("changePassword")]
     public async Task<ActionResult<ChangePasswordResponse>> ChangePasswordAsync(ChangePasswordRequest request)
     {
         var userId = User.FindFirstValue("uid");
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized();
+        }
 
         try
         {

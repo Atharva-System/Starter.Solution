@@ -200,17 +200,7 @@ public class AuthService(UserManager<ApplicationUser> userManager,
 
 #region Private Methods
 
-private async Task<bool> ValidateCurrentPasswordAsync(string userId, string currentPassword)
-{
-    var user = await _userManager.FindByIdAsync(userId);
-    
-    if (user == null)
-    {
-        throw new NotFoundException("User", userId);
-    }
 
-    return await _userManager.CheckPasswordAsync(user, currentPassword);
-}
     private async Task<JwtSecurityToken> GenerateToken(ApplicationUser user)
     {
         var userClaims = await _userManager.GetClaimsAsync(user);
