@@ -28,6 +28,15 @@ public static class StartupExtensions
         builder.Services.AddHttpContextAccessor();
 
         builder.Services.AddControllers();
+        builder.Services.AddAuthorization(options =>
+        {
+            // Existing authorization policies...
+
+            options.AddPolicy("ChangePasswordPolicy", policy =>
+            {
+                policy.RequireClaim("uid"); // Assuming you store user ID in claims
+            });
+        });
 
         builder.Services.AddCors(options =>
         {
@@ -51,6 +60,7 @@ public static class StartupExtensions
             c.SwaggerEndpoint("/swagger/v1/swagger.json", "Starter API");
         });
         //}
+
 
         // app.UseHttpsRedirection();
 
@@ -114,6 +124,7 @@ public static class StartupExtensions
             //c.OperationFilter<FileResultContentTypeOperationFilter>();
         });
     }
+
 
     public static async Task ResetDatabaseAsync(this WebApplication app)
     {
