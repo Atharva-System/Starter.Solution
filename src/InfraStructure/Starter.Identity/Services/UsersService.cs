@@ -16,7 +16,6 @@ namespace Starter.Identity.Services;
 public partial class UsersService(UserManager<ApplicationUser> userManager,
                                   RoleManager<ApplicationRole> roleManager,
                                   AppIdentityDbContext db,
-                                  ICurrentUserService currentUserService,
                                   IConfiguration configuration,
                                   ICurrentUserService currentUserService, 
                                   IEmailTemplateService templateService,
