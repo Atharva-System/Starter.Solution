@@ -15,6 +15,7 @@ public class AllPermissions
        new("Export Todo", Action.Export, Resource.Todo, IsAdmin: true),
        new("View Users", Action.View, Resource.Users, IsAdmin: true),
        new("invite-user", Action.Create, Resource.Users, IsAdmin: true),
+       new("Search Users", Action.Search, Resource.Users, IsAdmin: true),
    ];
 
     public static IReadOnlyList<Permission> All { get; } = new ReadOnlyCollection<Permission>(_all);

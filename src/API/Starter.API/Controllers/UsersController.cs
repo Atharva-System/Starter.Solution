@@ -44,7 +44,13 @@ public class UsersController(IUsersService userService, IConfiguration configura
         {
             return corsSettings.Angular;
         }
-
         return $"{Request.Scheme}://{Request.Host.Value}{Request.PathBase.Value}";
+    }
+
+    [HttpPost("search")]
+    [MustHavePermission(Action.Search, Resource.Users)]
+    public async Task<IPagedDataResponse<UserListDto>> GetListAsync(UserListFilter filter, CancellationToken cancellationToken)
+    {
+        return await _usersService.SearchAsync(filter, cancellationToken);
     }
 }
