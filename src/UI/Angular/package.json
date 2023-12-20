@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --host=127.0.0.1",
+    "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
@@ -24,8 +24,8 @@
     "headlessui-angular": "^0.0.7",
     "jwt-decode": "^4.0.0",
     "ngx-scrollbar": "^13.0.3",
-    "rxjs": "~7.8.1",
     "sweetalert2": "^11.10.1",
+    "rxjs": "~7.8.1",
     "tslib": "^2.6.2",
     "zone.js": "~0.14.2"
   },
