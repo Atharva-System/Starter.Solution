@@ -1,6 +1,9 @@
-﻿namespace Starter.Application.Exceptions;
+﻿using System.Net;
 
-public class ForbiddenAccessException : Exception
+namespace Starter.Application.Exceptions;
+
+public class ForbiddenAccessException : CustomException
 {
-    public ForbiddenAccessException() : base() { }
+    public ForbiddenAccessException(string message, List<string>? errors = default) 
+        : base(message, errors, HttpStatusCode.Forbidden) { }
 }
