@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Starter.Application.Contracts.Mailing.Models;
+﻿using Starter.Application.Contracts.Mailing.Models;
 using Starter.Application.Contracts.Mailing;
 using Starter.Application.Exceptions;
 using Starter.Application.Features.Common;
 using Starter.Application.Features.Users.Invite;
-using Starter.Application.Interfaces;
 using Starter.Identity.Models;
+using Microsoft.EntityFrameworkCore;
+using Starter.Application.Features.Users.AcceptInvite;
 
 namespace Starter.Identity.Services;
 public partial class UsersService
@@ -19,7 +15,7 @@ public partial class UsersService
         var applicationUser = await ExistsUserWithEmailAsync(request.Email);
         if (applicationUser == true)
         {
-            throw new ForbiddenAccessException("Invitation already sent.");
+            throw new ForbiddenAccessException("");
         }
         else
         {
@@ -42,7 +38,7 @@ public partial class UsersService
             var result = await _userManager.CreateAsync(user);
             if (!result.Succeeded)
             {
-                throw new ForbiddenAccessException("Validation Errors Occurred.");
+                throw new ForbiddenAccessException("");
             }
 
             await _userManager.AddToRoleAsync(user, role?.Name);
@@ -68,7 +64,7 @@ public partial class UsersService
             HeyUserName = user.FirstName + " " + user.LastName,
             YourDomain = _configuration.GetSection("CorsSettings")["CorsURLs"],
             ButtonText = "Accept Invitation",
-            RowData = new List<string> { "Join our exclusive plateform and unlock premium features.", "Connect with like-minded individuals and expand youu network.", "Experience the power of collaboration. Click the button to accept the invitation!" },
+            RowData = new List<string> { "Join our exclusive plateform and unlock premium features.", "Connect with like-minded individuals and expand your network.", "Experience the power of collaboration. Click the button to accept the invitation!" },
             ButtonAnchorUrl = userInvitedEmailUri,
         };
 
@@ -77,5 +73,36 @@ public partial class UsersService
             "User Invitation",
             _templateService.GenerateDefaultEmailTemplate(eMailModel));
         _jobService.Enqueue(() => _mailService.SendAsync(mailRequest, CancellationToken.None));
+    }
+
+    public async Task<ApiResponse<string>> AcceptInvitationAsync(AcceptUserInvitationRequest request)
+    {
+        var user = await _db.Users.FirstOrDefaultAsync(x => x.Id == request.UserId && x.IsActive == true);
+
+        _ = user ?? throw new NotFoundException("User not null", user);
+
+        var resultPW = await _userManager.AddPasswordAsync(user, request.Password!);
+
+        if (!resultPW.Succeeded)
+        {
+            throw new ForbiddenAccessException("");
+        }
+
+        user.IsInvitationAccepted = user.EmailConfirmed = true;
+
+        var result = await _userManager.UpdateAsync(user);
+
+        if (!result.Succeeded)
+        {
+            throw new ForbiddenAccessException("");
+        }
+
+        return new ApiResponse<string>
+        {
+            Success = true,
+            Data = "Invitation Accepted successfully!",
+            StatusCode = HttpStatusCodes.OK,
+            Message = "Invitation Accepted successfully!"
+        };
     }
 }

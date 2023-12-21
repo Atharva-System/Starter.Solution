@@ -9,6 +9,8 @@ using Action = Starter.Identity.Authorizations.Action;
 using MediatR;
 using Starter.InfraStructure.Cors;
 using Starter.Application.Features.Users.Invite;
+using Microsoft.AspNetCore.Authorization;
+using Starter.Application.Features.Users.AcceptInvite;
 
 namespace Starter.API.Controllers;
 
@@ -72,5 +74,12 @@ public class UsersController(IUsersService userService, IConfiguration configura
             return corsSettings.Angular;
         }
         return $"{Request.Scheme}://{Request.Host.Value}{Request.PathBase.Value}";
+    }
+
+    [AllowAnonymous]
+    [HttpPost("accept-invite")]
+    public async Task<ApiResponse<string>> AcceptInviteAsync(ISender sender, AcceptUserInvitationRequest request)
+    {
+        return await sender.Send(request);
     }
 }
