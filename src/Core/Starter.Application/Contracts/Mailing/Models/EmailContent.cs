@@ -8,7 +8,7 @@ public class EmailContent
     #region Readonly Property
     public string DomainLogo { get; }
 
-    public string ButtonAnchorUrl { get; }
+    public string ButtonAnchorUrl { get; set; }
 
     public bool HasButton { get; } = false;
     #endregion

@@ -87,7 +87,7 @@ public class AuthorizationBehaviour<TRequest, TResponse>(
                 // Must be a member of at least one role in roles
                 if (!authorized)
                 {
-                    throw new ForbiddenAccessException();
+                    throw new ForbiddenAccessException("");
                 }
             }
 
