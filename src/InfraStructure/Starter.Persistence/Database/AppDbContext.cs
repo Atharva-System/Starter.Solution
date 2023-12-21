@@ -19,6 +19,7 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<TodoItem> TodoItems => Set<TodoItem>();
+    public DbSet<Project> Projects => Set<Project>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
