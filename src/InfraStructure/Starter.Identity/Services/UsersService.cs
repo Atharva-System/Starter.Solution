@@ -9,19 +9,28 @@ using Starter.Application.Features.Common;
 using Starter.Application.Models.Users;
 using Starter.Identity.Database;
 using Starter.Identity.Models;
+using Starter.Application.Interfaces;
+using Starter.Application.Contracts.Mailing;
 
 namespace Starter.Identity.Services;
 public partial class UsersService(UserManager<ApplicationUser> userManager,
                                   RoleManager<ApplicationRole> roleManager,
                                   AppIdentityDbContext db,
                                   ICurrentUserService currentUserService,
-                                  IConfiguration configuration) : IUsersService
+                                  IConfiguration configuration,
+                                  IEmailTemplateService templateService,
+                                  IMailService mailService,
+                                  IJobService jobService) : IUsersService
 {
     private readonly AppIdentityDbContext _db = db;
     private readonly UserManager<ApplicationUser> _userManager = userManager;
     private readonly RoleManager<ApplicationRole> _roleManager = roleManager;
     private readonly ICurrentUserService _currentUserService = currentUserService;
     private readonly IConfiguration _configuration = configuration;
+    private readonly IJobService _jobService = jobService;
+    private readonly IMailService _mailService = mailService;
+    private readonly IEmailTemplateService _templateService = templateService;
+
 
     public async Task<ApiResponse<UserDetailsDto>> GetUserDetailsAsync(string userId, CancellationToken cancellationToken)
     {
@@ -146,5 +155,14 @@ public partial class UsersService(UserManager<ApplicationUser> userManager,
             StatusCode = result.Succeeded ? HttpStatusCodes.OK : HttpStatusCodes.BadRequest,
             Message = result.Succeeded ? $"User {ConstantMessages.DeletedSuccessfully}" : $"{ConstantMessages.FailedToCreate} user."
         };
+    }
+
+    public async Task<bool> ExistsUserWithEmailAsync(string email)
+    {
+        bool userExists = await _db.Users
+                                    .AsNoTracking()
+                                    .AnyAsync(x => x.NormalizedEmail == email.ToUpper());
+
+        return userExists;
     }
 }
