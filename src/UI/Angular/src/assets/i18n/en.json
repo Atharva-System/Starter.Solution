@@ -44,10 +44,10 @@
     "sweet_alerts": "Sweet Alerts",
     "timeline": "Timeline",
     "notifications": "Notifications",
-    "media_object" : "Media Object",
-    "list_group" : "List Group",
-    "pricing_tables" : "Pricing Tables",
-    "lightbox" : "Lightbox",
+    "media_object": "Media Object",
+    "list_group": "List Group",
+    "pricing_tables": "Pricing Tables",
+    "lightbox": "Lightbox",
     "alerts": "Alerts",
     "avatar": "Avatar",
     "badges": "Badges",
@@ -120,5 +120,6 @@
     "checkbox": "Checkbox",
     "skin": "Skin",
     "sticky_header": "Sticky Header",
-    "clone_header": "Clone Header"
+    "clone_header": "Clone Header",
+    "list_users": "Users"
 }

@@ -64,7 +64,7 @@ public partial class UsersService(UserManager<ApplicationUser> userManager,
                              LastName = u.LastName ?? string.Empty,
                              Email = u.Email ?? string.Empty,
                              FullName = u.FirstName + " " + u.LastName,
-                             Status = u.IsInvitationAccepted == false ? UserStatus.Invited.ToString() : (u.IsActive ? UserStatus.Active.ToString() : UserStatus.InActive.ToString()),
+                             Status = u.IsInvitationAccepted == false ? UserStatus.Invited.ToString() : (u.IsActive ? UserStatus.Active.ToString() : UserStatus.Inactive.ToString()),
                              RoleId = r.Id,
                              Role = r.Name ?? string.Empty,
                              CreatedOn = u.CreatedOn

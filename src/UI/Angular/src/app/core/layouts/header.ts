@@ -42,7 +42,7 @@ import { appPaths } from '../../shared/constants/routes';
 })
 export class HeaderComponent {
   routes = {
-    todo: '/' + appPaths.todo,
+    users: '/' + appPaths.users,
   };
   appSetting = inject(AppService);
   router = inject(Router);

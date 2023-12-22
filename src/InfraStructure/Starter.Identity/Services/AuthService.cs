@@ -111,7 +111,7 @@ public class AuthService(UserManager<ApplicationUser> userManager,
     public async Task<RefreshTokenResponse> RefreshTokenAsync(RefreshTokenRequest request)
     {
         var userPrincipal = GetPrincipalFromExpiredToken(request.Token);
-        string? userEmail = userPrincipal?.FindFirstValue(JwtRegisteredClaimNames.Email);
+        string? userEmail = userPrincipal?.FindFirstValue(ClaimTypes.Email);
 
         if (string.IsNullOrEmpty(userEmail))
         {
@@ -196,9 +196,9 @@ public class AuthService(UserManager<ApplicationUser> userManager,
         };
     }
 
-#endregion
+    #endregion
 
-#region Private Methods
+    #region Private Methods
 
 
     private async Task<JwtSecurityToken> GenerateToken(ApplicationUser user)

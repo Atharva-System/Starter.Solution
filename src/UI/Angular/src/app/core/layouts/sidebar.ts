@@ -22,7 +22,7 @@ import { appPaths } from '../../shared/constants/routes';
 })
 export class SidebarComponent {
   routes = {
-    todo: appPaths.todo,
+    users: appPaths.users,
   };
   active = false;
   store: any;
