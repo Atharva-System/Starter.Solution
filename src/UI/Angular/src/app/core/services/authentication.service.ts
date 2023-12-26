@@ -69,7 +69,7 @@ export class AuthenticationService {
     this.router.navigate(['/' + authPaths.signin]);
   }
 
-  refreshTokens() {
+  refreshToken() {
     const requestBody = {
       token: this.getToken() ?? '',
       refreshToken: this.getRefreshToken() ?? '',

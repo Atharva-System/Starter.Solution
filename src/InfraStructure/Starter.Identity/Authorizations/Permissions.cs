@@ -14,6 +14,12 @@ public class AllPermissions
        new("Delete Todo", Action.Delete, Resource.Todo, IsAdmin: true),
        new("Export Todo", Action.Export, Resource.Todo, IsAdmin: true),
        new("View Users", Action.View, Resource.Users, IsAdmin: true),
+       new("Search Users", Action.Search, Resource.Users, IsAdmin: true),
+       new("Update Users", Action.Update, Resource.Users, IsAdmin: true),
+       new("Delete Users", Action.Delete, Resource.Users, IsAdmin: true),
+       new("invite-user", Action.Create, Resource.Users, IsAdmin: true),
+       new("Create Project", Action.Create, Resource.Project, IsAdmin: true),
+       new("Create Task", Action.Create, Resource.Task, IsAdmin: true),
    ];
 
     public static IReadOnlyList<Permission> All { get; } = new ReadOnlyCollection<Permission>(_all);

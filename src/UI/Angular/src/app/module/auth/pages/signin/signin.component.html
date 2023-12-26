@@ -29,6 +29,13 @@
           placeholder="Enter Password"
         ></app-input>
       </div>
+      <div>
+        <app-anchor
+          text="Forgot Password?"
+          [routerLink]="forgotPasswordRoute"
+          classes="font-bold text-primary"
+        ></app-anchor>
+      </div>
       <app-button
         text="SIGN IN"
         type="submit"
@@ -37,7 +44,7 @@
       ></app-button>
     </form>
     <div
-      class="relative my-7 h-5 text-center before:absolute before:inset-0 before:m-auto before:h-[1px] before:w-full before:bg-[#ebedf2] dark:before:bg-[#253b5c]"
+      class="d-none relative my-7 h-5 text-center before:absolute before:inset-0 before:m-auto before:h-[1px] before:w-full before:bg-[#ebedf2] dark:before:bg-[#253b5c]"
     >
       <div
         class="relative z-[1] inline-block bg-white px-2 font-bold text-white-dark dark:bg-[#0e1726]"
@@ -45,7 +52,7 @@
         <span>OR</span>
       </div>
     </div>
-    <ul class="mb-5 flex justify-center gap-2 sm:gap-5">
+    <ul class="d-none mb-5 flex justify-center gap-2 sm:gap-5">
       <li>
         <button
           type="button"
@@ -86,13 +93,12 @@
         </button>
       </li>
     </ul>
-    <p class="text-center">
+    <p class="d-none text-center">
       Dont't have an account ?
       <app-anchor
-      text="Sign Up"
-      [routerLink]="signupRoute"
-      classes="font-bold text-primary"
-    ></app-anchor>
+        text="Sign Up"
+        classes="font-bold text-primary"
+      ></app-anchor>
     </p>
   </div>
 </div>

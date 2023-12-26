@@ -9,5 +9,6 @@ public class Resource
     public const string Roles = nameof(Roles);
     public const string RoleClaims = nameof(RoleClaims);
     public const string Todo = nameof(Todo);
-
+    public const string Project = nameof(Project);
+    public const string Task = nameof(Task);
 }

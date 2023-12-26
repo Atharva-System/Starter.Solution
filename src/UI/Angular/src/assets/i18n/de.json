@@ -120,5 +120,6 @@
     "checkbox": "Kontrollkästchen",
     "skin": "Haut",
     "sticky_header": "Klebrige Kopfzeile",
-    "clone_header": "Kopfzeile klonen"
+    "clone_header": "Kopfzeile klonen",
+    "list_users": "Benutzer"
 }

@@ -142,7 +142,7 @@ public class AuthService : IAuthService
     public async Task<RefreshTokenResponse> RefreshTokenAsync(RefreshTokenRequest request)
     {
         var userPrincipal = GetPrincipalFromExpiredToken(request.Token);
-        string? userEmail = userPrincipal?.FindFirstValue(JwtRegisteredClaimNames.Email);
+        string? userEmail = userPrincipal?.FindFirstValue(ClaimTypes.Email);
 
         if (string.IsNullOrEmpty(userEmail))
         {
@@ -308,10 +308,8 @@ public class AuthService : IAuthService
        
     }
 
-
-
     #endregion
-
+    
     #region Private Methods
 
 

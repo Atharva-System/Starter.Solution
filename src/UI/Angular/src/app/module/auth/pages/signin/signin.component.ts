@@ -30,7 +30,7 @@ import { IAuthenticationResponse } from '../../models/authentication-response.in
   ],
 })
 export class SigninComponent {
-  signupRoute = '/' + authPaths.signup;
+  forgotPasswordRoute = '/' + authPaths.forgotPassword;
   formSignin!: FormGroup;
   isSubmitFormSignin = false;
 

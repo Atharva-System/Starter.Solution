@@ -1,0 +1,27 @@
+<div class="panel mt-6 pb-0">
+  <div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
+    <h5 class="text-lg font-semibold dark:text-white-light">Users</h5>
+  </div>
+
+  <div class="datatable">
+    <ng-datatable
+      [rows]="rows"
+      [columns]="cols"
+      [loading]="loading"
+      [totalRows]="total_rows"
+      [isServerMode]="true"
+      [pageSize]="params.PageSize"
+      [columnFilter]="true"
+      [pageSizeOptions]="[10, 15, 30, 50]"
+      [sortable]="true"
+      paginationInfo="{0} to {1} of {2}"
+      (changeServer)="changeServer($event)"
+    >
+      <ng-template slot="status" let-value="data">
+        <span class="badge" [ngClass]="getBadgeColor(value.status)">{{
+          value.status
+        }}</span>
+      </ng-template>
+    </ng-datatable>
+  </div>
+</div>
