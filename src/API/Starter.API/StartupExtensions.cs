@@ -22,7 +22,7 @@ public static class StartupExtensions
         builder.Services.AddInfrastructureSharedServices(builder.Configuration);
         builder.Services.AddPersistenceServices(builder.Configuration);
         builder.Services.AddIdentityServices(builder.Configuration);
-
+        builder.Services.AddHttpContextAccessor();
         builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
         builder.Services.AddHttpContextAccessor();
