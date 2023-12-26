@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Starter.API.Controllers.Base;
 using Starter.Application.Features.Common;
-using Starter.Application.Features.Tasks.CreateCommand;
+using Starter.Application.Features.Tasks.Command;
+using Starter.Application.Features.Tasks.Dto;
+using Starter.Application.Features.Tasks.Query;
 using Starter.Identity.Authorizations;
 using Starter.Identity.Authorizations.Permissions;
 using Action = Starter.Identity.Authorizations.Action;
@@ -15,5 +17,12 @@ public class TaskController : BaseApiController
     public async Task<ApiResponse<int>> CreateTask(CreateTaskCommandRequest request)
     {
         return await Mediator.Send(request);
+    }
+
+    [HttpGet("{id}")]
+    [MustHavePermission(Action.View, Resource.Task)]
+    public async Task<ApiResponse<TaskDetailsDto>> GetTaskDetails(Guid id)
+    {
+        return await Mediator.Send(new GetTaskDetailsQueryRequest(id));
     }
 }
