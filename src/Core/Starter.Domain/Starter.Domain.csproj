@@ -2,7 +2,6 @@
 
   <ItemGroup>
     <PackageReference Include="MediatR" />
-    <PackageReference Include="NewId" />
   </ItemGroup>
 
 </Project>
