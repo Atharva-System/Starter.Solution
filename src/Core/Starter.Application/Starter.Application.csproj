@@ -19,4 +19,8 @@
     <ProjectReference Include="..\Starter.Domain\Starter.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\Projects\Query\" />
+  </ItemGroup>
+
 </Project>
