@@ -4,7 +4,7 @@ using Starter.Domain.Entities;
 using Starter.Domain.Enums;
 using Starter.Domain.Events;
 
-namespace Starter.Application.Features.Todos.Command.CreateCommand;
+namespace Starter.Application.Features.Todos.Command;
 
 public sealed record CreateTodoItemCommandReqeust : IRequest<ApiResponse<int>>
 {

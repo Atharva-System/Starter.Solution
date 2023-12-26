@@ -2,7 +2,7 @@
 using Starter.Application.Features.Todos.Dto;
 using Starter.Application.UnitOfWork;
 
-namespace Starter.Application.Features.Todos.Query.GetToDoItem;
+namespace Starter.Application.Features.Todos.Query;
 public record GetToDoItemRequest(Guid id) : IRequest<ApiResponse<GetToDoItemDto>>;
 
 public sealed class GetToDoItemRequestHandler : IRequestHandler<GetToDoItemRequest, ApiResponse<GetToDoItemDto>>

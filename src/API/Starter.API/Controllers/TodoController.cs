@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Starter.API.Controllers.Base;
 using Starter.Application.Features.Common;
-using Starter.Application.Features.Todos.Command.CreateCommand;
+using Starter.Application.Features.Todos.Command;
 using Starter.Application.Features.Todos.Dto;
-using Starter.Application.Features.Todos.Query.GetToDoItem;
+using Starter.Application.Features.Todos.Query;
 using Starter.Identity.Authorizations;
 using Starter.Identity.Authorizations.Permissions;
 using Action = Starter.Identity.Authorizations.Action;
