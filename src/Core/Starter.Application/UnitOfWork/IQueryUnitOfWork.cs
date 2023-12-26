@@ -1,12 +1,11 @@
 ﻿using Starter.Application.Contracts.Persistence.Repositoris.Base;
-using Starter.Application.Contracts.Persistence.Repositoris.TodoRepository;
 using Starter.Domain.Common;
 
 namespace Starter.Application.UnitOfWork;
 
-public interface IQueryUnitOfWork : IDisposable
+public interface IQueryUnitOfWork
 {
-    ITodoQueryRepository TodoQuery { get; }
+    // ITodoQueryRepository TodoQueryRepository { get; }
 
     IQueryRepository<TEntity> QueryRepository<TEntity>() where TEntity : BaseEntity, new();
 }

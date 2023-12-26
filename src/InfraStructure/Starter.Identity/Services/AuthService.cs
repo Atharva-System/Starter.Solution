@@ -2,61 +2,30 @@
 using System.Security.Authentication;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Security.Policy;
 using System.Text;
-using Azure.Core;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Starter.Application.Contracts.Identity;
-using Starter.Application.Contracts.Mailing;
 using Starter.Application.Exceptions;
 using Starter.Application.Models.Authentication;
 using Starter.Identity.Models;
 
 namespace Starter.Identity.Services;
 
-public class AuthService : IAuthService
+public class AuthService(UserManager<ApplicationUser> userManager,
+                        IOptions<JwtSettings> jwtSettings,
+                        IUserClaimsPrincipalFactory<ApplicationUser> userClaimsPrincipalFactory,
+                        SignInManager<ApplicationUser> signInManager,
+                        IAuthorizationService authorizationService) : IAuthService
 {
-    private readonly IAuthorizationService _authorizationService;
-    private readonly IMailService _mailService;
-    private readonly UserManager<ApplicationUser> _userManager;
-    private readonly SignInManager<ApplicationUser> _signInManager;
-    private readonly IUserClaimsPrincipalFactory<ApplicationUser> _userClaimsPrincipalFactory;
-    private readonly JwtSettings _jwtSettings;
-    private readonly IUrlHelper _urlHelper;
-    private readonly IHttpContextAccessor _httpContextAccessor;
-
-    public AuthService(
-        UserManager<ApplicationUser> userManager,
-        IOptions<JwtSettings> jwtSettings,
-        IUserClaimsPrincipalFactory<ApplicationUser> userClaimsPrincipalFactory,
-        SignInManager<ApplicationUser> signInManager,
-        IAuthorizationService authorizationService,
-        IMailService mailService,
-        IHttpContextAccessor httpContextAccessor,
-        IUrlHelperFactory urlHelperFactory)
-    {
-        _userManager = userManager;
-        _jwtSettings = jwtSettings.Value;
-        _userClaimsPrincipalFactory = userClaimsPrincipalFactory;
-        _signInManager = signInManager;
-        _authorizationService = authorizationService;
-        _mailService = mailService;
-        _httpContextAccessor = httpContextAccessor;
-        _urlHelper = urlHelperFactory.GetUrlHelper(new ActionContext(
-            _httpContextAccessor.HttpContext,
-            _httpContextAccessor.HttpContext.GetRouteData(),
-            new ActionDescriptor()));
-    }
-
+    private readonly IAuthorizationService _authorizationService = authorizationService;
+    private readonly UserManager<ApplicationUser> _userManager = userManager;
+    private readonly JwtSettings _jwtSettings = jwtSettings.Value;
+    private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
+    private readonly IUserClaimsPrincipalFactory<ApplicationUser> _userClaimsPrincipalFactory = userClaimsPrincipalFactory;
 
     #region Public Methods
     public async Task<string?> GetUserNameAsync(string userId)
@@ -226,90 +195,9 @@ public class AuthService : IAuthService
             Message = "Password changed successfully"
         };
     }
-    public async Task ForgotPasswordAsync(ForgotPasswordRequest request)
-    {
-        try
-        {
-           
-            if (_urlHelper != null && _httpContextAccessor != null && _mailService != null && _userManager != null)
-            {
-                var user = await _userManager.FindByEmailAsync(request.Email);
-
-                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
-                {
-                    
-                    return;
-                }
-
-                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var resetLink = _urlHelper.Action(
-                    action: "resetPassword",
-                    controller: "Auth",
-                    values: new { token, email = request.Email },
-                    protocol: _httpContextAccessor.HttpContext?.Request.Scheme);
-
-                
-                var mailRequest = new MailRequest(
-                    to: new List<string> { request.Email },
-                    subject: "Reset Your Password",
-                    body: $"Click here to reset your password: {resetLink}"
-                );
-
-                await _mailService.SendAsync(mailRequest, CancellationToken.None);
-            }
-            else
-            {
-                throw new NullReferenceException("One or more dependencies are not initialized.");
-            }
-        }
-        catch (Exception ex)
-        {
-            // Log the exception for debugging purposes
-            // Replace _logger with your logging mechanism (e.g., Serilog, System.Diagnostics)
-            //_logger.LogError(ex, "Exception occurred in ForgotPasswordAsync method");
-
-            // Rethrow the exception or handle it according to your application's requirements
-            throw;
-        }
-    }
-
-
-
-
-    public async Task ResetPasswordAsync(string email, string token, string newPassword)
-    {
-        var user = await _userManager.FindByEmailAsync(email);
-
-        if (user == null)
-        {
-            
-            throw new InvalidOperationException($"User with email '{email}' not found.");
-        }
-
-        try
-        {
-            var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
-
-            if (result.Succeeded)
-            {
-                
-                return;
-            }
-            else
-            {
-                throw new InvalidOperationException("Invalid token for password reset.");
-            }
-        }
-        catch (InvalidOperationException ex)
-        {
-           
-            throw new InvalidOperationException("Invalid token for password reset.");
-        }
-       
-    }
 
     #endregion
-    
+
     #region Private Methods
 
 

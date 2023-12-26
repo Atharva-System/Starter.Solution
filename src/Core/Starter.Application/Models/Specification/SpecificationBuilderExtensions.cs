@@ -195,7 +195,7 @@ public static class SpecificationBuilderExtensions
         if (memberExpression.Type == typeof(string))
         {
             if (filterOperator != FilterOperator.ISNOTNULL && filterOperator != FilterOperator.ISNULL)
-            constantExpression = Expression.Call(constantExpression, "ToLower", null);
+                constantExpression = Expression.Call(constantExpression, "ToLower", null);
             memberExpression = Expression.Call(memberExpression, "ToLower", null);
         }
 

@@ -1,7 +1,8 @@
-﻿using Starter.Application.UnitOfWork;
+﻿using Starter.Application.Features.Todos.Create;
+using Starter.Application.UnitOfWork;
 using Starter.Domain.Entities;
 
-namespace Starter.Application.Features.Todos.Command;
+namespace Starter.Application.Features.Todos.CreateCommand;
 
 public class CreateTodoItemCommandValidator : AbstractValidator<CreateTodoItemCommandReqeust>
 {
