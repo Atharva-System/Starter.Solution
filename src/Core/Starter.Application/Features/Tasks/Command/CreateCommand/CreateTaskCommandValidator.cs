@@ -1,6 +1,6 @@
 ﻿using Starter.Application.UnitOfWork;
 
-namespace Starter.Application.Features.Tasks.CreateCommand;
+namespace Starter.Application.Features.Tasks.Command.CreateCommand;
 public class CreateTaskCommandValidator : AbstractValidator<CreateTaskCommandRequest>
 {
     private readonly IQueryUnitOfWork _query;
@@ -31,6 +31,6 @@ public class CreateTaskCommandValidator : AbstractValidator<CreateTaskCommandReq
 
         RuleFor(p => p.Priority)
             .NotEmpty()
-            .WithMessage((_, name)=> "Priority is required");
+            .WithMessage((_, name) => "Priority is required");
     }
 }

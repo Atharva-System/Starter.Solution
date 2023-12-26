@@ -1,5 +1,5 @@
 ﻿namespace Starter.Domain.Enums;
-public enum TasksPriority
+public enum TaskPriority
 {
     High = 1,
     Medium = 2,
