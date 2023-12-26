@@ -22,8 +22,8 @@ public class ProjectController : BaseApiController
 
     [HttpPost("Search")]
     [MustHavePermission(Action.Search, Resource.Project)]
-    public async Task<IPagedDataResponse<ProjectListDto>> GetListAsync(ISender sender, ListProjectQueryReqeust request)
+    public async Task<IPagedDataResponse<ProjectListDto>> GetListAsync(ListProjectQueryReqeust request)
     {
-        return await sender.Send(request);
+        return await Mediator.Send(request);
     }
 }

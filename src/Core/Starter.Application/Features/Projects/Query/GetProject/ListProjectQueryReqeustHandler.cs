@@ -1,11 +1,9 @@
 ﻿using Ardalis.Specification;
-using Starter.Application.Contracts.Persistence.Repositoris.Queries;
 using Starter.Application.Contracts.Responses;
 using Starter.Application.Features.Projects.Dtos;
 using Starter.Application.Models.Specification;
 using Starter.Application.Models.Specification.Filters;
 using Starter.Application.UnitOfWork;
-using Starter.Domain.Entities;
 
 namespace Starter.Application.Features.Projects.Query.GetProject;
 

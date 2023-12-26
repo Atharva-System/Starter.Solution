@@ -1,14 +1,13 @@
 ﻿using System.Collections;
-using Microsoft.EntityFrameworkCore;
 using Starter.Application.Contracts.Persistence.Repositoris.Base;
+using Starter.Application.Contracts.Persistence.Repositoris.Queries;
 using Starter.Application.Contracts.Persistence.Repositoris.TodoRepository;
 using Starter.Application.UnitOfWork;
 using Starter.Domain.Common;
 using Starter.Persistence.Database;
 using Starter.Persistence.Repositories.Base;
-using Starter.Persistence.Repositories.Todos;
-using Starter.Application.Contracts.Persistence.Repositoris.Queries;
 using Starter.Persistence.Repositories.Project.Query;
+using Starter.Persistence.Repositories.Todos;
 
 namespace Starter.Persistence.UnitofWork;
 

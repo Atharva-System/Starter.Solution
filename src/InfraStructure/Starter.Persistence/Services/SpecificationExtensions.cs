@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Ardalis.Specification;
 using Ardalis.Specification.EntityFrameworkCore;
-using Ardalis.Specification;
 using Microsoft.EntityFrameworkCore;
 
 namespace Starter.Persistence.Services;
@@ -24,6 +19,6 @@ public static class SpecificationExtensions
         var queryable = source.AsQueryable();
         var specificationEvaluator = new SpecificationEvaluator(new IEvaluator[] { WhereEvaluator.Instance });
         var result = specificationEvaluator.GetQuery(queryable, specification);
-        return result.Count();
+        return await result.CountAsync();
     }
 }
