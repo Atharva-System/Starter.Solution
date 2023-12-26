@@ -19,6 +19,7 @@ public class AllPermissions
        new("Delete Users", Action.Delete, Resource.Users, IsAdmin: true),
        new("invite-user", Action.Create, Resource.Users, IsAdmin: true),
        new("Create Project", Action.Create, Resource.Project, IsAdmin: true),
+       new("Create Task", Action.Create, Resource.Task, IsAdmin: true),
    ];
 
     public static IReadOnlyList<Permission> All { get; } = new ReadOnlyCollection<Permission>(_all);
