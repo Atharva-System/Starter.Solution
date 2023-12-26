@@ -165,4 +165,18 @@ public partial class UsersService(UserManager<ApplicationUser> userManager,
 
         return userExists;
     }
+
+    public async Task<UserDetailsTaskDto> GetUserDetailsForTaskAsync(string userId, CancellationToken cancellationToken)
+    {
+        var userDto = new UserDetailsTaskDto();
+        var user = await _db.Users.AsNoTracking().Where(x => x.Id == userId).FirstOrDefaultAsync();
+
+        if (user != null) 
+        {
+            userDto.Id = user.Id;
+            userDto.FullName = user.FirstName + " " + user.LastName;
+        }
+
+        return userDto;
+    }
 }
