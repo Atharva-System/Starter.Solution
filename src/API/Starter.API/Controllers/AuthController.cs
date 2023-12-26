@@ -66,5 +66,19 @@ public class AuthController(ILogger<AuthController> logger, IAuthService authSer
         }
     }
 
+    [HttpPost("forgotPassword")]
+    public async Task<ActionResult> ForgotPassword(ForgotPasswordRequest request)
+    {
+        await _authService.ForgotPasswordAsync(request);
+        return Ok("Password reset link sent successfully.");
+    }
+
+    [HttpPost("resetPassword")]
+    public async Task<ActionResult> ResetPassword(ResetPasswordRequest request)
+    {
+        await _authService.ResetPasswordAsync(request.Email, request.Token, request.NewPassword);
+        return Ok("Password reset successful.");
+    }
+
 
 }
