@@ -1,8 +1,7 @@
-﻿using Starter.Application.Features.Projects.Create;
-using Starter.Application.UnitOfWork;
+﻿using Starter.Application.UnitOfWork;
 using Starter.Domain.Entities;
 
-namespace Starter.Application.Features.Projects.CreateCommand;
+namespace Starter.Application.Features.Projects.Command.CreateCommand;
 public class CreateProjectCommandValidator : AbstractValidator<CreateProjectCommandRequest>
 {
     private readonly IQueryUnitOfWork _query;
@@ -19,7 +18,7 @@ public class CreateProjectCommandValidator : AbstractValidator<CreateProjectComm
             .NotEmpty()
             .WithMessage((_, name) => "Description is required");
 
-        RuleFor(p => p.StartDate) 
+        RuleFor(p => p.StartDate)
             .NotEmpty()
             .WithMessage((_, name) => "Start Date is required");
 

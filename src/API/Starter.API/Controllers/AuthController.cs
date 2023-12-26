@@ -1,14 +1,13 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Starter.API.Controllers.Base;
 using Starter.Application.Contracts.Identity;
 using Starter.Application.Models.Authentication;
 
 namespace Starter.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class AuthController(ILogger<AuthController> logger, IAuthService authService) : ControllerBase
+public class AuthController(ILogger<AuthController> logger, IAuthService authService) : BaseApiController
 {
     private readonly ILogger<AuthController> _logger = logger;
     private readonly IAuthService _authService = authService;
