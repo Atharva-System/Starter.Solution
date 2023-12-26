@@ -1,9 +1,5 @@
-﻿using System;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using NSwag.Annotations;
-using Org.BouncyCastle.Asn1.Cmp;
-using Starter.Application.Contracts.Responses;
 using Starter.Application.Features.Common;
 using Starter.Application.Features.Projects.Command.CreateCommand;
 using Starter.Application.Features.Projects.Dto;
@@ -14,15 +10,13 @@ using Action = Starter.Identity.Authorizations.Action;
 
 namespace Starter.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class ProjectController : ControllerBase
+public class ProjectController : BaseApiController
 {
     [HttpPost("Create")]
     [MustHavePermission(Action.Create, Resource.Project)]
-    public async Task<ApiResponse<int>> CreateProject(ISender sender, CreateProjectCommandRequest request)
+    public async Task<ApiResponse<int>> CreateProject(CreateProjectCommandRequest request)
     {
-        return await sender.Send(request);
+        return await Mediator.Send(request);
     }
 
     [HttpGet("{id:guid}")]
