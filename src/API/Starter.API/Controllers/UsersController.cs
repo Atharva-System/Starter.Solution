@@ -1,22 +1,20 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Starter.API.Controllers.Base;
 using Starter.Application.Contracts.Identity;
 using Starter.Application.Contracts.Responses;
 using Starter.Application.Features.Common;
+using Starter.Application.Features.Users.AcceptInvite;
+using Starter.Application.Features.Users.Invite;
 using Starter.Application.Models.Users;
 using Starter.Identity.Authorizations;
 using Starter.Identity.Authorizations.Permissions;
-using Action = Starter.Identity.Authorizations.Action;
-using MediatR;
 using Starter.InfraStructure.Cors;
-using Starter.Application.Features.Users.Invite;
-using Microsoft.AspNetCore.Authorization;
-using Starter.Application.Features.Users.AcceptInvite;
+using Action = Starter.Identity.Authorizations.Action;
 
 namespace Starter.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class UsersController(IUsersService userService, IConfiguration configuration) : ControllerBase
+public class UsersController(IUsersService userService, IConfiguration configuration) : BaseApiController
 {
     private readonly IUsersService _usersService = userService;
     private readonly IConfiguration _configuration = configuration;
@@ -60,9 +58,9 @@ public class UsersController(IUsersService userService, IConfiguration configura
 
     [HttpPost("invite-user")]
     [MustHavePermission(Action.Create, Resource.Users)]
-    public async Task<ApiResponse<string>> InviteAsync(ISender sender, CreateUserInvitation request)
+    public async Task<ApiResponse<string>> InviteAsync(CreateUserInvitation request)
     {
-        return await sender.Send(new CreateUserInvitationRequest() { request = request, Origion = GetOriginFromRequest() });
+        return await Mediator.Send(new CreateUserInvitationRequest() { request = request, Origion = GetOriginFromRequest() });
     }
 
     private string GetOriginFromRequest()
@@ -78,8 +76,8 @@ public class UsersController(IUsersService userService, IConfiguration configura
 
     [AllowAnonymous]
     [HttpPost("accept-invite")]
-    public async Task<ApiResponse<string>> AcceptInviteAsync(ISender sender, AcceptUserInvitationRequest request)
+    public async Task<ApiResponse<string>> AcceptInviteAsync(AcceptUserInvitationRequest request)
     {
-        return await sender.Send(request);
+        return await Mediator.Send(request);
     }
 }

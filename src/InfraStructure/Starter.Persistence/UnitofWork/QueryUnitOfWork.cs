@@ -1,26 +1,25 @@
 ﻿using System.Collections;
+using Microsoft.EntityFrameworkCore;
 using Starter.Application.Contracts.Persistence.Repositoris.Base;
+using Starter.Application.Contracts.Persistence.Repositoris.TodoRepository;
 using Starter.Application.UnitOfWork;
 using Starter.Domain.Common;
 using Starter.Persistence.Database;
 using Starter.Persistence.Repositories.Base;
+using Starter.Persistence.Repositories.Todos;
 using Starter.Application.Contracts.Persistence.Repositoris.Queries;
 using Starter.Persistence.Repositories.Project.Query;
 
 namespace Starter.Persistence.UnitofWork;
+
 public class QueryUnitOfWork : IQueryUnitOfWork
 {
-    //public ITodoQueryRepository TodoQueryRepository => throw new NotImplementedException();
-
-    //public IQueryRepository<TEntity> QueryRepository<TEntity>() where TEntity : BaseEntity, new()
-    //{
-    //    throw new NotImplementedException();
-    //}
-
-
     private readonly AppDbContext _appDbContext;
 
     private Hashtable _repositories;
+
+    public TodoQueryRepository _todoQuery;
+    public ITodoQueryRepository TodoQuery => _todoQuery ?? (_todoQuery = new TodoQueryRepository(_appDbContext));
 
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.

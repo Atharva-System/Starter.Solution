@@ -1,5 +1,5 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Starter.API.Controllers.Base;
 using Starter.Application.Features.Common;
 using Starter.Application.Features.Projects.Command.CreateCommand;
 using Starter.Identity.Authorizations;
@@ -11,15 +11,13 @@ using Starter.Application.Contracts.Responses;
 
 namespace Starter.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class ProjectController : ControllerBase
+public class ProjectController : BaseApiController
 {
     [HttpPost("Create")]
     [MustHavePermission(Action.Create, Resource.Project)]
-    public async Task<ApiResponse<int>> CreateProject(ISender sender, CreateProjectCommandRequest request)
+    public async Task<ApiResponse<int>> CreateProject(CreateProjectCommandRequest request)
     {
-        return await sender.Send(request);
+        return await Mediator.Send(request);
     }
 
     [HttpPost("Search")]

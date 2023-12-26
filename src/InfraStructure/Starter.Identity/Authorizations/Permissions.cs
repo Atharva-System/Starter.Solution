@@ -20,6 +20,7 @@ public class AllPermissions
        new("invite-user", Action.Create, Resource.Users, IsAdmin: true),
        new("Create Project", Action.Create, Resource.Project, IsAdmin: true),
        new("Create Task", Action.Create, Resource.Task, IsAdmin: true),
+       new("View Task", Action.View, Resource.Task, IsAdmin: true),
        new("Search Project", Action.Search, Resource.Project, IsAdmin: true),
    ];
 
