@@ -6,4 +6,5 @@ public sealed class Project : BaseAuditableEntity
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set;}
     public TimeOnly EstimatedHours { get; set; }
+    public ICollection<Tasks> Tasks { get; set; }
 }
