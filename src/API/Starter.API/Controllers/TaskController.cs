@@ -21,8 +21,8 @@ public class TaskController : BaseApiController
 
     [HttpGet("{id}")]
     [MustHavePermission(Action.View, Resource.Task)]
-    public async Task<ApiResponse<TaskDetailsDto>> GetTaskDetails(ISender sender, Guid id)
+    public async Task<ApiResponse<TaskDetailsDto>> GetTaskDetails(Guid id)
     {
-        return await sender.Send(new GetTaskDetailsQueryRequest(id));
+        return await Mediator.Send(new GetTaskDetailsQueryRequest(id));
     }
 }
