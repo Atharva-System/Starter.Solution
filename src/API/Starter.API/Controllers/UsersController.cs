@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Starter.API.Controllers.Base;
 using Starter.Application.Contracts.Identity;
