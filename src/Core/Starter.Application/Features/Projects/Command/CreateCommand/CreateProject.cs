@@ -2,7 +2,7 @@
 using Starter.Application.UnitOfWork;
 using Starter.Domain.Entities;
 
-namespace Starter.Application.Features.Projects.Create;
+namespace Starter.Application.Features.Projects.Command.CreateCommand;
 
 public sealed record CreateProjectCommandRequest : IRequest<ApiResponse<int>>
 {
