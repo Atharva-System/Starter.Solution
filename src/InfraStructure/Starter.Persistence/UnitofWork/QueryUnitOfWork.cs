@@ -4,6 +4,8 @@ using Starter.Application.UnitOfWork;
 using Starter.Domain.Common;
 using Starter.Persistence.Database;
 using Starter.Persistence.Repositories.Base;
+using Starter.Application.Contracts.Persistence.Repositoris.Queries;
+using Starter.Persistence.Repositories.Project.Query;
 
 namespace Starter.Persistence.UnitofWork;
 public class QueryUnitOfWork : IQueryUnitOfWork
@@ -28,7 +30,7 @@ public class QueryUnitOfWork : IQueryUnitOfWork
         _appDbContext = appDbContext;
     }
 
-
+    
 
     public async Task<int> SaveAsync(CancellationToken cancellationToken)
     {
@@ -53,6 +55,10 @@ public class QueryUnitOfWork : IQueryUnitOfWork
         return (IQueryRepository<TEntity>)_repositories[type] ?? new QueryRepository<TEntity>(_appDbContext);
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
     }
+
+    public ProjectQueryRepository _projectRepository;
+
+    public IProjectQueryRepository ProjectQuery => _projectRepository ?? new ProjectQueryRepository(_appDbContext);
 
     public void Dispose()
     {

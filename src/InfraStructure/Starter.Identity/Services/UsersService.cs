@@ -86,7 +86,7 @@ public partial class UsersService(UserManager<ApplicationUser> userManager,
 
         int count = await usersList.ApplySpecificationCount(spec);
 
-        return new PagedApiResponse<UserListDto>(count, filter.PageNumber, filter.PageSize) { Data = users };
+        return new PagedApiResponse<UserListDto>(users,count, filter.PageNumber, filter.PageSize) { Data = users };
     }
 
     public async Task<ApiResponse<string>> UpdateAsync(UpdateUserDto request)
