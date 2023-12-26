@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Starter.API.Controllers.Base;
 using Starter.Application.Features.Common;
-using Starter.Application.Features.Projects.Create;
+using Starter.Application.Features.Projects.Command.CreateCommand;
 using Starter.Identity.Authorizations;
 using Starter.Identity.Authorizations.Permissions;
 using Action = Starter.Identity.Authorizations.Action;
