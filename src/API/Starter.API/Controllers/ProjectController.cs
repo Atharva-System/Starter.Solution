@@ -12,6 +12,8 @@ using Starter.Application.Features.Tasks.Dto;
 using Starter.Application.Features.Tasks.Query;
 using MediatR;
 using Starter.Application.Features.Projects.Query.GetProjectDetails;
+using Starter.Application.Features.Projects.Command;
+using Microsoft.OpenApi.Validations.Rules;
 
 namespace Starter.API.Controllers;
 
@@ -37,4 +39,12 @@ public class ProjectController : BaseApiController
     {
         return await Mediator.Send(new GetProjectDetailsQueryRequest(id));
     }
+
+    [HttpDelete("{id}")]
+    [MustHavePermission(Action.Delete, Resource.Project)]
+    public async Task<ApiResponse<string>> DeleteProject(Guid id)
+    {
+        return await Mediator.Send(new DeleteProjectCommandRequest(id));
+    }
+
 }
