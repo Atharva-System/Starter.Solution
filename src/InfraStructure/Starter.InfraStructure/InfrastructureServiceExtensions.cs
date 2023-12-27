@@ -22,7 +22,9 @@ namespace Starter.InfraStructure
 
         internal static IServiceCollection AddServices(this IServiceCollection services) =>
         services
-            .AddServices(typeof(ITransientService), ServiceLifetime.Transient);
+            .AddServices(typeof(ITransientService), ServiceLifetime.Transient)
+            .AddServices(typeof(IScopedService), ServiceLifetime.Scoped);
+        
 
         internal static IServiceCollection AddServices(this IServiceCollection services, Type interfaceType, ServiceLifetime lifetime)
         {
