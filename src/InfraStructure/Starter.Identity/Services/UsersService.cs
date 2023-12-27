@@ -11,6 +11,7 @@ using Starter.Identity.Database;
 using Starter.Identity.Models;
 using Starter.Application.Interfaces;
 using Starter.Application.Contracts.Mailing;
+using Starter.Application.Contracts.Persistence.Services;
 
 namespace Starter.Identity.Services;
 public partial class UsersService(UserManager<ApplicationUser> userManager,
@@ -20,7 +21,8 @@ public partial class UsersService(UserManager<ApplicationUser> userManager,
                                   IConfiguration configuration,
                                   IEmailTemplateService templateService,
                                   IMailService mailService,
-                                  IJobService jobService) : IUsersService
+                                  IJobService jobService,
+                                  ITaskService taskService) : IUsersService
 {
     private readonly AppIdentityDbContext _db = db;
     private readonly UserManager<ApplicationUser> _userManager = userManager;
@@ -30,6 +32,7 @@ public partial class UsersService(UserManager<ApplicationUser> userManager,
     private readonly IJobService _jobService = jobService;
     private readonly IMailService _mailService = mailService;
     private readonly IEmailTemplateService _templateService = templateService;
+    private readonly ITaskService _taskService = taskService;
 
 
     public async Task<ApiResponse<UserDetailsDto>> GetUserDetailsAsync(string userId, CancellationToken cancellationToken)
@@ -144,7 +147,13 @@ public partial class UsersService(UserManager<ApplicationUser> userManager,
             throw new Exception($"Not allowed to deleted '{userId}' member.");
         }
 
-        //Add code for transaction exist delete
+        //Check for any task assigned to user
+        var userTask = await _taskService.IsTaskAssignedToUser(userId);
+
+        if (userTask)
+        {
+            throw new Exception($"Cannot delete as Task is assigned to '{userId}' user.");
+        }
 
         var result = await _userManager.DeleteAsync(user);
 
