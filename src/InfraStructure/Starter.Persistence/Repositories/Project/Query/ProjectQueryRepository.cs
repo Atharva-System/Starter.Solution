@@ -29,6 +29,6 @@ public class ProjectQueryRepository : QueryRepository<Starter.Domain.Entities.Pr
 
         var count = await projectList.ApplySpecificationCount(spec);
 
-        return new PagedApiResponse<ProjectListDto>(projects, count, pageNumber, pageSize);
+        return new PagedApiResponse<ProjectListDto>(count, pageNumber, pageSize) { Data = projects };
     }
 }
