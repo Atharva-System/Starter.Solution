@@ -33,8 +33,8 @@ public class AppDbContext : DbContext
         // QueryFilters need to be applied before base.OnModelCreating
         modelBuilder.AppendGlobalQueryFilter<ISoftDelete>(s => s.IsDeleted == false);
 
-        base.OnModelCreating(modelBuilder);
-
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+        base.OnModelCreating(modelBuilder);
     }
 }
