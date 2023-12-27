@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Starter.Domain.Common.Contracts;
 using Starter.Domain.Entities;
 using Starter.Persistence.Interceptors;
 using System.Reflection;
@@ -29,8 +30,11 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        // QueryFilters need to be applied before base.OnModelCreating
+        modelBuilder.AppendGlobalQueryFilter<ISoftDelete>(s => s.IsDeleted == false);
 
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
 }
