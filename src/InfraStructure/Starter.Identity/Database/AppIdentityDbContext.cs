@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Reflection.Emit;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Starter.Domain.Common;
+using Starter.Domain.Common.Contracts;
 using Starter.Domain.Entities;
 using Starter.Identity.Interceptors;
 using Starter.Identity.Models;
@@ -25,6 +27,9 @@ public class AppIdentityDbContext : IdentityDbContext<ApplicationUser, Applicati
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        // QueryFilters need to be applied before base.OnModelCreating
+        builder.AppendGlobalQueryFilter<ISoftDelete>(s => s.IsDeleted == false);
+
         builder.HasDefaultSchema(SchemaNames.Identity);
         base.OnModelCreating(builder);
         builder.ApplyConfigurationsFromAssembly(GetType().Assembly);

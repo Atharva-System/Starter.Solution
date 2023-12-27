@@ -3,7 +3,7 @@ using Starter.Domain.Common.Contracts;
 
 namespace Starter.Identity.Models;
 
-public class ApplicationUser : IdentityUser, IAuditableEntity
+public class ApplicationUser : IdentityUser, IAuditableEntity, ISoftDelete
 {
 
     public string? FirstName { get; set; }
@@ -15,8 +15,8 @@ public class ApplicationUser : IdentityUser, IAuditableEntity
     public DateTimeOffset CreatedOn { get; set; }
     public string? ModifiedBy { get; set; }
     public DateTimeOffset ModifiedOn { get; set; }
-    public DateTime? DeletedOn { get; set; }
-    public Guid? DeletedBy { get; set; }
+    public DateTimeOffset DeletedOn { get; set; }
+    public string? DeletedBy { get; set; }
     public bool IsActive { get; set; } = true;
     public bool IsDeleted { get; set; } = false;
     public Guid InvitedBy { get; set; }

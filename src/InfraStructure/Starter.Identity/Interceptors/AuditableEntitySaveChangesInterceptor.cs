@@ -44,6 +44,17 @@ public class AuditableEntitySaveChangesInterceptor(
                 entry.Entity.ModifiedBy = _currentUserService.UserId;
                 entry.Entity.ModifiedOn = now;
             }
+
+            if (entry.State == EntityState.Deleted)
+            {
+                if (entry.Entity is ISoftDelete softDelete)
+                {
+                    softDelete.IsDeleted = true;
+                    softDelete.DeletedBy = _currentUserService.UserId;
+                    softDelete.DeletedOn = now;
+                    entry.State = EntityState.Modified;
+                }
+            }
         }
     }
 }
