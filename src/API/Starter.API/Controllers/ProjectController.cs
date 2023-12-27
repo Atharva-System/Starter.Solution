@@ -8,6 +8,12 @@ using Action = Starter.Identity.Authorizations.Action;
 using Starter.Application.Features.Projects.Query.GetProject;
 using Starter.Application.Features.Projects.Dtos;
 using Starter.Application.Contracts.Responses;
+using Starter.Application.Features.Tasks.Dto;
+using Starter.Application.Features.Tasks.Query;
+using MediatR;
+using Starter.Application.Features.Projects.Query.GetProjectDetails;
+using Starter.Application.Features.Projects.Command;
+using Microsoft.OpenApi.Validations.Rules;
 using Starter.Application.Features.Projects.Command.UpdateProject;
 
 namespace Starter.API.Controllers;
@@ -27,6 +33,21 @@ public class ProjectController : BaseApiController
     {
         return await Mediator.Send(request);
     }
+
+    [HttpGet("{id:guid}")]
+    [MustHavePermission(Action.View, Resource.Project)]
+    public async Task<ApiResponse<ProjectDto>> GetAsync(Guid id)
+    {
+        return await Mediator.Send(new GetProjectDetailsQueryRequest(id));
+    }
+
+    [HttpDelete("{id}")]
+    [MustHavePermission(Action.Delete, Resource.Project)]
+    public async Task<ApiResponse<string>> DeleteProject(Guid id)
+    {
+        return await Mediator.Send(new DeleteProjectCommandRequest(id));
+    }
+
 
     [HttpPost("Update")]
     [MustHavePermission(Action.Update, Resource.Project)]
