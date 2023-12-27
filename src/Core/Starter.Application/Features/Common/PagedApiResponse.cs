@@ -11,6 +11,4 @@ public class PagedApiResponse<T>(int count, int page, int pageSize) : ApiRespons
     public bool HasNextPage { get; set; }
 
     // Additional properties from ApiResponse class
-
-    public List<string> Messages { get; set; } = new List<string>();
 }
