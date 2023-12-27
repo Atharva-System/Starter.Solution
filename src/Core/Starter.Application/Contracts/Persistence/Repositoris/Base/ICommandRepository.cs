@@ -9,4 +9,5 @@ public interface ICommandRepository<T> where T : BaseEntity, new()
     T Update(T entity);
     void Remove(T entity);
     void RemoveRange(IEnumerable<T> entities);
+    Task<T> GetByIdAsync(Guid id, CancellationToken cancellationToken);
 }

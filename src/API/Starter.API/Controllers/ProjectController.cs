@@ -8,6 +8,7 @@ using Action = Starter.Identity.Authorizations.Action;
 using Starter.Application.Features.Projects.Query.GetProject;
 using Starter.Application.Features.Projects.Dtos;
 using Starter.Application.Contracts.Responses;
+using Starter.Application.Features.Projects.Command.UpdateProject;
 
 namespace Starter.API.Controllers;
 
@@ -23,6 +24,13 @@ public class ProjectController : BaseApiController
     [HttpPost("Search")]
     [MustHavePermission(Action.Search, Resource.Project)]
     public async Task<IPagedDataResponse<ProjectListDto>> GetListAsync(ListProjectQueryReqeust request)
+    {
+        return await Mediator.Send(request);
+    }
+
+    [HttpPost("Update")]
+    [MustHavePermission(Action.Update, Resource.Project)]
+    public async Task<ApiResponse<int>> UpdateProject(UpdateProjectCommand request)
     {
         return await Mediator.Send(request);
     }

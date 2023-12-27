@@ -22,6 +22,7 @@ public class AllPermissions
        new("Create Task", Action.Create, Resource.Task, IsAdmin: true),
        new("View Task", Action.View, Resource.Task, IsAdmin: true),
        new("Search Project", Action.Search, Resource.Project, IsAdmin: true),
+       new("Update Project", Action.Update, Resource.Project, IsAdmin: true),
    ];
 
     public static IReadOnlyList<Permission> All { get; } = new ReadOnlyCollection<Permission>(_all);
