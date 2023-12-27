@@ -20,6 +20,11 @@ public class CommandRepository<T>(AppDbContext context) : ICommandRepository<T> 
         await _appDbContext.Set<T>().AddRangeAsync(entities);
     }
 
+    public async Task<T> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return await _appDbContext.Set<T>().FindAsync(new object[] { id }, cancellationToken);
+    }
+
     public void Remove(T entity)
     {
         _appDbContext.Set<T>().Remove(entity);

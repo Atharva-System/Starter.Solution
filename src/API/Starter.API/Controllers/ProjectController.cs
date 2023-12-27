@@ -14,6 +14,7 @@ using MediatR;
 using Starter.Application.Features.Projects.Query.GetProjectDetails;
 using Starter.Application.Features.Projects.Command;
 using Microsoft.OpenApi.Validations.Rules;
+using Starter.Application.Features.Projects.Command.UpdateProject;
 
 namespace Starter.API.Controllers;
 
@@ -47,4 +48,20 @@ public class ProjectController : BaseApiController
         return await Mediator.Send(new DeleteProjectCommandRequest(id));
     }
 
+
+    [HttpPut("{id}")]
+    [MustHavePermission(Action.Update, Resource.Project)]
+    public async Task<ApiResponse<string>> UpdateProject(Guid id, UpdateProjectCommand request)
+    {
+        if (id != request.Id)
+        {
+            return new ApiResponse<string>
+            {
+                Success = false,
+                Data = "The provided ID in the route does not match the ID in the request body.",
+                StatusCode = HttpStatusCodes.BadRequest
+            };
+        }
+        return await Mediator.Send(request);
+    }
 }

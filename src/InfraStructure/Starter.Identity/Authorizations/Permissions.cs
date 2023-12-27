@@ -22,6 +22,7 @@ public class AllPermissions
        new("Search Project", Action.Search, Resource.Project, IsAdmin: true),
        new("Delete Project", Action.Delete, Resource.Project, IsAdmin: true),
        new("View Project", Action.View, Resource.Project, IsAdmin: true),
+       new("Update Project", Action.Update, Resource.Project, IsAdmin: true),
        new("Create Task", Action.Create, Resource.Task, IsAdmin: true),
        new("View Task", Action.View, Resource.Task, IsAdmin: true),
        new("Delete Task", Action.Delete, Resource.Task, IsAdmin: true),
