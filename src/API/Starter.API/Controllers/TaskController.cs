@@ -25,4 +25,11 @@ public class TaskController : BaseApiController
     {
         return await Mediator.Send(new GetTaskDetailsQueryRequest(id));
     }
+
+    [HttpDelete("{id}")]
+    [MustHavePermission(Action.Delete, Resource.Task)]
+    public async Task<ApiResponse<string>> DeleteTask(Guid id)
+    {
+        return await Mediator.Send(new DeleteTaskCommandRequest(id));
+    }
 }
