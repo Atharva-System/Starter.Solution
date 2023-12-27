@@ -1,8 +1,7 @@
 ﻿using Starter.Application.Features.Common;
 using Starter.Application.UnitOfWork;
-using Starter.Domain.Enums;
 
-namespace Starter.Application.Features.Tasks.CreateCommand;
+namespace Starter.Application.Features.Tasks.Command;
 public sealed class CreateTaskCommandRequest : IRequest<ApiResponse<int>>
 {
     public string? TaskName { get; set; }
@@ -27,8 +26,8 @@ public class CreateTaskCommandHandler(ICommandUnitOfWork command) : IRequestHand
             Description = request.Description,
             StartDate = request.StartDate,
             EndDate = request.EndDate,
-            Status = (TasksStatus)request.Status,
-            Priority = (TasksPriority)request.Priority,
+            Status = request.Status,
+            Priority = request.Priority,
             ProjectId = request.ProjectId,
             AssignedTo = request.AssignedTo,
         };
