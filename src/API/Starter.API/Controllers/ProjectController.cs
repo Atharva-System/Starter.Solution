@@ -49,10 +49,19 @@ public class ProjectController : BaseApiController
     }
 
 
-    [HttpPost("Update")]
+    [HttpPut("{id}")]
     [MustHavePermission(Action.Update, Resource.Project)]
-    public async Task<ApiResponse<int>> UpdateProject(UpdateProjectCommand request)
+    public async Task<ApiResponse<string>> UpdateProject(Guid id, UpdateProjectCommand request)
     {
+        if (id != request.Id)
+        {
+            return new ApiResponse<string>
+            {
+                Success = false,
+                Data = "The provided ID in the route does not match the ID in the request body.",
+                StatusCode = HttpStatusCodes.BadRequest
+            };
+        }
         return await Mediator.Send(request);
     }
 }

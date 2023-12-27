@@ -3,17 +3,17 @@ using Starter.Application.UnitOfWork;
 using Starter.Domain.Entities;
 
 namespace Starter.Application.Features.Projects.Command.UpdateProject;
-public class UpdateProjectCommandHandler(ICommandUnitOfWork command) : IRequestHandler<UpdateProjectCommand, ApiResponse<int>>
+public class UpdateProjectCommandHandler(ICommandUnitOfWork command) : IRequestHandler<UpdateProjectCommand, ApiResponse<string>>
 {
     private readonly ICommandUnitOfWork _commandUnitofWork = command;
 
-    public async Task<ApiResponse<int>> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
+    public async Task<ApiResponse<string>> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
     {
         var existingProject = await _commandUnitofWork.CommandRepository<Project>().GetByIdAsync(request.Id, cancellationToken);
 
         if (existingProject == null)
         {
-            return new ApiResponse<int>
+            return new ApiResponse<string>
             {
                 Success = false,
                 StatusCode = HttpStatusCodes.NotFound,
@@ -29,11 +29,11 @@ public class UpdateProjectCommandHandler(ICommandUnitOfWork command) : IRequestH
 
         var saveResult = await _commandUnitofWork.SaveAsync(cancellationToken);
 
-        var response = new ApiResponse<int>
+        var response = new ApiResponse<string>
         {
             Success = saveResult > 0,
             StatusCode = saveResult > 0 ? HttpStatusCodes.OK : HttpStatusCodes.BadRequest,
-            Data = saveResult,
+            Data = "Project update successfully",
             Message = saveResult > 0 ? $"Project {ConstantMessages.UpdatedSuccessfully}" : "FailedToUpdate project.",
         };
 

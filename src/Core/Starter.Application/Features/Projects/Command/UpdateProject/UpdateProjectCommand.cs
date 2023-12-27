@@ -1,7 +1,7 @@
 ﻿using Starter.Application.Features.Common;
 
 namespace Starter.Application.Features.Projects.Command.UpdateProject;
-public sealed record UpdateProjectCommand : IRequest<ApiResponse<int>>
+public sealed record UpdateProjectCommand : IRequest<ApiResponse<string>>
 {
     public Guid Id { get; set; }
     public string? ProjectName { get; set; }
