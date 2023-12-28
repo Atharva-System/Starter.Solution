@@ -1,0 +1,50 @@
+<modal #modalComponent class="modal-center animate animate-fade-in" (onClose)="resetForm();">
+    <ng-template #modalHeader> <div>Invite User</div> </ng-template>
+    <ng-template #modalBody>
+        <form
+        class="space-y-5"
+        [formGroup]="formInviteUser"
+        novalidate
+      >
+        <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+          <div>
+            <label for="firstName">First Name</label>
+            <app-input
+              formControlName="firstName"
+              [control]="formInviteUser.controls['firstName']"
+              [isSubmit]="isSubmitFormInviteUser"
+              placeholder="Enter First Name"
+            ></app-input>
+          </div>
+          <div>
+            <label for="lastName">Last Name</label>
+            <app-input
+              formControlName="lastName"
+              [control]="formInviteUser.controls['lastName']"
+              [isSubmit]="isSubmitFormInviteUser"
+              placeholder="Enter Last Name"
+            ></app-input>
+          </div>
+        </div>
+        <div>
+          <label for="email">Email</label>
+          <app-input
+            formControlName="email"
+            [control]="formInviteUser.controls['email']"
+            [isSubmit]="isSubmitFormInviteUser"
+            placeholder="Enter Email"
+          ></app-input>
+        </div>
+      </form>
+    </ng-template>
+    <ng-template #modalFooter>
+        <button type="button" (click)="resetForm();modalComponent.close()" class="btn btn-outline-danger">Discard</button>
+        <app-button
+        text="Invite"
+        type="submit"
+        classes="btn-primary ltr:ml-4 rtl:mr-4"
+        class="d-block"
+        (click)="submitForm()"
+      ></app-button>
+    </ng-template>
+  </modal>

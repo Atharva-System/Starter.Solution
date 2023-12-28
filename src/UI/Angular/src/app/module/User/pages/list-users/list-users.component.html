@@ -1,6 +1,15 @@
 <div class="panel mt-6 pb-0">
   <div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
     <h5 class="text-lg font-semibold dark:text-white-light">Users</h5>
+    <div class="ltr:ml-auto rtl:mr-auto">
+      <app-button
+        text="Invite"
+        type="button"
+        classes="btn-outline-primary btn-sm w-full"
+        class="d-block"
+        (click)="openInviteUserModal()"
+      ></app-button>
+    </div>
   </div>
 
   <div class="datatable">
@@ -16,6 +25,7 @@
       [sortable]="true"
       paginationInfo="{0} to {1} of {2}"
       (changeServer)="changeServer($event)"
+      skin="whitespace-nowrap table-hover"
     >
       <ng-template slot="status" let-value="data">
         <span class="badge" [ngClass]="getBadgeColor(value.status)">{{
@@ -25,3 +35,7 @@
     </ng-datatable>
   </div>
 </div>
+<app-invite-user-modal
+  #inviteUserModal
+  (saved)="this.getUsers()"
+></app-invite-user-modal>
