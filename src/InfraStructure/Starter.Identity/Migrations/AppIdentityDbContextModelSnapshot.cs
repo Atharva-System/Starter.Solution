@@ -223,11 +223,11 @@ namespace Starter.Identity.Migrations
                     b.Property<string>("Culture")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("DeletedBy")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("DeletedOn")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("DeletedOn")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)

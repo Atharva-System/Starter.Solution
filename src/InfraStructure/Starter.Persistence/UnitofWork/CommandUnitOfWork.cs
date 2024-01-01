@@ -1,9 +1,9 @@
-﻿using Starter.Application.Contracts.Persistence.Repositoris.Base;
+﻿using System.Collections;
+using Starter.Application.Contracts.Persistence.Repositoris.Base;
 using Starter.Application.UnitOfWork;
 using Starter.Domain.Common;
 using Starter.Persistence.Database;
 using Starter.Persistence.Repositories.Base;
-using System.Collections;
 
 namespace Starter.Persistence.UnitofWork;
 
