@@ -1,4 +1,4 @@
-import {  NgClass, NgStyle } from '@angular/common';
+import { NgClass, NgStyle } from '@angular/common';
 import { Component, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DataTableModule, colDef } from '@bhplugin/ng-datatable';
@@ -7,21 +7,35 @@ import { PaginationFilter } from '../../../../core/models/pagination-filter.inte
 import { CommonFilterService } from '../../../../core/services/common-filter.service';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 import { InviteUserModalComponent } from '../../components/invite-user-modal/invite-user-modal.component';
+import { DeleteConfirmationModalComponent } from '../../../../shared/ui/delete-confirmation-modal/delete-confirmation-modal.component';
+import { AlertService } from '../../../../shared/services/alert.service';
 
 @Component({
   selector: 'app-list-users',
   standalone: true,
-  imports: [NgClass, NgStyle, DataTableModule, FormsModule, ButtonComponent,InviteUserModalComponent],
+  imports: [
+    NgClass,
+    NgStyle,
+    DataTableModule,
+    FormsModule,
+    ButtonComponent,
+    InviteUserModalComponent,
+    DeleteConfirmationModalComponent,
+  ],
   templateUrl: './list-users.component.html',
   styleUrl: './list-users.component.css',
 })
 export class ListUsersComponent {
   @ViewChild('inviteUserModal') inviteUserModal!: InviteUserModalComponent;
+  @ViewChild('deleteUserModal')
+  deleteUserModal!: DeleteConfirmationModalComponent;
 
-  search2 = '';
-  todoService = inject(UserService);
+  userService = inject(UserService);
   commonFilterService = inject(CommonFilterService);
+  alertService = inject(AlertService);
   timer: any;
+  deleteUserId = '';
+  editUserId = '';
 
   params: PaginationFilter;
 
@@ -31,6 +45,13 @@ export class ListUsersComponent {
     { field: 'email', title: 'Email' },
     { field: 'status', title: 'Status' },
     { field: 'role', title: 'Role' },
+    {
+      field: 'action',
+      title: 'Action',
+      sort: false,
+      filter: false,
+      headerClass: 'justify-center',
+    },
   ];
 
   rows: Array<any> = [];
@@ -43,7 +64,7 @@ export class ListUsersComponent {
 
   async getUsers() {
     this.loading = true;
-    this.todoService.getUsers(this.params).subscribe((data) => {
+    this.userService.getUsers(this.params).subscribe((data) => {
       this.rows = data?.data;
       this.total_rows = data?.totalCount;
       this.loading = false;
@@ -86,7 +107,29 @@ export class ListUsersComponent {
     return '';
   }
 
-  openInviteUserModal(){
-    this.inviteUserModal.open()
+  openInviteUserModal() {
+    this.inviteUserModal.open();
+  }
+
+  deleteUser(id: string) {
+    this.deleteUserModal.open();
+    this.deleteUserId = id;
+  }
+
+  editUser(id: string) {
+    this.editUserId = id;
+    this.openInviteUserModal();
+  }
+
+  onDelete() {
+    this.userService.deleteUser(this.deleteUserId).subscribe((data) => {
+      this.alertService.showMessage(data.message);
+      this.getUsers();
+      this.deleteUserModal.close();
+    });
+  }
+
+  onCancel() {
+    this.deleteUserId = this.editUserId = '';
   }
 }

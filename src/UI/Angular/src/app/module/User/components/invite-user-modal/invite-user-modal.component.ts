@@ -1,7 +1,22 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output, ViewChild, inject } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+  ViewChild,
+  inject,
+} from '@angular/core';
 import { ModalComponent } from '../../../../shared/ui/modal/modal.component';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 import { InputComponent } from '../../../../shared/ui/input/input.component';
 import { Router } from '@angular/router';
@@ -9,19 +24,26 @@ import { FieldValidation } from '../../../../shared/constants/constants';
 import { authPaths } from '../../../../shared/constants/routes';
 import { AlertService } from '../../../../shared/services/alert.service';
 import { AuthService } from '../../../auth/services/auth.service';
+import { UserService } from '../../services/user.service';
+import { IUpdateUser } from '../../models/update-user.interface';
 
 @Component({
   selector: 'app-invite-user-modal',
   standalone: true,
-  imports: [FormsModule,
+  imports: [
+    FormsModule,
     ReactiveFormsModule,
     InputComponent,
-    ButtonComponent,ModalComponent,CommonModule],
+    ButtonComponent,
+    ModalComponent,
+    CommonModule,
+  ],
   templateUrl: './invite-user-modal.component.html',
-  styleUrl: './invite-user-modal.component.css'
+  styleUrl: './invite-user-modal.component.css',
 })
-export class InviteUserModalComponent {
-  @Output()  saved = new EventEmitter()
+export class InviteUserModalComponent implements OnChanges {
+  @Input() userId = '';
+  @Output() saved = new EventEmitter();
   @ViewChild('modalComponent') modalComponent!: ModalComponent;
   signinRoute = '/' + authPaths.signin;
   formInviteUser!: FormGroup;
@@ -31,17 +53,33 @@ export class InviteUserModalComponent {
   fb = inject(FormBuilder);
   alertService = inject(AlertService);
   authService = inject(AuthService);
+  userService = inject(UserService);
 
   constructor() {
     this.initForm();
   }
 
-  open(){
-    this.modalComponent.open()
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['userId']) {
+      if (this.userId) {
+        this.setUserDetails();
+      }
+    }
+  }
+
+  setUserDetails() {
+    this.userService.getUser(this.userId).subscribe((data) => {
+      this.formInviteUser.patchValue(data.data);
+    });
+  }
+
+  open() {
+    this.modalComponent.open();
   }
 
   initForm() {
     this.formInviteUser = this.fb.group({
+      id: '',
       firstName: [
         '',
         Validators.compose([
@@ -63,11 +101,12 @@ export class InviteUserModalComponent {
           Validators.email,
           Validators.maxLength(FieldValidation.emailMaxLength),
         ]),
-      ]
+      ],
     });
   }
 
-  resetForm(){
+  resetForm() {
+    this.userId = '';
     this.isSubmitFormInviteUser = false;
     this.formInviteUser.reset();
   }
@@ -76,17 +115,37 @@ export class InviteUserModalComponent {
     this.isSubmitFormInviteUser = true;
     if (this.formInviteUser.valid) {
       const formValues = this.formInviteUser.value;
-      this.authService.inviteUser(formValues).subscribe(
-        (res: any) => {
-          this.isSubmitFormInviteUser = false;
-          this.alertService.showMessage('User invited successfully.');
-          this.formInviteUser.reset();
-          this.modalComponent.close()
-          this.saved.emit()
-        },
-        (error) => {},
-      );
+      if (this.userId) {
+        const updateUserDto: IUpdateUser = {
+          id: this.userId,
+          firstName: formValues.firstName,
+          lastName:  formValues.lastName,
+          email: formValues.email,
+        };
+        this.userService.updateUsers(updateUserDto).subscribe(
+          (res: any) => {
+            this.isSubmitFormInviteUser = false;
+            this.alertService.showMessage('User updated successfully.');
+            this.formInviteUser.reset();
+            this.modalComponent.close();
+            this.saved.emit();
+            this.userId = '';
+          },
+          (error) => {},
+        );
+      } else {
+        this.authService.inviteUser(formValues).subscribe(
+          (res: any) => {
+            this.isSubmitFormInviteUser = false;
+            this.alertService.showMessage('User invited successfully.');
+            this.formInviteUser.reset();
+            this.modalComponent.close();
+            this.saved.emit();
+            this.userId = '';
+          },
+          (error) => {},
+        );
+      }
     }
   }
 }
-
