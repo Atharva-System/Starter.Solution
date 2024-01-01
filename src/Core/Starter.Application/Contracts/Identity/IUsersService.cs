@@ -15,4 +15,6 @@ public interface IUsersService : ITransientService
     Task<bool> ExistsUserWithEmailAsync(string email);
     Task<ApiResponse<string>> AcceptInvitationAsync(AcceptUserInvitationRequest request);
     Task<UserDetailsTaskDto> GetUserDetailsForTaskAsync(string userId, CancellationToken cancellationToken);
+    Task<List<string>> GetPermissionAsync(string userId, CancellationToken cancellationToken);
+    Task<bool> HasPermissionAsync(string? userId, string permission, CancellationToken cancellationToken = default);
 }
