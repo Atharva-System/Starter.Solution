@@ -14,7 +14,7 @@ public class LocalCacheService : ICacheService
         _cache.Get<T>(key);
     
     public Task<T?> GetAsync<T>(string key, CancellationToken token = default) =>
-        Task.FromResult(default(T?));
+        Task.FromResult(_cache.Get<T>(key));
    
     public void Refresh(string key) =>
         _cache.TryGetValue(key, out _);

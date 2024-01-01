@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Starter.Application.Contracts.Application;
 using Starter.Application.Interfaces;
 using Starter.InfraStructure.BackgroundJobs;
+using Starter.InfraStructure.Caching;
 using Starter.InfraStructure.Mailing;
 using Starter.InfraStructure.Services;
 
@@ -16,7 +17,8 @@ namespace Starter.InfraStructure
             services
            .AddServices()
            .AddMailing(configuration)
-           .AddBackgroundJobs(configuration);
+           .AddBackgroundJobs(configuration)
+           .AddCaching(configuration);
             services.AddScoped<IDateTimeService, DateTimeService>();
         }
 
