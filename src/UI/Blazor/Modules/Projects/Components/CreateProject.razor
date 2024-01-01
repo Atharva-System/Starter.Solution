@@ -1,0 +1,72 @@
+﻿@page "/projectcreate"
+@using Starter.Blazor.Modules.Dashboard.Services
+@using Starter.Blazor.Modules.Projects.Models
+
+<div class="mb-5">
+    <form @onsubmit="CreateProjectAsync">
+        <div>
+            <label for="projectname">Project Name:</label>
+            <input id="projectname" type="text" @bind="projectName" class="form-input" required />
+        </div>
+        <div>
+            <label for="Description">Description:</label>
+            <input id="Description" type="text" @bind="description" class="form-input" required />
+        </div>
+        <div>
+            <label for="startdate">StartDate:</label>
+            <input id="startdate" type="date" @bind="startDate" class="form-input" required />
+        </div>
+        <div>
+            <label for="Enddate">End Date:</label>
+            <input id="Enddate" type="date" @bind="endDate" class="form-input" required />
+        </div>
+        <div>
+            <label for="Estimatedhours">Estimated Hours:</label>
+            <input id="Estimatedhours" type="time" @bind="estimatedHours" class="form-input" required />
+        </div>
+        <div>
+            <button id="createProjectBtn" type="submit" class="btn btn-primary mt-6">Create Project</button>
+        </div>
+    </form>
+</div>
+
+@code {
+    private string projectName;
+    private string description;
+    private DateTime startDate;
+    private DateTime endDate;
+    private TimeOnly estimatedHours;
+
+    private async Task CreateProjectAsync()
+    {
+        // Convert input values to the appropriate types
+       
+        // Create a ProjectDto object with the input data
+        var project = new ProjectDto
+            {
+                ProjectName = projectName,
+                Description = description,
+                StartDate = startDate,
+                EndDate = endDate,
+                EstimatedHours = estimatedHours,
+            };
+
+        try
+        {
+            // Make the API call using the injected ProjectService
+            var projectId = await projectService.CreateProject(project);
+
+            // Optionally, you can handle the response, e.g., display a success message or navigate to another page
+            Console.WriteLine($"Project created successfully. ProjectId: {projectId}");
+        }
+        catch (Exception ex)
+        {
+            // Handle errors, e.g., display an error message
+                Console.WriteLine($"Error creating project: {ex.Message}");
+        }
+    }
+
+    [Inject]
+    private ProjectService projectService { get; set; }
+}
+    

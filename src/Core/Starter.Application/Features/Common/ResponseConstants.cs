@@ -13,6 +13,7 @@ public static class ConstantMessages
     public static string DataFound => "Data found";
     public static string NoDataFound => "No Data found";
     public static string NotFound => "{0} Not Found";
+    public static string FailedToUpdate => "Failed to Updated";
 
     // Localized
     public static string Commission => "Commission";

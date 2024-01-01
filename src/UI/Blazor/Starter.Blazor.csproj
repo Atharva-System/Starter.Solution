@@ -20,6 +20,7 @@
     <Folder Include="Shared\Components\Button\" />
     <Folder Include="Shared\Components\Grid\" />
     <Folder Include="Shared\Utility\" />
+    <Folder Include="Shared\Utility\" />
   </ItemGroup>
 
 </Project>

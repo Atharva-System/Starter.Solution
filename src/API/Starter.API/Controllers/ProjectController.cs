@@ -21,14 +21,14 @@ namespace Starter.API.Controllers;
 public class ProjectController : BaseApiController
 {
     [HttpPost("Create")]
-    [MustHavePermission(Action.Create, Resource.Project)]
+   // [MustHavePermission(Action.Create, Resource.Project)]
     public async Task<ApiResponse<int>> CreateProject(CreateProjectCommandRequest request)
     {
         return await Mediator.Send(request);
     }
 
     [HttpPost("Search")]
-    [MustHavePermission(Action.Search, Resource.Project)]
+   // [MustHavePermission(Action.Search, Resource.Project)]
     public async Task<IPagedDataResponse<ProjectListDto>> GetListAsync(ListProjectQueryReqeust request)
     {
         return await Mediator.Send(request);

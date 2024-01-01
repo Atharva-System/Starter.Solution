@@ -264,11 +264,6 @@ public class AuthService : IAuthService
         }
         catch (Exception ex)
         {
-            // Log the exception for debugging purposes
-            // Replace _logger with your logging mechanism (e.g., Serilog, System.Diagnostics)
-            //_logger.LogError(ex, "Exception occurred in ForgotPasswordAsync method");
-
-            // Rethrow the exception or handle it according to your application's requirements
             throw;
         }
     }

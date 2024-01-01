@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Starter.API.Controllers.Base;
+using Starter.Application.Contracts.Responses;
 using Starter.Application.Features.Common;
 using Starter.Application.Features.Tasks.Command;
 using Starter.Application.Features.Tasks.Command.UpdateTask;
 using Starter.Application.Features.Tasks.Dto;
 using Starter.Application.Features.Tasks.Query;
+using Starter.Application.Models.Task;
 using Starter.Identity.Authorizations;
 using Starter.Identity.Authorizations.Permissions;
 using Action = Starter.Identity.Authorizations.Action;
@@ -27,6 +29,8 @@ public class TaskController : BaseApiController
         return await Mediator.Send(new GetTaskDetailsQueryRequest(id));
     }
 
+    
+
     [HttpDelete("{id}")]
     [MustHavePermission(Action.Delete, Resource.Task)]
     public async Task<ApiResponse<string>> DeleteTask(Guid id)
@@ -47,6 +51,13 @@ public class TaskController : BaseApiController
                 StatusCode = HttpStatusCodes.BadRequest
             };
         }
+        return await Mediator.Send(request);
+    }
+    [HttpPost("Search")]
+    [MustHavePermission(Action.View, Resource.Task)]
+    public async Task<IPagedDataResponse<TaskDto>>GetListAsync(TaskFilter filter)
+    {
+        var request = new GetTasksQuery{ Filter = filter };
         return await Mediator.Send(request);
     }
 }
