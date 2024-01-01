@@ -11,4 +11,9 @@ public class TaskService(AppDbContext context) : ITaskService
     {
          return await _context.Tasks.AnyAsync(x => x.AssignedTo == userId);
     }
+
+    public async Task<bool> IsTaskCreatedForProject(Guid projectId)
+    {
+        return await _context.Tasks.AnyAsync(x => x.ProjectId == projectId);
+    }
 }

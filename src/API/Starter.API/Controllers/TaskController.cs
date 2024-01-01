@@ -2,6 +2,7 @@
 using Starter.API.Controllers.Base;
 using Starter.Application.Features.Common;
 using Starter.Application.Features.Tasks.Command;
+using Starter.Application.Features.Tasks.Command.UpdateTask;
 using Starter.Application.Features.Tasks.Dto;
 using Starter.Application.Features.Tasks.Query;
 using Starter.Identity.Authorizations;
@@ -31,5 +32,21 @@ public class TaskController : BaseApiController
     public async Task<ApiResponse<string>> DeleteTask(Guid id)
     {
         return await Mediator.Send(new DeleteTaskCommandRequest(id));
+    }
+
+    [HttpPut("{id}")]
+    [MustHavePermission(Action.Update, Resource.Task)]
+    public async Task<ApiResponse<string>> UpdateTask(Guid id, UpdateTaskRequestCommand request)
+    {
+        if (id != request.Id)
+        {
+            return new ApiResponse<string>
+            {
+                Success = false,
+                Data = "The provided ID in the route does not match the ID in the request body.",
+                StatusCode = HttpStatusCodes.BadRequest
+            };
+        }
+        return await Mediator.Send(request);
     }
 }
