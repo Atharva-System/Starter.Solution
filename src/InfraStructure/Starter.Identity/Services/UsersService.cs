@@ -12,6 +12,7 @@ using Starter.Identity.Models;
 using Starter.Application.Interfaces;
 using Starter.Application.Contracts.Mailing;
 using Starter.Application.Contracts.Persistence.Services;
+using Starter.Application.Contracts.Caching;
 
 namespace Starter.Identity.Services;
 public partial class UsersService(UserManager<ApplicationUser> userManager,
@@ -22,7 +23,9 @@ public partial class UsersService(UserManager<ApplicationUser> userManager,
                                   IEmailTemplateService templateService,
                                   IMailService mailService,
                                   IJobService jobService,
-                                  ITaskService taskService) : IUsersService
+                                  ITaskService taskService,
+                                  ICacheService cache,
+                                  ICacheKeyService cacheKey) : IUsersService
 {
     private readonly AppIdentityDbContext _db = db;
     private readonly UserManager<ApplicationUser> _userManager = userManager;
@@ -33,6 +36,8 @@ public partial class UsersService(UserManager<ApplicationUser> userManager,
     private readonly IMailService _mailService = mailService;
     private readonly IEmailTemplateService _templateService = templateService;
     private readonly ITaskService _taskService = taskService;
+    private readonly ICacheService _cache = cache;
+    private readonly ICacheKeyService _cacheKey = cacheKey;
 
 
     public async Task<ApiResponse<UserDetailsDto>> GetUserDetailsAsync(string userId, CancellationToken cancellationToken)
@@ -188,4 +193,5 @@ public partial class UsersService(UserManager<ApplicationUser> userManager,
 
         return userDto;
     }
+
 }

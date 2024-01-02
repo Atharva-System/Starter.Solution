@@ -15,7 +15,7 @@ public partial class UsersService
         var applicationUser = await ExistsUserWithEmailAsync(request.Email);
         if (applicationUser == true)
         {
-            throw new ForbiddenAccessException("");
+            throw new CustomException("User is already exist.");
         }
         else
         {
@@ -25,15 +25,13 @@ public partial class UsersService
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 UserName = request.Email,
-                IsActive = true,
+                IsActive = false,
                 InvitedBy = new Guid(_currentUserService.UserId),
                 InvitedDate = DateTime.UtcNow,
                 IsInvitationAccepted = false
             };
 
-            var role = await _roleManager.FindByIdAsync(request.RoleId);
-
-            _ = role ?? throw new NotFoundException("Role", request.RoleId);
+            var role = await _roleManager.FindByNameAsync(Constants.IdentityRole.User);
 
             var result = await _userManager.CreateAsync(user);
             if (!result.Succeeded)
@@ -77,7 +75,7 @@ public partial class UsersService
 
     public async Task<ApiResponse<string>> AcceptInvitationAsync(AcceptUserInvitationRequest request)
     {
-        var user = await _db.Users.FirstOrDefaultAsync(x => x.Id == request.UserId && x.IsActive == true);
+        var user = await _db.Users.FirstOrDefaultAsync(x => x.Id == request.UserId);
 
         _ = user ?? throw new NotFoundException("User not null", user);
 
@@ -88,7 +86,7 @@ public partial class UsersService
             throw new ForbiddenAccessException("");
         }
 
-        user.IsInvitationAccepted = user.EmailConfirmed = true;
+        user.IsInvitationAccepted = user.IsActive = user.EmailConfirmed = true;
 
         var result = await _userManager.UpdateAsync(user);
 

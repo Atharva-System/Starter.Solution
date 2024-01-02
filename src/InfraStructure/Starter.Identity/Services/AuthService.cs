@@ -72,6 +72,11 @@ public class AuthService : IAuthService
 
         _ = user ?? throw new NotFoundException("User ", request.Email);
 
+        if(!(user.IsActive && user.IsInvitationAccepted) || user.IsSuperAdmin == false)
+        {
+            throw new Exception($"Please accept the invitation");
+        }
+
         var result = await _signInManager.PasswordSignInAsync(user?.UserName!, request.Password, false, lockoutOnFailure: false);
 
         if (!result.Succeeded)
