@@ -17,6 +17,7 @@
     <Folder Include="Modules\Settings\" />
     <Folder Include="Modules\Users\" />
     <Folder Include="Modules\Task\" />
+    <Folder Include="Modules\User\Components\" />
     <Folder Include="Shared\Components\Button\" />
     <Folder Include="Shared\Components\Grid\" />
     <Folder Include="Shared\Utility\" />
