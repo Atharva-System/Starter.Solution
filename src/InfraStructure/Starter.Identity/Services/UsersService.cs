@@ -194,30 +194,4 @@ public partial class UsersService(UserManager<ApplicationUser> userManager,
         return userDto;
     }
 
-    public async Task<ApiResponse<string>> UpdateProfileAsync(UpdateProfileRequest request)
-    {
-        // Retrieve the existing user
-        var existingUser = await _userManager.FindByIdAsync(request.Id);
-
-        if (existingUser == null)
-        {
-            return new ApiResponse<string> { Success = false, Data = "User not found", StatusCode = HttpStatusCodes.NotFound };
-        }
-
-        // Update user profile properties
-        existingUser.FirstName = request.FirstName;
-        existingUser.LastName = request.LastName;
-        existingUser.Email = request.Email;
-        existingUser.ImageUrl = request.ImageUrl;
-
-        var result = await _userManager.UpdateAsync(existingUser);
-
-        return new ApiResponse<string>
-        {
-            Success = result.Succeeded,
-            Data = "Profile updated successfully.",
-            StatusCode = result.Succeeded ? HttpStatusCodes.OK : HttpStatusCodes.BadRequest,
-            Message = result.Succeeded ? $"User {ConstantMessages.UpdatedSuccessfully}" : $"{ConstantMessages.FailedToUpdate} user profile."
-        };
-    }
 }
