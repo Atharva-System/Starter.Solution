@@ -1,0 +1,82 @@
+﻿@page "/userlist"
+@using Starter.Blazor.Modules.User.Models
+@using Starter.Blazor.Modules.User.Services
+@inject UserService UserService
+
+<div class="panel h-full w-full">
+    <div class="mb-5 flex items-center justify-between">
+        <h5 class="text-lg font-semibold dark:text-white-light">Users List</h5>
+    </div>
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th class="ltr:rounded-l-md rtl:rounded-r-md">Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th class="ltr:rounded-r-md rtl:rounded-l-md">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var user in users)
+                {
+                    <tr class="group text-white-dark hover:text-black dark:hover:text-white-light/90">
+                        <td class="min-w-[150px] text-black dark:text-white">
+                            <div class="flex items-center">
+                                <img class="h-8 w-8 rounded-md object-cover ltr:mr-3 rtl:ml-3"
+                                     src="assets/images/profile-6.jpeg"
+                                     alt="avatar" />
+                                <span class="whitespace-nowrap">@user.FullName</span>
+                            </div>
+                        </td>
+                        <td>@user.Email</td>
+                        <td class="text-primary">@user.Role</td>
+                        <td>
+                            <span class="badge @(user.Status == "Active" ? "bg-success" : "bg-secondary") shadow-md dark:group-hover:bg-transparent">
+                                @user.Status
+                            </span>
+                        </td>
+                    </tr>
+                }
+              @*   <tr class="group text-white-dark hover:text-black dark:hover:text-white-light/90">
+                    <td class="min-w-[150px] text-black dark:text-white">
+                        <div class="flex items-center">
+                            <img class="h-8 w-8 rounded-md object-cover ltr:mr-3 rtl:ml-3"
+                                 src="assets/images/profile-6.jpeg"
+                                 alt="avatar" />
+                            <span class="whitespace-nowrap">Luke Ivory</span>
+                        </div>
+                    </td>
+                    <td class="text-primary">Headphone</td>
+                    <td><a href="apps-invoice-preview.html">#46894</a></td>
+                    <td>$56.07</td>
+                    <td><span class="badge bg-success shadow-md dark:group-hover:bg-transparent">Paid</span></td>
+                </tr>
+                <tr class="group text-white-dark hover:text-black dark:hover:text-white-light/90">
+                    <td class="text-black dark:text-white">
+                        <div class="flex items-center">
+                            <img class="h-8 w-8 rounded-md object-cover ltr:mr-3 rtl:ml-3"
+                                 src="assets/images/profile-7.jpeg"
+                                 alt="avatar" />
+                            <span class="whitespace-nowrap">Andy King</span>
+                        </div>
+                    </td>
+                    <td class="text-info">Nike Sport</td>
+                    <td><a href="apps-invoice-preview.html">#76894</a></td>
+                    <td>$126.04</td>
+                    <td><span class="badge bg-secondary shadow-md dark:group-hover:bg-transparent">Shipped</span></td>
+                </tr> *@
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@code {
+    private List<UserlistDto> users = new List<UserlistDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        users = await UserService.GetUserlistsAsync();
+    }
+}

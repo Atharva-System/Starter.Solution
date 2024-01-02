@@ -27,7 +27,7 @@ public class UsersController(IUsersService userService, IConfiguration configura
     }
 
     [HttpPost("search")]
-    [MustHavePermission(Action.Search, Resource.Users)]
+    //[MustHavePermission(Action.Search, Resource.Users)]
     public async Task<IPagedDataResponse<UserListDto>> GetListAsync(UserListFilter filter, CancellationToken cancellationToken)
     {
         return await _usersService.SearchAsync(filter, cancellationToken);
