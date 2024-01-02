@@ -1,0 +1,18 @@
+﻿
+<tbody>
+    @foreach (var item in DisplayedData)
+    {
+        <tr>
+            @foreach (var headerKey in HeaderInfo)
+            {
+                <td>@item[headerKey["Key"]]</td>
+            }
+        </tr>
+    }
+</tbody>
+
+
+@code {
+    [Parameter] public List<Dictionary<string, object>> DisplayedData { get; set; }
+    [Parameter] public List<Dictionary<string, string>> HeaderInfo { get; set; }
+}

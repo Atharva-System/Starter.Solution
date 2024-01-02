@@ -1,0 +1,16 @@
+﻿<!-- Components/Search.razor -->
+<div>
+    <input @bind="SearchQuery" />
+    <button @onclick="SearchData">Search</button>
+</div>
+
+@code {
+    private string SearchQuery { get; set; }
+
+    [Parameter] public EventCallback<string> OnSearch { get; set; }
+
+    private async Task SearchData()
+    {
+        await OnSearch.InvokeAsync(SearchQuery);
+    }
+}
