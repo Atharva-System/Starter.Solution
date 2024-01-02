@@ -1,11 +1,12 @@
-﻿using Starter.Application.Contracts.Mailing.Models;
+﻿using Microsoft.EntityFrameworkCore;
 using Starter.Application.Contracts.Mailing;
+using Starter.Application.Contracts.Mailing.Models;
 using Starter.Application.Exceptions;
 using Starter.Application.Features.Common;
-using Starter.Application.Features.Users.Invite;
-using Starter.Identity.Models;
-using Microsoft.EntityFrameworkCore;
 using Starter.Application.Features.Users.AcceptInvite;
+using Starter.Application.Features.Users.Invite;
+using Starter.Application.Models.Users;
+using Starter.Identity.Models;
 
 namespace Starter.Identity.Services;
 public partial class UsersService
@@ -83,7 +84,7 @@ public partial class UsersService
 
         if (!resultPW.Succeeded)
         {
-            throw new ForbiddenAccessException("");
+            throw new Exception(string.Join(", ", resultPW.Errors.Select(e => e.Description)));
         }
 
         user.IsInvitationAccepted = user.EmailConfirmed = true;
@@ -92,7 +93,7 @@ public partial class UsersService
 
         if (!result.Succeeded)
         {
-            throw new ForbiddenAccessException("");
+            throw new ForbiddenAccessException("Accept Invite failed");
         }
 
         return new ApiResponse<string>
@@ -101,6 +102,40 @@ public partial class UsersService
             Data = "Invitation Accepted successfully!",
             StatusCode = HttpStatusCodes.OK,
             Message = "Invitation Accepted successfully!"
+        };
+    }
+
+    public async Task<ApiResponse<UserInviteDto>> GetAcceptInviteDetailsAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+
+        _ = user ?? throw new NotFoundException("Invitation Not Found.", userId);
+
+        var invitedUser = await _userManager.FindByIdAsync(user.InvitedBy.ToString());
+
+        _ = invitedUser ?? throw new NotFoundException("Invitation Not Found.", userId);
+
+        var useRole = await _db.UserRoles.FirstOrDefaultAsync(u => u.UserId == user.Id);
+
+        _ = useRole ?? throw new NotFoundException("Invitation Not Found.", userId);
+
+        var role = await _roleManager.FindByIdAsync(useRole.RoleId);
+
+        _ = role ?? throw new NotFoundException("Invitation Not Found.", userId);
+
+        var userInviteDto = new UserInviteDto()
+        {
+            InvitedBy = invitedUser.FirstName + " " + invitedUser.LastName,
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+        };
+
+        return new ApiResponse<UserInviteDto>
+        {
+            Success = true,
+            Data = userInviteDto,
+            StatusCode = user.IsInvitationAccepted ? HttpStatusCodes.Conflict : HttpStatusCodes.OK,
         };
     }
 }

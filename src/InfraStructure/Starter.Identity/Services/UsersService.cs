@@ -160,6 +160,7 @@ public partial class UsersService(UserManager<ApplicationUser> userManager,
             throw new Exception($"Cannot delete as Task is assigned to '{userId}' user.");
         }
 
+        user.NormalizedUserName = user.UserName = user.UserName + "_" + Guid.NewGuid().ToString();
         var result = await _userManager.DeleteAsync(user);
 
         return new ApiResponse<string>
@@ -185,7 +186,7 @@ public partial class UsersService(UserManager<ApplicationUser> userManager,
         var userDto = new UserDetailsTaskDto();
         var user = await _db.Users.AsNoTracking().Where(x => x.Id == userId).FirstOrDefaultAsync();
 
-        if (user != null) 
+        if (user != null)
         {
             userDto.Id = user.Id;
             userDto.FullName = user.FirstName + " " + user.LastName;
