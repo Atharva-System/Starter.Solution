@@ -121,7 +121,8 @@
 <app-invite-user-modal
   [userId]="editUserId"
   #inviteUserModal
-  (saved)="this.getUsers()"
+  (saved)="onSave()"
+  (discard)="onCancel()"
 ></app-invite-user-modal>
 <app-delete-confirmation-modal
   #deleteUserModal

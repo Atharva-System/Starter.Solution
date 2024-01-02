@@ -129,6 +129,11 @@ export class ListUsersComponent {
     });
   }
 
+  onSave() {
+    this.getUsers();
+    this.onCancel();
+  }
+
   onCancel() {
     this.deleteUserId = this.editUserId = '';
   }

@@ -14,6 +14,7 @@ export class ModalComponent {
   @ContentChild('modalFooter') footer!: TemplateRef<any>;
   @Input() closeOnOutsideClick = true;
   @Output()  onClose = new EventEmitter()
+  @Output()  onCancel = new EventEmitter()
 
   visible = false;
   visibleAnimate = false;

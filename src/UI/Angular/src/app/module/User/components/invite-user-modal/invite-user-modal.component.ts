@@ -44,6 +44,7 @@ import { IUpdateUser } from '../../models/update-user.interface';
 export class InviteUserModalComponent implements OnChanges {
   @Input() userId = '';
   @Output() saved = new EventEmitter();
+  @Output() discard = new EventEmitter();
   @ViewChild('modalComponent') modalComponent!: ModalComponent;
   signinRoute = '/' + authPaths.signin;
   formInviteUser!: FormGroup;
@@ -74,12 +75,13 @@ export class InviteUserModalComponent implements OnChanges {
   }
 
   open() {
-    this.modalComponent.open();
+    setTimeout(() => {
+      this.modalComponent.open();
+    }, 10);
   }
 
   initForm() {
     this.formInviteUser = this.fb.group({
-      id: '',
       firstName: [
         '',
         Validators.compose([
@@ -106,9 +108,9 @@ export class InviteUserModalComponent implements OnChanges {
   }
 
   resetForm() {
-    this.userId = '';
     this.isSubmitFormInviteUser = false;
     this.formInviteUser.reset();
+    this.discard.emit();
   }
 
   submitForm() {
@@ -119,7 +121,7 @@ export class InviteUserModalComponent implements OnChanges {
         const updateUserDto: IUpdateUser = {
           id: this.userId,
           firstName: formValues.firstName,
-          lastName:  formValues.lastName,
+          lastName: formValues.lastName,
           email: formValues.email,
         };
         this.userService.updateUsers(updateUserDto).subscribe(
@@ -129,7 +131,6 @@ export class InviteUserModalComponent implements OnChanges {
             this.formInviteUser.reset();
             this.modalComponent.close();
             this.saved.emit();
-            this.userId = '';
           },
           (error) => {},
         );
@@ -141,7 +142,6 @@ export class InviteUserModalComponent implements OnChanges {
             this.formInviteUser.reset();
             this.modalComponent.close();
             this.saved.emit();
-            this.userId = '';
           },
           (error) => {},
         );
