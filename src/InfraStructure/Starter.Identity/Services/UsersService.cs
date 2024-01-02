@@ -12,6 +12,7 @@ using Starter.Identity.Models;
 using Starter.Application.Interfaces;
 using Starter.Application.Contracts.Mailing;
 using Starter.Application.Contracts.Persistence.Services;
+using Starter.Application.Contracts.Caching;
 using Starter.Application.Features.Users.Profile;
 
 namespace Starter.Identity.Services;
