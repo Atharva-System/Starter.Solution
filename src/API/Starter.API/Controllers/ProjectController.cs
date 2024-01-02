@@ -1,20 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Starter.API.Controllers.Base;
+using Starter.Application.Contracts.Responses;
 using Starter.Application.Features.Common;
+using Starter.Application.Features.Projects.Command;
 using Starter.Application.Features.Projects.Command.CreateCommand;
+using Starter.Application.Features.Projects.Command.UpdateProject;
+using Starter.Application.Features.Projects.Dtos;
+using Starter.Application.Features.Projects.Query.GetProject;
+using Starter.Application.Features.Projects.Query.GetProjectDetails;
 using Starter.Identity.Authorizations;
 using Starter.Identity.Authorizations.Permissions;
 using Action = Starter.Identity.Authorizations.Action;
-using Starter.Application.Features.Projects.Query.GetProject;
-using Starter.Application.Features.Projects.Dtos;
-using Starter.Application.Contracts.Responses;
-using Starter.Application.Features.Tasks.Dto;
-using Starter.Application.Features.Tasks.Query;
-using MediatR;
-using Starter.Application.Features.Projects.Query.GetProjectDetails;
-using Starter.Application.Features.Projects.Command;
-using Microsoft.OpenApi.Validations.Rules;
-using Starter.Application.Features.Projects.Command.UpdateProject;
 
 namespace Starter.API.Controllers;
 

@@ -1,9 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <ItemGroup>
+    <PackageReference Include="Blazored.LocalStorage" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
+    <PackageReference Include="System.Net.Http.Json" />
+    <PackageReference Include="Toolbelt.Blazor.HttpClientInterceptor" />
   </ItemGroup>
 
   <ItemGroup>
@@ -13,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Core\Auth\" />
+    <Folder Include="Modules\Login\Page\" />
     <Folder Include="Modules\Settings\" />
     <Folder Include="Modules\Users\" />
     <Folder Include="Modules\Task\" />
