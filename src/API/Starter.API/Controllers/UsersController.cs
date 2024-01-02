@@ -6,6 +6,7 @@ using Starter.Application.Contracts.Responses;
 using Starter.Application.Features.Common;
 using Starter.Application.Features.Users.AcceptInvite;
 using Starter.Application.Features.Users.Invite;
+using Starter.Application.Features.Users.Profile;
 using Starter.Application.Models.Users;
 using Starter.Identity.Authorizations;
 using Starter.Identity.Authorizations.Permissions;
@@ -72,6 +73,32 @@ public class UsersController(IUsersService userService, IConfiguration configura
             return corsSettings.Angular;
         }
         return $"{Request.Scheme}://{Request.Host.Value}{Request.PathBase.Value}";
+    }
+
+    [HttpPut("{id}/update-profile")]
+    [MustHavePermission(Action.Update, Resource.Users)]
+    public async Task<ApiResponse<string>> UpdateProfileAsync(string id, UpdateProfileRequest request)
+    {
+        if (id != request.Id)
+        {
+            return new ApiResponse<string>
+            {
+                Success = false,
+                Data = "The provided ID in the route does not match the ID in the request body.",
+                StatusCode = HttpStatusCodes.BadRequest
+            };
+        }
+
+        var updateProfileCommand = new UpdateProfileRequest
+        {
+            Id = id,
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            Email = request.Email,
+            ImageUrl = request.ImageUrl,
+        };
+
+        return await Mediator.Send(updateProfileCommand);
     }
 
     [AllowAnonymous]

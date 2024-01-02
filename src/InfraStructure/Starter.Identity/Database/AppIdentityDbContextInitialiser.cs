@@ -170,6 +170,7 @@ public class AppIdentityDbContextInitialiser(ILogger<AppIdentityDbContextInitial
                 PhoneNumberConfirmed = true,
                 IsActive = true,
                 IsSuperAdmin = true,
+                IsInvitationAccepted = true,
             };
 
             _logger.LogInformation("Seeding Default Admin User for '{id}'.", adminUser.Id);

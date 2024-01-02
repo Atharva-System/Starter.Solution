@@ -26,7 +26,7 @@ public partial class UsersService
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 UserName = request.Email,
-                IsActive = true,
+                IsActive = false,
                 InvitedBy = new Guid(_currentUserService.UserId),
                 InvitedDate = DateTime.UtcNow,
                 IsInvitationAccepted = false
@@ -76,7 +76,7 @@ public partial class UsersService
 
     public async Task<ApiResponse<string>> AcceptInvitationAsync(AcceptUserInvitationRequest request)
     {
-        var user = await _db.Users.FirstOrDefaultAsync(x => x.Id == request.UserId && x.IsActive == true);
+        var user = await _db.Users.FirstOrDefaultAsync(x => x.Id == request.UserId);
 
         _ = user ?? throw new NotFoundException("User not null", user);
 
@@ -87,7 +87,7 @@ public partial class UsersService
             throw new Exception(string.Join(", ", resultPW.Errors.Select(e => e.Description)));
         }
 
-        user.IsInvitationAccepted = user.EmailConfirmed = true;
+        user.IsInvitationAccepted = user.IsActive = user.EmailConfirmed = true;
 
         var result = await _userManager.UpdateAsync(user);
 
