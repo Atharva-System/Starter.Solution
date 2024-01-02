@@ -13,7 +13,6 @@ public class CreateUserInvitation
     public string FirstName { get; set; } = default!;
     public string LastName { get; set; } = default!;
     public string Email { get; set; } = default!;
-    public string RoleId { get; set; } = default!;
 }
 
 public class CreateUserInvitationRequest : IRequest<ApiResponse<string>>

@@ -19,6 +19,12 @@ export class AuthInterceptor implements HttpInterceptor {
     request: HttpRequest<any>,
     next: HttpHandler,
   ): Observable<HttpEvent<any>> {
+    request = request.clone({
+      setHeaders: {
+        'Content-Type': 'application/json',
+      },
+    });
+
     if (
       this.authenticationService.isAuthenticated() &&
       !this.isRequestUrlAllowAnonymous(request.url)

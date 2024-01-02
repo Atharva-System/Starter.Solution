@@ -15,7 +15,7 @@ public partial class UsersService
         var applicationUser = await ExistsUserWithEmailAsync(request.Email);
         if (applicationUser == true)
         {
-            throw new ForbiddenAccessException("");
+            throw new CustomException("User is already exist.");
         }
         else
         {
@@ -31,9 +31,7 @@ public partial class UsersService
                 IsInvitationAccepted = false
             };
 
-            var role = await _roleManager.FindByIdAsync(request.RoleId);
-
-            _ = role ?? throw new NotFoundException("Role", request.RoleId);
+            var role = await _roleManager.FindByNameAsync(Constants.IdentityRole.User);
 
             var result = await _userManager.CreateAsync(user);
             if (!result.Succeeded)
