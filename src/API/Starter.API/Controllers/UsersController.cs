@@ -107,4 +107,11 @@ public class UsersController(IUsersService userService, IConfiguration configura
     {
         return await Mediator.Send(request);
     }
+
+    [AllowAnonymous]
+    [HttpGet("get-invite-details/{userId}")]
+    public async Task<ApiResponse<UserInviteDto>> GetAcceptInviteDetailsAsync(string userId)
+    {
+        return await _usersService.GetAcceptInviteDetailsAsync(userId);
+    }
 }

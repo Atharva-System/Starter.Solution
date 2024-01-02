@@ -7,7 +7,9 @@ export class APIs {
   //User
   static searchUserApi = '/Users/search';
   static inviteUserApi = '/Users/invite-user';
+  static acceptInviteUserApi = '/Users/accept-invite';
   static deleteUserApi = '/Users/';
   static getUserApi = '/Users/';
   static updateUserApi = '/users/';
+  static getInviteDetails = '/users/get-invite-details';
 }

@@ -5,8 +5,9 @@ import { AuthLayout } from './core/layouts/auth-layout';
 import { SignupComponent } from './module/auth/pages/signup/signup.component';
 import { appPaths, authPaths, pageTitle } from './shared/constants/routes';
 import { ForgotPasswordComponent } from './module/auth/pages/forgot-password/forgot-password.component';
-import { ListUsersComponent } from './module/User/pages/list-users/list-users.component';
+import { ListUsersComponent } from './module/user/pages/list-users/list-users.component';
 import { SigninComponent } from './module/auth/pages/signin/signin.component';
+import { AcceptInvitationComponent } from './module/auth/pages/accept-invitation/accept-invitation.component';
 
 export const routes: Routes = [
   {
@@ -44,6 +45,11 @@ export const routes: Routes = [
         path: authPaths.forgotPassword,
         component: ForgotPasswordComponent,
         title: pageTitle.forgotPassword,
+      },
+      {
+        path: authPaths.acceptInvitation,
+        component: AcceptInvitationComponent,
+        title: pageTitle.acceptInvitation,
       },
     ],
   },

@@ -22,4 +22,12 @@ export class AuthService {
   signin(obj: IAuthenticationRequest) {
     return this.apiHandlerService.post(APIs.signinApi, obj);
   }
+
+  getInviteDetails(userId: string) {
+    return this.apiHandlerService.get(APIs.getInviteDetails + `/${userId}`);
+  }
+
+  acceptInvitation(obj: any) {
+    return this.apiHandlerService.post(APIs.acceptInviteUserApi, obj);
+  }
 }

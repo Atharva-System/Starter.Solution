@@ -38,11 +38,11 @@
   }
   <!-- @if (control.errors["pattern"]) {
     <p class="mt-1 text-danger">Invalid pattern, please check the format</p>
-  }
+  }-->
   @if (isSubmit && control.errors?.["pattern"] && type == "password") {
     <p class="mt-1 text-danger">
       Password requirements: At least one uppercase letter (A-Z), one lowercase
       letter (a-z), and one non-alphanumeric character.
     </p>
-  } -->
+  }
 </div>
