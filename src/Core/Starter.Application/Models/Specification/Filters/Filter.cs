@@ -2,15 +2,18 @@
 
 public static class FilterOperator
 {
-    public const string EQ = "eq";
-    public const string NEQ = "neq";
+    public const string EQ = "equal";
+    public const string NEQ = "not_equal";
     public const string LT = "lt";
     public const string LTE = "lte";
     public const string GT = "gt";
     public const string GTE = "gte";
-    public const string STARTSWITH = "startswith";
-    public const string ENDSWITH = "endswith";
-    public const string CONTAINS = "contains";
+    public const string STARTSWITH = "start_with";
+    public const string ENDSWITH = "end_with";
+    public const string CONTAINS = "contain";
+    public const string NOTCONTAINS = "not_contain";
+    public const string ISNULL = "is_null";
+    public const string ISNOTNULL = "is_not_null";
 }
 
 public static class FilterLogic

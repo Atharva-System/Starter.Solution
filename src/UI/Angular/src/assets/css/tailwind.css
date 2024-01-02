@@ -1,5 +1,14 @@
+/* animation */
+@import 'animate.css';
+
 /* sweetalert */
 @import 'sweetalert.css';
+
+/* vue3-datatable */
+@import 'datatable.css';
+
+/* modal popup */
+@import 'modal.css';
 
 @tailwind base;
 @tailwind components;

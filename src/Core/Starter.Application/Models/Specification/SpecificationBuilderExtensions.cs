@@ -178,6 +178,10 @@ public static class SpecificationBuilderExtensions
         object? value,
         ParameterExpression parameter)
     {
+        if (filterOperator == FilterOperator.ISNOTNULL || filterOperator == FilterOperator.ISNULL)
+        {
+            value = null;
+        }
         var propertyExpresion = GetPropertyExpression(field, parameter);
         var valueExpresion = GeValuetExpression(field, value, propertyExpresion.Type);
         return CreateFilterExpression(propertyExpresion, valueExpresion, filterOperator);
@@ -190,12 +194,15 @@ public static class SpecificationBuilderExtensions
     {
         if (memberExpression.Type == typeof(string))
         {
+            if (filterOperator != FilterOperator.ISNOTNULL && filterOperator != FilterOperator.ISNULL)
             constantExpression = Expression.Call(constantExpression, "ToLower", null);
             memberExpression = Expression.Call(memberExpression, "ToLower", null);
         }
 
         return filterOperator switch
         {
+            FilterOperator.ISNULL => Expression.Equal(memberExpression, constantExpression),
+            FilterOperator.ISNOTNULL => Expression.NotEqual(memberExpression, constantExpression),
             FilterOperator.EQ => Expression.Equal(memberExpression, constantExpression),
             FilterOperator.NEQ => Expression.NotEqual(memberExpression, constantExpression),
             FilterOperator.LT => Expression.LessThan(memberExpression, constantExpression),
@@ -203,6 +210,7 @@ public static class SpecificationBuilderExtensions
             FilterOperator.GT => Expression.GreaterThan(memberExpression, constantExpression),
             FilterOperator.GTE => Expression.GreaterThanOrEqual(memberExpression, constantExpression),
             FilterOperator.CONTAINS => Expression.Call(memberExpression, "Contains", null, constantExpression),
+            FilterOperator.NOTCONTAINS => Expression.Not(Expression.Call(memberExpression, "Contains", null, constantExpression)),
             FilterOperator.STARTSWITH => Expression.Call(memberExpression, "StartsWith", null, constantExpression),
             FilterOperator.ENDSWITH => Expression.Call(memberExpression, "EndsWith", null, constantExpression),
             _ => throw new CustomException("Filter Operator is not valid."),
