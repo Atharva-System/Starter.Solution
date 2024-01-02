@@ -7,7 +7,7 @@ public static class ConstantMessages
     public static string AddedSuccesfully => " Added Successfully";
     public static string UpdatedSuccessfully => " Updated Successfully";
     public static string DeletedSuccessfully => " Deleted Successfully";
-
+    public static string FailedToUpdate => "Failed to Updated";
     public static string FailedToCreate => "Failed to create ";
     public static string DataCreated => "Data Created";
     public static string DataFound => "Data found";

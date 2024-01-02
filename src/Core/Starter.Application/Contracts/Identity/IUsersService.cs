@@ -3,6 +3,7 @@ using Starter.Application.Features.Common;
 using Starter.Application.Models.Users;
 using Starter.Application.Features.Users.Invite;
 using Starter.Application.Features.Users.AcceptInvite;
+using Starter.Application.Features.Users.Profile;
 
 namespace Starter.Application.Contracts.Identity;
 public interface IUsersService : ITransientService
@@ -14,6 +15,7 @@ public interface IUsersService : ITransientService
     Task<ApiResponse<string>> CreateInvitationAsync(CreateUserInvitation request, string origin);
     Task<bool> ExistsUserWithEmailAsync(string email);
     Task<ApiResponse<string>> AcceptInvitationAsync(AcceptUserInvitationRequest request);
+    Task<ApiResponse<string>> UpdateProfileAsync(UpdateProfileRequest request);
     Task<UserDetailsTaskDto> GetUserDetailsForTaskAsync(string userId, CancellationToken cancellationToken);
     Task<List<string>> GetPermissionAsync(string userId, CancellationToken cancellationToken);
     Task<bool> HasPermissionAsync(string? userId, string permission, CancellationToken cancellationToken = default);
