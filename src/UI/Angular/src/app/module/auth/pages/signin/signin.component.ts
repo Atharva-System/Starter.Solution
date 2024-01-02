@@ -1,24 +1,22 @@
 import { Component, inject } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
-import { authPaths } from '../../../../shared/constants/routes';
 import {
-  FormBuilder,
   FormGroup,
+  FormBuilder,
+  Validators,
   FormsModule,
   ReactiveFormsModule,
-  Validators,
 } from '@angular/forms';
-import { InputComponent } from '../../../../shared/ui/input/input.component';
-import { ButtonComponent } from '../../../../shared/ui/button/button.component';
-import { AnchorComponent } from '../../../../shared/ui/anchor/anchor.component';
-import { AuthService } from '../../services/auth.service';
+import { Router, RouterModule } from '@angular/router';
 import { AuthenticationService } from '../../../../core/services/authentication.service';
+import { authPaths } from '../../../../shared/constants/routes';
 import { IAuthenticationResponse } from '../../models/authentication-response.interface';
+import { AuthService } from '../../services/auth.service';
+import { AnchorComponent } from '../../../../shared/ui/anchor/anchor.component';
+import { ButtonComponent } from '../../../../shared/ui/button/button.component';
+import { InputComponent } from '../../../../shared/ui/input/input.component';
 
 @Component({
   selector: 'app-signin',
-  templateUrl: './signin.component.html',
-  styleUrl: './signin.component.css',
   standalone: true,
   imports: [
     RouterModule,
@@ -28,6 +26,8 @@ import { IAuthenticationResponse } from '../../models/authentication-response.in
     ButtonComponent,
     AnchorComponent,
   ],
+  templateUrl: './signin.component.html',
+  styleUrl: './signin.component.css',
 })
 export class SigninComponent {
   forgotPasswordRoute = '/' + authPaths.forgotPassword;
