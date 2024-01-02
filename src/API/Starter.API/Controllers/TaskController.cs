@@ -6,8 +6,12 @@ using Starter.Application.Features.Tasks.Command.UpdateTask;
 using Starter.Application.Features.Tasks.Dto;
 using Starter.Application.Features.Tasks.Query;
 using Starter.Identity.Authorizations;
+using Starter.Application.Contracts.Responses;
 using Starter.Identity.Authorizations.Permissions;
+using Starter.Application.Features.Tasks.Dto;
 using Action = Starter.Identity.Authorizations.Action;
+using Starter.Application.Models.Specification.Filters;
+using Starter.Application.Models.Task.Dto;
 
 namespace Starter.API.Controllers;
 
@@ -47,6 +51,14 @@ public class TaskController : BaseApiController
                 StatusCode = HttpStatusCodes.BadRequest
             };
         }
+        return await Mediator.Send(request);
+    }
+
+    [HttpPost("Search")]
+    [MustHavePermission(Action.View, Resource.Task)]
+    public async Task<IPagedDataResponse<TaskListDto>> GetListAsync(TaskFilter filter)
+    {
+        var request = new GetTasksQuery { Filter = filter };
         return await Mediator.Send(request);
     }
 }
