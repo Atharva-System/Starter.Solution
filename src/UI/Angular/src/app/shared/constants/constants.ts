@@ -26,4 +26,6 @@ export class FieldValidation {
 
 export const queryStringParams = {
   UserId: 'userId',
+  Email: 'email',
+  Token: 'token',
 };
