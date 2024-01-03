@@ -10,7 +10,6 @@ using Starter.Application.Features.Users.Profile;
 using Starter.Application.Models.Users;
 using Starter.Identity.Authorizations;
 using Starter.Identity.Authorizations.Permissions;
-using Starter.InfraStructure.Cors;
 using Action = Starter.Identity.Authorizations.Action;
 
 namespace Starter.API.Controllers;
@@ -61,18 +60,7 @@ public class UsersController(IUsersService userService, IConfiguration configura
     [MustHavePermission(Action.Create, Resource.Users)]
     public async Task<ApiResponse<string>> InviteAsync(CreateUserInvitation request)
     {
-        return await Mediator.Send(new CreateUserInvitationRequest() { request = request, Origion = GetOriginFromRequest() });
-    }
-
-    private string GetOriginFromRequest()
-    {
-        var corsSettings = _configuration.GetSection(nameof(CorsSettings)).Get<CorsSettings>();
-
-        if (corsSettings != null && corsSettings.Angular is not null)
-        {
-            return corsSettings.Angular;
-        }
-        return $"{Request.Scheme}://{Request.Host.Value}{Request.PathBase.Value}";
+        return await Mediator.Send(new CreateUserInvitationRequest() { request = request, Origion = GetOriginFromRequest(_configuration) });
     }
 
     [HttpPut("{id}/update-profile")]

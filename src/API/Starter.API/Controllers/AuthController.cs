@@ -5,7 +5,6 @@ using Starter.API.Controllers.Base;
 using Starter.Application.Contracts.Identity;
 using Starter.Application.Features.Common;
 using Starter.Application.Models.Authentication;
-using Starter.InfraStructure.Cors;
 
 namespace Starter.API.Controllers;
 
@@ -71,7 +70,7 @@ public class AuthController(ILogger<AuthController> logger, IAuthService authSer
     [HttpPost("forgotPassword")]
     public async Task<ApiResponse<string>> ForgotPassword(ForgotPasswordRequest request)
     {
-        await _authService.ForgotPasswordAsync(request, GetOriginFromRequest());
+        await _authService.ForgotPasswordAsync(request, GetOriginFromRequest(_configuration));
         return new ApiResponse<string>
         {
             Success = true,
@@ -91,15 +90,5 @@ public class AuthController(ILogger<AuthController> logger, IAuthService authSer
             StatusCode = HttpStatusCodes.OK
         };
     }
-
-    private string GetOriginFromRequest()
-    {
-        var corsSettings = _configuration.GetSection(nameof(CorsSettings)).Get<CorsSettings>();
-
-        if (corsSettings != null && corsSettings.Angular is not null)
-        {
-            return corsSettings.Angular;
-        }
-        return $"{Request.Scheme}://{Request.Host.Value}{Request.PathBase.Value}";
-    }
+    
 }
