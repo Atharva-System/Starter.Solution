@@ -47,7 +47,7 @@
 
 <div x-data="modal">
     <!-- button -->
-    <button type="button" class="btn btn-primary" @* @click="toggle" *@>Invite User</button>
+    <button type="button" class="btn btn-primary" @click="toggle">Invite User</button>
 
     <!-- modal -->
     <div class="fixed inset-0 bg-[black]/60 z-[999] hidden overflow-y-auto" :class="open && '!block'">
@@ -80,7 +80,6 @@
 @code {
     private List<UserlistDto> users = new List<UserlistDto>();
     private PaginationRequest param  = new PaginationRequest { PageNumber = 0, PageSize = 10, OrderBy = new[] { "FullName" }};
-
     private InviteUserDto inviteUser = new InviteUserDto(); 
    
     protected override async Task OnInitializedAsync()

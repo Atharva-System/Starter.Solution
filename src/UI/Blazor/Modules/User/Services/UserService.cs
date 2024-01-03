@@ -29,7 +29,7 @@ public class UserService(HttpClient http) : IUserService
         }
     }
 
-    public async Task<string> InviteUserAsync(InviteUserDto userDto)
+    public async Task<ApiResponse<string>> InviteUserAsync(InviteUserDto userDto)
     {
         try
         {
@@ -41,15 +41,21 @@ public class UserService(HttpClient http) : IUserService
 
             if (newResponse != null && newResponse.Success)
             {
-                return newResponse.Data;
+                return newResponse;
             }
 
-            return "";
+            return new ApiResponse<string>
+            {
+                Success = false,
+            };
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error: {ex.Message}");
-            return "";
+            return new ApiResponse<string>
+            {
+                Success = false,
+            };
         }
     }
 }
