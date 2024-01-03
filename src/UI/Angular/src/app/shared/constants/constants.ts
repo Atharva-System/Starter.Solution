@@ -23,3 +23,9 @@ export class FieldValidation {
   static emailMaxLength = 50;
   static passwordMinLength = 6;
 }
+
+export const queryStringParams = {
+  UserId: 'userId',
+  Email: 'email',
+  Token: 'token',
+};
