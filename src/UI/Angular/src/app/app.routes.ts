@@ -8,6 +8,7 @@ import { ForgotPasswordComponent } from './module/auth/pages/forgot-password/for
 import { ListUsersComponent } from './module/user/pages/list-users/list-users.component';
 import { SigninComponent } from './module/auth/pages/signin/signin.component';
 import { AcceptInvitationComponent } from './module/auth/pages/accept-invitation/accept-invitation.component';
+import { ResetPasswordComponent } from './module/auth/pages/reset-password/reset-password.component';
 
 export const routes: Routes = [
   {
@@ -50,6 +51,11 @@ export const routes: Routes = [
         path: authPaths.acceptInvitation,
         component: AcceptInvitationComponent,
         title: pageTitle.acceptInvitation,
+      },
+      {
+        path: authPaths.resetPassword,
+        component: ResetPasswordComponent,
+        title: pageTitle.resetPassword,
       },
     ],
   },

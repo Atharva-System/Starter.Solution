@@ -4,6 +4,7 @@ export const pageTitle = {
   forgotPassword: 'Forgot Password',
   users: 'Users',
   acceptInvitation: 'Accept Invitation',
+  resetPassword: 'Reset Password',
 };
 
 export const authPaths = {
@@ -11,6 +12,7 @@ export const authPaths = {
   signup: 'signup',
   forgotPassword: 'forgot-password',
   acceptInvitation: 'accept-invite',
+  resetPassword: 'reset-password',
 };
 
 export const appPaths = {
