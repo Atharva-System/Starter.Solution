@@ -35,4 +35,29 @@ public class AuthService : IAuthService
 
         return await result.Content.ReadFromJsonAsync<AuthResponseDto>();
     }
+
+    public async Task<string> RefreshToken()
+    {
+        var token = await _localStorage.GetItemAsync<string>("authToken");
+        var request = new RefreshTokenRequest() { CurrentToken = token };
+
+        var result = await _http.PostAsJsonAsync($"{AuthBaseURL}refreshToken", request);
+        var response = await result.Content.ReadFromJsonAsync<ApiResponse<AuthResponseDto>>();
+
+        if (response != null)
+        {
+            if (response.Success)
+            {
+                await _localStorage.SetItemAsync("authToken", response.Data.Token);
+                await _authStateProvider.GetAuthenticationStateAsync();
+                return response.Data.Token;
+            }
+            else
+            {
+                _navigationManager.NavigateTo("/login");
+            }
+        }
+
+        return string.Empty;
+    }
 }

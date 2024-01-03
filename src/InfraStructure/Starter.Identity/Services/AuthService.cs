@@ -88,7 +88,8 @@ public class AuthService : IAuthService
 
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
         user.RefreshToken = GenerateRefreshToken();
-        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenExpirationInDays);
+        //user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenExpirationInDays);
+        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddMinutes(1);
         await _userManager.UpdateAsync(user);
 
         AuthenticationResponse response = new AuthenticationResponse
