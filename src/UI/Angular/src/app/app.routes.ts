@@ -9,6 +9,7 @@ import { ListUsersComponent } from './module/user/pages/list-users/list-users.co
 import { SigninComponent } from './module/auth/pages/signin/signin.component';
 import { AcceptInvitationComponent } from './module/auth/pages/accept-invitation/accept-invitation.component';
 import { ResetPasswordComponent } from './module/auth/pages/reset-password/reset-password.component';
+import { ProfileComponent } from './module/user/pages/profile/profile.component';
 
 export const routes: Routes = [
   {
@@ -24,6 +25,11 @@ export const routes: Routes = [
         path: appPaths.users,
         component: ListUsersComponent,
         title: pageTitle.users,
+      },
+      {
+        path: appPaths.profile,
+        component: ProfileComponent,
+        title: pageTitle.profile,
       },
     ],
     canActivate: [AuthGuard],
