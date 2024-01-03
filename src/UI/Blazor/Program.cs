@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Starter.Blazor.Core.Auth;
 using Starter.Blazor.Modules.Login.Services;
 using Blazored.LocalStorage;
+using Starter.Blazor.Core.AuthProviders;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -25,5 +26,6 @@ builder.Services.AddScoped<CustomAuthenticationStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<CustomAuthenticationStateProvider>());
 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<UserAuthID>();
 
 await builder.Build().RunAsync();
