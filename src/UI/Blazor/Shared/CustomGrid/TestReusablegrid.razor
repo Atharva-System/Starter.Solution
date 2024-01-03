@@ -1,0 +1,38 @@
+﻿@page "/testReusablegrid"
+
+@using Starter.Blazor.Modules.Common
+@using Starter.Blazor.Modules.User.Models
+@using Starter.Blazor.Modules.User.Services
+
+@inject IUserService UserService
+
+<ReusableGrid TItem="UserlistDto" GridData="@DisplayedData" HeaderData="@headerInfo" ParentAction="@ParentMethod" />
+
+
+@code {
+    public Action ParentMethod { get; set; }
+    private List<UserlistDto> DisplayedData = new List<UserlistDto>();
+
+    protected override void OnInitialized()
+    {
+        // Define the action to be executed in the child component
+        ParentMethod = () =>
+        {
+            var paginationRequest = new PaginationRequest
+                {
+                    PageSize = 10,
+                    PageNumber = 1
+                };
+            // Logic to execute when called from child component
+            DisplayedData = UserService.GetUserlistsAsync(paginationRequest).Result;
+        };
+    }
+    private List<Dictionary<string, string>> headerInfo = new List<Dictionary<string, string>>
+    {
+        new Dictionary<string, string> {{"Name", "Full Name"}, {"Key","FullName"}, {"CssClass", ""}, {"ShowSorting", "true"}, {"SorderOrder","asc" }, {"ShowFilter", "true"}},
+        new Dictionary<string, string> {{"Name", "Email"}, { "Key","Email"}, { "CssClass", ""}, { "ShowSorting", "false"}, { "SorderOrder","asc" }, { "ShowFilter", "false"}},
+        new Dictionary<string, string> { { "Name", "Status" }, { "Key", "Status" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" } },
+        new Dictionary<string, string> { { "Name", "Role" }, { "Key", "Role" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" } }
+    };
+
+}

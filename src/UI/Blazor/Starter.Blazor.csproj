@@ -1,6 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <ItemGroup>
+    <Content Remove="Shared\CustomGrid\GridBody.razor" />
+    <Content Remove="Shared\CustomGrid\GridHeader.razor" />
+    <Content Remove="Shared\CustomGrid\Pagination.razor" />
+    <Content Remove="Shared\CustomGrid\SampleDataLoad.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" />

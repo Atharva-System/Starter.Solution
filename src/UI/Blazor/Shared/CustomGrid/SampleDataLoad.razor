@@ -1,6 +1,7 @@
 ﻿@page "/sampleDataLoad"
 @using System.Text
 @using System.Text.Json
+@using Starter.Blazor.Modules.Common
 @using Starter.Blazor.Modules.User.Models
 @using Starter.Blazor.Modules.User.Services
 @inject HttpClient httpClient
@@ -53,8 +54,13 @@
 
     private async Task<GridResponse<T>> ApiCall<T>()
     {
+        var paginationRequest = new PaginationRequest
+            {
+                PageSize = this.itemsPerPage,
+                PageNumber = this.currentPage
+            };
         // Generate sample data - replace with your actual data retrieval logic
-        var sampleData = await UserService.GetUserlistsAsync();
+        var sampleData = await UserService.GetUserlistsAsync(paginationRequest);
 
         // You may modify and process 'sampleData' as needed
 
