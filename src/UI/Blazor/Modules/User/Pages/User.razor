@@ -2,6 +2,7 @@
 @using Starter.Blazor.Modules.Common
 @using Starter.Blazor.Modules.User.Models
 @using Starter.Blazor.Modules.User.Services
+@inject IJSRuntime JSRuntime
 @inject IUserService UserService
 
 <div x-data="modal">
@@ -55,7 +56,7 @@
 
     <!-- modal -->
     <div class="fixed inset-0 bg-[black]/60 z-[999] hidden overflow-y-auto" :class="open && '!block'">
-        <div class="flex items-start justify-center min-h-screen px-4">
+        <div class="flex items-center justify-center min-h-screen px-4">
             <div x-show="open" x-transition x-transition.duration.300 class="panel border-0 py-1 px-4 rounded-lg overflow-hidden w-full max-w-sm my-8">
                 <div class="flex items-center justify-between p-5 font-semibold text-lg dark:text-white">
                     Invite User
@@ -150,6 +151,14 @@
     private PaginationRequest param  = new PaginationRequest { PageNumber = 0, PageSize = 10, OrderBy = new[] { "FullName" }};
     private InviteUserDto inviteUser = new InviteUserDto(); 
     private bool openModal = false;
+    private readonly string toastScriptConstant = @"
+        const toast = window.Swal.mixin({
+            toast: true,
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            showCloseButton: true,
+        });";
 
     protected override async Task OnInitializedAsync()
     {
@@ -161,6 +170,15 @@
         var result = await UserService.InviteUserAsync(inviteUser);
         if (result.Success)
         {
+            showToaster(result.Data, "top");
+
+            inviteUser.FirstName = string.Empty;
+            inviteUser.LastName = string.Empty;
+            inviteUser.Email = string.Empty;
+
+            users = await UserService.GetUserlistsAsync(param);
+            StateHasChanged();
+
             openModal = false;
         }
     }
@@ -168,5 +186,11 @@
     private void toggle()
     {
         openModal = !openModal;
+    }
+
+    private void showToaster(string msg, string position)
+    {
+        string toastScript = $"{toastScriptConstant} toast.fire({{ title: '{msg}' }});";
+        JSRuntime.InvokeVoidAsync("eval", toastScript);
     }
 }
