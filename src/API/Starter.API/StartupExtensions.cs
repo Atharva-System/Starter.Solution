@@ -37,11 +37,6 @@ public static class StartupExtensions
             });
         });
 
-        builder.Services.AddCors(options =>
-        {
-            options.AddPolicy("Open", builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
-        });
-
         //builder.Services.AddSwaggerGen();
 
         return builder.Build();
@@ -51,14 +46,14 @@ public static class StartupExtensions
     public static WebApplication ConfigurePipeline(this WebApplication app)
     {
 
-        //if (app.Environment.IsDevelopment())
-        //{
-        app.UseSwagger();
-        app.UseSwaggerUI(c =>
+        if (app.Environment.IsDevelopment() || app.Environment.ToString() == "Docker")
         {
-            c.SwaggerEndpoint("/swagger/v1/swagger.json", "Starter API");
-        });
-        //}
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Starter API");
+            });
+        }
 
 
         // app.UseHttpsRedirection();
@@ -69,7 +64,7 @@ public static class StartupExtensions
 
         app.UseCustomExceptionHandler();
 
-        app.UseCors("Open");
+        app.UseInfrastructureService();
 
         app.UseAuthorization();
 
