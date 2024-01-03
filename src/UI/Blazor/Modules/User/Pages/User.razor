@@ -1,7 +1,8 @@
 ﻿@page "/userlist"
+@using Starter.Blazor.Modules.Common
 @using Starter.Blazor.Modules.User.Models
 @using Starter.Blazor.Modules.User.Services
-@inject UserService UserService
+@inject IUserService UserService
 
 <div class="panel h-full w-full">
     <div class="mb-5 flex items-center justify-between">
@@ -44,11 +45,51 @@
     </div>
 </div>
 
+<div x-data="modal">
+    <!-- button -->
+    <button type="button" class="btn btn-primary" @* @click="toggle" *@>Invite User</button>
+
+    <!-- modal -->
+    <div class="fixed inset-0 bg-[black]/60 z-[999] hidden overflow-y-auto" :class="open && '!block'">
+        <div class="flex items-start justify-center min-h-screen px-4">
+            <div x-show="open" x-transition x-transition.duration.300 class="panel border-0 py-1 px-4 rounded-lg overflow-hidden w-full max-w-sm my-8">
+                <div class="flex items-center justify-between p-5 font-semibold text-lg dark:text-white">
+                    Invite User
+                    @* <button type="button" @click="toggle" class="text-white-dark hover:text-dark">
+                    </button> *@
+                </div>
+                <div class="p-5">
+                    <form @onsubmit="InviteUser">
+                        <div class="relative mb-4">
+                            <input type="text" placeholder="First Name" class="form-input" @bind="inviteUser.FirstName" />
+                        </div>
+                        <div class="relative mb-4">
+                            <input type="text" placeholder="Last Name" class="form-input" @bind="inviteUser.LastName" />
+                        </div>
+                        <div class="relative mb-4">
+                            <input type="email" placeholder="Email" class="form-input" @bind="inviteUser.Email" />
+                        </div>
+                        <button type="submit" class="btn btn-primary w-full">Invite</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @code {
     private List<UserlistDto> users = new List<UserlistDto>();
+    private PaginationRequest param  = new PaginationRequest { PageNumber = 0, PageSize = 10, OrderBy = new[] { "FullName" }};
 
+    private InviteUserDto inviteUser = new InviteUserDto(); 
+   
     protected override async Task OnInitializedAsync()
     {
-        users = await UserService.GetUserlistsAsync();
+        users = await UserService.GetUserlistsAsync(param);
+    }
+
+    private async Task InviteUser()
+    {
+        var result = await UserService.InviteUserAsync(inviteUser);
     }
 }
