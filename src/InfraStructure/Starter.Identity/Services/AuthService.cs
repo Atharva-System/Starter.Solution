@@ -198,24 +198,17 @@ public class AuthService : IAuthService
         {
             throw new NotFoundException("User", userId);
         }
+
         if (newPassword != confirmPassword)
         {
-            return new ChangePasswordResponse
-            {
-                Success = false,
-                Message = "New password does not match the confirmed password."
-            };
+            throw new CustomException("New password does not match the confirmed password.");
         }
 
         var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
 
         if (!result.Succeeded)
         {
-            return new ChangePasswordResponse
-            {
-                Success = false,
-                Message = $"Failed to change password: {string.Join(",", result.Errors.Select(p => p.Description))}"
-            };
+            throw new CustomException($"Failed to change password: {string.Join(",", result.Errors.Select(p => p.Description))}");
         }
 
         return new ChangePasswordResponse
@@ -254,8 +247,6 @@ public class AuthService : IAuthService
                _templateService.GenerateDefaultEmailTemplate(eMailModel));
 
         _jobService.Enqueue(() => _mailService.SendAsync(mailRequest, CancellationToken.None));
-
-        await _mailService.SendAsync(mailRequest, CancellationToken.None);
     }
 
     public async Task ResetPasswordAsync(string email, string token, string newPassword)

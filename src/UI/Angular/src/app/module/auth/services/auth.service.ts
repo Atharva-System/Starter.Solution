@@ -5,6 +5,7 @@ import { IRegistrationRequest } from '../models/registration-request.interface';
 import { IAuthenticationRequest } from '../models/authentication-request.interface';
 import { IInviteUserRequest } from '../models/invite-user-request.interface';
 import { IResetPasswordRequest } from '../models/reset-password-request.interface';
+import { IChangePasswordRequest } from '../models/change-password.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -39,7 +40,11 @@ export class AuthService {
     return this.apiHandlerService.post(APIs.forgotPasswordApi, param);
   }
 
-  resetpassword(model: IResetPasswordRequest) {
-    return this.apiHandlerService.post(APIs.reserpasswordApi, model);
+  resetPassword(model: IResetPasswordRequest) {
+    return this.apiHandlerService.post(APIs.resetPasswordApi, model);
+  }
+
+  changePassword(model: IChangePasswordRequest) {
+    return this.apiHandlerService.post(APIs.changePasswordApi, model);
   }
 }

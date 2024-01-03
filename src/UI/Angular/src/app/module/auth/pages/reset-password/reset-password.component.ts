@@ -97,7 +97,7 @@ export class ResetPasswordComponent {
         newPassword: this.formResetPassword.value.password,
         token: token,
       };
-      this.authService.resetpassword(this.forgotPasswordData).subscribe(
+      this.authService.resetPassword(this.forgotPasswordData).subscribe(
         (res: any) => {
           this.isSubmitFormResetPassword = false;
           this.alertService.showMessage(res.data);
