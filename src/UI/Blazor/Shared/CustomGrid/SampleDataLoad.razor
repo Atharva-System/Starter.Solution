@@ -1,4 +1,12 @@
 ﻿@page "/sampleDataLoad"
+@using System.Text
+@using System.Text.Json
+@using Starter.Blazor.Modules.User.Models
+@using Starter.Blazor.Modules.User.Services
+@inject HttpClient httpClient
+@inject IJSRuntime jsRuntime
+@inject NavigationManager navigationManager
+@inject UserService UserService
 <div class="panel mt-6">
     <h5 class="text-lg font-semibold dark:text-white-light">Advanced</h5>
     <div class="dataTable-wrapper dataTable-loading no-footer sortable fixed-columns">
@@ -15,7 +23,7 @@
 </div>
 
 @code {
-    private List<Dictionary<string, object>> DisplayedData = new List<Dictionary<string, object>>();
+    private List<UserlistDto> DisplayedData = new List<UserlistDto>();
     private List<Dictionary<string, string>> headerInfo = new List<Dictionary<string, string>>();
     private int currentPage = 1;
     private int totalPages = 0;
@@ -33,38 +41,41 @@
     {
         // Simulate fetching data from a service or database
         // Here, we'll simulate with some hardcoded data
-        var allData = GenerateSampleData();
+        var allData = await ApiCall<UserlistDto>();
 
         // Paginate the data based on the current page and items per page
-        DisplayedData = PaginateData(allData, currentPage, itemsPerPage);
+        DisplayedData = PaginateData<UserlistDto>(allData.Data, currentPage, itemsPerPage);
 
         // Calculate total pages
-        totalPages = (int)Math.Ceiling((double)allData.Count / itemsPerPage);
-        totalRecord = allData.Count;
+        totalPages = (int)Math.Ceiling((double)allData.Data.Count / itemsPerPage);
+        totalRecord = allData.Data.Count;
     }
 
-    private List<Dictionary<string, object>> GenerateSampleData()
+    private async Task<GridResponse<T>> ApiCall<T>()
     {
         // Generate sample data - replace with your actual data retrieval logic
-        var sampleData = new List<Dictionary<string, object>>();
+        var sampleData = await UserService.GetUserlistsAsync();
 
-        // Add sample data rows
-        for (int i = 1; i <= 100; i++)
+        // You may modify and process 'sampleData' as needed
+
+        // Simulating API response structure
+        var response = new GridResponse<T>
+            {
+                Data = sampleData.Cast<T>().ToList(), // Assuming sampleData is of type List<T>
+                HeaderInfo = new List<Dictionary<string, string>>
         {
-            sampleData.Add(new Dictionary<string, object> { { "FullName", "Alice" + i.ToString() }, { "Status", "Active" }, { "Role", "Admin" }, { "Email", "alice@example.com" } });
+            new Dictionary<string, string> {{"Name", "Full Name"}, {"Key","FullName"}, {"CssClass", ""}, {"ShowSorting", "true"}, {"SorderOrder","asc" }, {"ShowFilter", "true"}},
+            new Dictionary<string, string> {{"Name", "Email"}, {"Key","Email"}, {"CssClass", ""}, {"ShowSorting", "false"}, {"SorderOrder","asc" }, {"ShowFilter", "false"}},
+            new Dictionary<string, string> {{"Name", "Status"}, {"Key","Status"}, {"CssClass", ""}, {"ShowSorting", "false"}, {"SorderOrder","asc" }, {"ShowFilter", "false"}},
+            new Dictionary<string, string> {{"Name", "Role"}, {"Key","Role"}, {"CssClass", ""}, {"ShowSorting", "false"}, {"SorderOrder","asc" }, {"ShowFilter", "false"}}
         }
-        headerInfo = new List<Dictionary<string, string>>
-        {
-            new Dictionary<string, string> {{"Name", "Full Name"},{ "Key","FullName"}, {"CssClass", ""}, {"ShowSorting", "true"},{ "SorderOrder","asc" }, {"ShowFilter", "true"}},
-            new Dictionary<string, string> {{"Name", "Email"},{ "Key","Email"}, {"CssClass", ""}, {"ShowSorting", "false"},{ "SorderOrder","asc" }, {"ShowFilter", "false"}},
-            new Dictionary<string, string> {{"Name", "Status"},{ "Key","Status"}, {"CssClass", ""}, {"ShowSorting", "false"},{ "SorderOrder","asc" }, {"ShowFilter", "false"}},
-            new Dictionary<string, string> {{"Name", "Role"},{ "Key","Role"}, {"CssClass", ""}, {"ShowSorting", "false"},{ "SorderOrder","asc" }, {"ShowFilter", "false"}},
+                // You might have additional properties or metadata here
+            };
 
-        };
-        return sampleData;
+        return response;
     }
 
-    private List<Dictionary<string, object>> PaginateData(List<Dictionary<string, object>> data, int currentPage, int pageSize)
+    private List<T> PaginateData<T>(List<T> data, int currentPage, int pageSize)
     {
         // Perform pagination based on the current page and items per page
         return data.Skip((currentPage - 1) * pageSize).Take(pageSize).ToList();
