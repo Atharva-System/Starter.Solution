@@ -61,7 +61,7 @@ public partial class UsersService
         {
             Subject = "User Invitation",
             HeyUserName = user.FirstName + " " + user.LastName,
-            YourDomain = _configuration.GetSection("CorsSettings")["CorsURLs"],
+            YourDomain = origin,
             ButtonText = "Accept Invitation",
             RowData = new List<string> { "Join our exclusive plateform and unlock premium features.", "Connect with like-minded individuals and expand your network.", "Experience the power of collaboration. Click the button to accept the invitation!" },
             ButtonAnchorUrl = userInvitedEmailUri,

@@ -148,9 +148,9 @@
 @code {
     private List<UserlistDto> users = new List<UserlistDto>();
     private PaginationRequest param  = new PaginationRequest { PageNumber = 0, PageSize = 10, OrderBy = new[] { "FullName" }};
-
     private InviteUserDto inviteUser = new InviteUserDto(); 
-   
+    private bool openModal = false;
+
     protected override async Task OnInitializedAsync()
     {
         users = await UserService.GetUserlistsAsync(param);
@@ -159,5 +159,14 @@
     private async Task InviteUser()
     {
         var result = await UserService.InviteUserAsync(inviteUser);
+        if (result.Success)
+        {
+            openModal = false;
+        }
+    }
+
+    private void toggle()
+    {
+        openModal = !openModal;
     }
 }
