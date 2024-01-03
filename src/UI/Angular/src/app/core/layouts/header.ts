@@ -1,4 +1,4 @@
-﻿import { Component, inject } from '@angular/core';
+﻿import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
   Router,
@@ -41,6 +41,7 @@ import { appPaths } from '../../shared/constants/routes';
   ],
 })
 export class HeaderComponent {
+  @Output() openChangePasswordPopup = new EventEmitter();
   routes = {
     users: '/' + appPaths.users,
   };
@@ -181,5 +182,9 @@ export class HeaderComponent {
 
   signOut() {
     this.authenticationService.signOut();
+  }
+
+  openChangePasswordModal() {
+    this.openChangePasswordPopup.emit();
   }
 }

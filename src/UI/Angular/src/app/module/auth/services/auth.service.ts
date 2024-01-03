@@ -39,7 +39,11 @@ export class AuthService {
     return this.apiHandlerService.post(APIs.forgotPasswordApi, param);
   }
 
-  resetpassword(model: IResetPasswordRequest) {
+  resetPassword(model: IResetPasswordRequest) {
     return this.apiHandlerService.post(APIs.reserpasswordApi, model);
+  }
+  
+  changePassword(model: IResetPasswordRequest) {
+    return this.apiHandlerService.post(APIs.changepasswordApi, model);
   }
 }

@@ -5,6 +5,7 @@ export class APIs {
   static refreshTokenApi = '/Auth/refreshToken';
   static forgotPasswordApi = '/Auth/forgotPassword';
   static reserpasswordApi = '/Auth/resetPassword';
+  static changepasswordApi = '/Auth/changePassword';
 
   //User
   static searchUserApi = '/Users/search';
