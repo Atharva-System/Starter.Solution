@@ -60,7 +60,7 @@ public class UsersController(IUsersService userService, IConfiguration configura
     [MustHavePermission(Action.Create, Resource.Users)]
     public async Task<ApiResponse<string>> InviteAsync(CreateUserInvitation request)
     {
-        return await Mediator.Send(new CreateUserInvitationRequest() { request = request, Origion = GetOriginFromRequest(_configuration) });
+            return await Mediator.Send(new CreateUserInvitationRequest() { request = request, Origion = GetOriginFromRequest(_configuration) });
     }
 
     [HttpPut("{id}/update-profile")]
