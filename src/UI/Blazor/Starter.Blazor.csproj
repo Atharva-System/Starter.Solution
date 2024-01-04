@@ -21,6 +21,8 @@
     <Folder Include="Modules\Login\Page\" />
     <Folder Include="Modules\Settings\" />
     <Folder Include="Modules\Users\" />
+    <Folder Include="Modules\ForgotPassword\" />
+    <Folder Include="Modules\ResetPassword\" />
     <Folder Include="Modules\Task\" />
     <Folder Include="Modules\User\Components\" />
     <Folder Include="Shared\Components\Button\" />
