@@ -1,14 +1,47 @@
 /* animation */
 @import 'animate.css';
 
+/* quill editor */
+@import 'quill-editor.css';
+
+/* full calendar */
+@import 'fullcalendar.css';
+
+/* swiper */
+@import 'swiper.css';
+
 /* sweetalert */
 @import 'sweetalert.css';
+
+/* tippy */
+@import 'tippy.css';
+
+/* flatpickr */
+@import 'flatpickr.css';
+
+/* file upload with preview */
+@import 'file-upload-preview.css';
+
+/* select2 */
+@import 'select2.css';
+
+/* wizard */
+@import 'wizard.css';
 
 /* vue3-datatable */
 @import 'datatable.css';
 
-/* modal popup */
-@import 'modal.css';
+/* lightbox */
+@import 'lightbox.css';
+
+/* scrumboard */
+@import 'scrumboard.css';
+
+/* dragndrop */
+@import 'dragndrop.css';
+
+/* form element*/
+@import 'form-elements.css';
 
 @tailwind base;
 @tailwind components;
@@ -57,7 +90,7 @@
 
     .sidebar .nav-item > button,
     .sidebar .nav-item > a {
-        @apply mb-1 flex w-full items-center justify-between overflow-hidden whitespace-nowrap rounded-md p-2.5 text-[#506690] hover:bg-[#000]/[0.08] hover:text-black dark:hover:bg-[#181f32] dark:hover:text-white-dark;
+        @apply mb-1 flex items-center w-full justify-between overflow-hidden whitespace-nowrap rounded-md p-2.5 text-[#506690] hover:bg-[#000]/[0.08] hover:text-black dark:hover:bg-[#181f32] dark:hover:text-white-dark;
     }
     .sidebar .nav-item > button.active,
     .sidebar .nav-item > a.active {
@@ -71,7 +104,7 @@
 
     .sidebar ul.sub-menu li button,
     .sidebar ul.sub-menu li a {
-        @apply flex w-full items-center px-9 py-2.5 before:h-0.5 before:w-2 before:rounded before:bg-gray-300 hover:bg-gray-100
+        @apply flex items-center w-full px-9 py-2.5 before:h-0.5 before:w-2 before:rounded before:bg-gray-300 hover:bg-gray-100
 hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark:before:bg-gray-500 dark:hover:bg-gray-900 dark:hover:text-primary;
     }
     .sidebar ul.sub-menu li button.active,
@@ -106,7 +139,7 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
     }
 
     .horizontal .nav-item a div:first-child svg {
-        @apply h-5 w-5 text-black/50 dark:text-white/50;
+        @apply w-5 h-5 text-black/50 dark:text-white/50;
     }
 
     .horizontal .dark .nav-item a div:first-child svg,
@@ -115,7 +148,7 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
     }
 
     .horizontal-menu .nav-link {
-        @apply flex items-center rounded-lg py-2.5 px-2 hover:bg-[#000]/[0.08] hover:text-black dark:hover:bg-[#181f32] dark:hover:text-white-dark xl:px-4;
+        @apply flex items-center py-2.5 px-2 rounded-lg hover:bg-[#000]/[0.08] hover:text-black dark:hover:bg-[#181f32] dark:hover:text-white-dark xl:px-4;
     }
 
     .horizontal-menu .nav-link.active {
@@ -455,8 +488,8 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
         @apply flex;
     }
     .dropdown ul {
-        @apply absolute z-10 mt-1 min-w-[120px] rounded bg-white p-0 py-2 text-black shadow dark:bg-[#1b2e4b] dark:text-white-dark;
-        /* @apply my-1 min-w-[120px] rounded bg-white p-0 py-2 shadow dark:bg-[#1b2e4b]  text-black dark:text-white-dark; */
+        /* @apply absolute z-10 mt-1 min-w-[120px] rounded bg-white p-0 py-2 shadow dark:bg-[#1b2e4b]; */
+        @apply my-1 min-w-[120px] rounded bg-white p-0 py-2 shadow dark:bg-[#1b2e4b]  text-black dark:text-white-dark;
     }
     .dropdown ul li > a,
     .dropdown ul li > button {
@@ -509,32 +542,28 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
     pre {
         direction: ltr;
     }
-
-    .accordion-content {
-        @apply overflow-hidden;
-        /* max-height: 0;
-        overflow: hidden;
-        transition: max-height 350ms ease-out; */
-    }
 }
 
 /* perfect scrollbar */
-.ng-scrollbar {
-    --scrollbar-size: 6px !important;
-    --scrollbar-thumb-color: #dddddd !important;
-    --scrollbar-padding: 0px !important;
+.ps__rail-y > .ps__thumb-y,
+.ps__rail-y > .ps__thumb-y {
+    @apply !w-1.5 !bg-[#DDDDDD] dark:!bg-[#2d334c];
 }
-
-.collapsible-vertical .sidebar .ng-scroll-content {
-    @apply !block;
+.ps .ps__rail-x:hover,
+.ps .ps__rail-y:hover,
+.ps .ps__rail-x:focus,
+.ps .ps__rail-y:focus,
+.ps .ps__rail-x.ps--clicking,
+.ps .ps__rail-y.ps--clicking {
+    @apply !opacity-60;
 }
-
-.sidebar .ng-scrollbar {
-    --scrollbar-padding: 2px !important;
-}
-
-.dark .ng-scrollbar {
-    --scrollbar-thumb-color: #2d334c !important;
+.ps .ps__rail-x:hover,
+.ps .ps__rail-y:hover,
+.ps .ps__rail-x:focus,
+.ps .ps__rail-y:focus,
+.ps .ps__rail-x.ps--clicking,
+.ps .ps__rail-y.ps--clicking {
+    @apply !bg-transparent;
 }
 
 /* swal2 */
@@ -648,11 +677,11 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
 }
 .slide-down-enter-from,
 .slide-down-leave-to {
-    @apply scale-95 transform opacity-0;
+    @apply transform scale-95 opacity-0;
 }
 .slide-down-enter-to,
 .slide-down-leave-from {
-    @apply scale-100 transform opacity-100;
+    @apply transform scale-100 opacity-100;
 }
 
 .modal-fade-enter-active {
@@ -663,19 +692,17 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
 }
 .modal-fade-enter-from,
 .modal-fade-leave-to {
-    @apply scale-95 transform opacity-0;
+    @apply transform opacity-0 scale-95;
 }
 .modal-fade-enter-to,
 .modal-fade-leave-from {
-    @apply scale-100 transform opacity-100;
+    @apply transform opacity-100 scale-100;
 }
 
-/* highlightjs */
-pre code.hljs {
-    @apply overflow-x-auto rounded-md !bg-[#191e3a] p-4 text-white;
+/* vue-collapsible */
+[data-height-collapsible] {
+    transition: height 280ms cubic-bezier(0.4, 0, 0.2, 1);
 }
-
-/* ngx-scrollbar */
-.ng-scroll-viewport {
-    @apply w-full;
+.no-animtion [data-height-collapsible] {
+    transition: none !important;
 }

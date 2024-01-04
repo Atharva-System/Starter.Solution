@@ -30,6 +30,7 @@ appSetting.init();
 import i18n from '@/i18n';
 app.use(i18n);
 
+
 // popper
 import Popper from 'vue3-popper';
 // eslint-disable-next-line vue/multi-word-component-names

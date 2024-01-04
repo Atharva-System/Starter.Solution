@@ -1,9 +1,5 @@
+@import 'vue3-perfect-scrollbar/dist/vue3-perfect-scrollbar.css';
+@import 'tippy.js/dist/tippy.css';
+@import '@bhplugin/vue3-datatable/dist/style.css';
 @import 'tailwind.css';
-
-.d-block{
-    display: block;
-}
-
-.d-none{
-    display: none;
-}
+@import 'sweetalert2.css';

@@ -27,6 +27,6 @@ export const usePageTitle = (pageTitle: string): void => {
 
 export const useMeta = (data: any) => {
     return useHead(
-        { ...data, title: `${data.title} | Starter - To-Do` }
+        { ...data, title: `${data.title} | Starter | TODO` }
     );
 };
