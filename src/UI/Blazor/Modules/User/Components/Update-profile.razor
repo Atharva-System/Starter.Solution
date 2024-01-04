@@ -1,5 +1,7 @@
 ﻿@page "/update-profile"
+@using Microsoft.AspNetCore.Authorization
 @using Starter.Blazor.Core.AuthProviders
+@using Starter.Blazor.Modules.Login.Services
 @using Starter.Blazor.Modules.User.Models
 @using Starter.Blazor.Modules.User.Services
 @inject IUserService UserService
@@ -7,6 +9,8 @@
 @inject ILocalStorageService LocalStorage
 @inject HttpClient httpClient
 @inject UserAuthID UserAuthId
+@inject IAuthService AuthService
+@attribute [Authorize]
 
 <div class="animate__animated p-6" :class="[$store.app.animation]">
     <!-- start main content section -->
@@ -57,10 +61,16 @@
 
 @code {
     private UpdateProfileDto UpdateProfile = new UpdateProfileDto();
+    bool isAuthenticated = false;
 
     protected override async Task OnInitializedAsync()
     {
-        var userData = await UserService.GetProfileDetailAsync(UserAuthId.GetUserId());
+        isAuthenticated = await AuthService.IsUserAuthenticated();
+        if (!isAuthenticated)
+        {
+            navigationManager.NavigateTo("/login");
+        }
+        UpdateProfile = await UserService.GetProfileDetailAsync();
     }
 
     private async Task HandleUpdateProfile()
