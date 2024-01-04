@@ -1,0 +1,94 @@
+﻿@page "/accept-invite"
+@using Starter.Blazor.Modules.User.Models
+@using Starter.Blazor.Modules.User.Services
+@inject IUserService UserService
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+
+
+<div class="main-container min-h-screen text-black dark:text-white-dark">
+    <!-- start main content section -->
+    <div class="flex min-h-screen items-center justify-center bg-[url('../images/map.svg')] bg-cover bg-center dark:bg-[url('../images/map-dark.svg')]">
+        <div class="panel m-6 w-full max-w-lg sm:w-[480px]">
+            <h2 class="mb-3 text-2xl font-bold">Create Account</h2>
+            <EditForm Model="@userRegister" class="space-y-5" OnValidSubmit="CreateAccount">
+                <DataAnnotationsValidator />
+                <div class="flex space-x-4">
+                    <div>
+                        <label for="firstName">First Name</label>
+                        <input id="firstName" type="text" class="form-input" placeholder="Enter First Name" @bind="user.FirstName" readonly />
+                    </div>
+                    <div>
+                        <label for="lastName">Last Name</label>
+                        <input id="lastName" type="text" class="form-input" placeholder="Enter Last Name" @bind="user.LastName" readonly />
+                    </div>
+                </div>
+                <div>
+                    <label for="email">Email</label>
+                    <input id="email" type="email" class="form-input" placeholder="Enter Email" @bind="user.Email" readonly />
+                </div>
+                <div>
+                    <label for="password">Password</label>
+                    <input id="password" type="password" class="form-input" placeholder="Enter Password" @bind="userRegister.Password" />
+                    <ValidationMessage For="@(() => userRegister.Password)" />
+                </div>
+            
+                <button type="submit" class="btn btn-primary w-full">Create</button>
+            </EditForm>
+        </div>
+    </div>
+    <!-- end main content section -->
+</div>
+
+@code {
+    private AcceptInviteDto user = new AcceptInviteDto();
+    private UserRegisterDto userRegister = new UserRegisterDto();
+    private readonly string toastScriptConstant = @"
+        const toast = window.Swal.mixin({
+            toast: true,
+            position: 'top',
+            showConfirmButton: false,
+            timer: 4000,
+            showCloseButton: true,
+        });";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var uri = new Uri(NavigationManager.Uri);
+        var userId = System.Web.HttpUtility.ParseQueryString(uri.Query).Get("userId");
+
+        if (!string.IsNullOrEmpty(userId))
+        {
+            var response = await UserService.GetAcceptInviteDetails(userId);
+
+            if (response.Success)
+            {
+                user = response.Data;
+                user.Id = userId;
+            }
+        }
+    }
+
+    private async Task CreateAccount()
+    {
+        userRegister.UserId = user.Id; 
+         
+        var result = await UserService.AcceptInvite(userRegister); 
+        if (result.Success) 
+        { 
+            showToaster(result.Data, "top"); 
+            NavigationManager.NavigateTo("/login"); 
+            StateHasChanged(); 
+        } 
+        else 
+        { 
+            showToaster(result.Messages.FirstOrDefault(), "top");
+        } 
+    } 
+
+    private void showToaster(string msg, string position)
+    { 
+        string toastScript = $"{toastScriptConstant} toast.fire({{ title: '{msg}' }});"; 
+        JSRuntime.InvokeVoidAsync("eval", toastScript); 
+    } 
+}
