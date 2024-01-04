@@ -255,7 +255,6 @@ public class AuthService : IAuthService
 
         if (user == null)
         {
-
             throw new InvalidOperationException($"User with email '{email}' not found.");
         }
 
@@ -276,8 +275,8 @@ public class AuthService : IAuthService
         {
             throw new InvalidOperationException("Invalid token for password reset.");
         }
-
     }
+
 
     #endregion
 

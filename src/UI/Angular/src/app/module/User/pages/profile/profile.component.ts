@@ -7,7 +7,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { FieldValidation } from '../../../../shared/constants/constants';
+import { FieldValidation, Regex } from '../../../../shared/constants/constants';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 import { InputComponent } from '../../../../shared/ui/input/input.component';
 import { AlertService } from '../../../../shared/services/alert.service';
@@ -43,6 +43,7 @@ export class ProfileComponent implements OnInit {
         Validators.compose([
           Validators.required,
           Validators.maxLength(FieldValidation.firstNameMaxLength),
+          Validators.pattern(Regex.noSpaceValidationPattern),
         ]),
       ],
       lastName: [
@@ -50,6 +51,7 @@ export class ProfileComponent implements OnInit {
         Validators.compose([
           Validators.required,
           Validators.maxLength(FieldValidation.lastNameMaxLength),
+          Validators.pattern(Regex.noSpaceValidationPattern),
         ]),
       ],
       email: [
