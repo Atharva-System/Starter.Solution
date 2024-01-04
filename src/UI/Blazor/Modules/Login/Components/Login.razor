@@ -1,8 +1,9 @@
-﻿@page "/login"
+﻿@page "/"
 @using System.Text
 @using System.Text.Json
 @using Starter.Blazor.Core.AuthProviders
 @using Starter.Blazor.Modules.Login.Services
+@layout Layout.Public.AuthLayout
 @inject HttpClient httpClient
 @inject NavigationManager navigationManager
 @inject ILocalStorageService LocalStorage
