@@ -309,7 +309,7 @@
         isAuthenticated = await AuthService.IsUserAuthenticated();
         if (!isAuthenticated)
         {
-            navigationManager.NavigateTo("/login");
+            navigationManager.NavigateTo("/");
         }
     }
 }

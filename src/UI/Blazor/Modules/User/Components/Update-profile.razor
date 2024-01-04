@@ -27,6 +27,7 @@
             <div>
                 <div>
                     <EditForm class="mb-5 rounded-md border border-[#ebedf2] bg-white p-4 dark:border-[#191e3a] dark:bg-[#0e1726]" Model="@UpdateProfile" OnValidSubmit="HandleUpdateProfile">
+                        <DataAnnotationsValidator />
                         <h6 class="mb-5 text-lg font-bold">General Information</h6>
                         <div class="flex flex-col sm:flex-row">
                             <div class="mb-5 w-full sm:w-2/12 ltr:sm:mr-4 rtl:sm:ml-4">
@@ -38,17 +39,20 @@
                                 <div>
                                     <label for="name">First Name</label>
                                     <InputText id="FirstName" type="text" placeholder="Jimmy" class="form-input" @bind-Value="UpdateProfile.FirstName" />
+                                    <ValidationMessage For="@(() => UpdateProfile.FirstName)" />
                                 </div>
                                 <div>
-                                    <label for="profession">Last Nmae</label>
+                                    <label for="profession">Last Name</label>
                                     <InputText id="lastName" type="text" placeholder="Turner" class="form-input" @bind-Value="UpdateProfile.LastName" />
+                                    <ValidationMessage For="@(() => UpdateProfile.LastName)" />
                                 </div>
                                 <div>
                                     <label for="email">Email</label>
                                     <InputText id="email" type="email" placeholder="Jimmy@gmail.com" class="form-input" @bind-Value="UpdateProfile.Email" />
+                                    <ValidationMessage For="@(() => UpdateProfile.Email)" />
                                 </div>
                                 <div class="mt-3 sm:col-span-2">
-                                    <button type="submit" class="btn btn-primary w-full">SIGN IN</button>
+                                    <button type="submit" class="btn btn-primary w-full">Update Profile</button>
                                 </div>
                             </div>
                         </div>
@@ -68,7 +72,7 @@
         isAuthenticated = await AuthService.IsUserAuthenticated();
         if (!isAuthenticated)
         {
-            navigationManager.NavigateTo("/login");
+            navigationManager.NavigateTo("/");
         }
 
         UpdateProfile = await UserService.GetProfileDetailAsync();
