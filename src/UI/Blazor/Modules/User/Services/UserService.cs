@@ -24,8 +24,8 @@ public class UserService(HttpClient http, ILocalStorageService localStorageServi
             var response = await _httpClient.GetAsync("api/Users/get-profile-details");
             if (response.IsSuccessStatusCode)
             {
-                var user = await response.Content.ReadFromJsonAsync<UpdateProfileDto>();
-                return user;
+                var user = await response.Content.ReadFromJsonAsync<ApiResponse<UpdateProfileDto>>();
+                return user.Data;
             }
             return null;
         }

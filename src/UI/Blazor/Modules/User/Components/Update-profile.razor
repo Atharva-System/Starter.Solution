@@ -70,7 +70,9 @@
         {
             navigationManager.NavigateTo("/login");
         }
+
         UpdateProfile = await UserService.GetProfileDetailAsync();
+
     }
 
     private async Task HandleUpdateProfile()
