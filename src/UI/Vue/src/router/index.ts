@@ -7,6 +7,19 @@ import HomeView from '../views/index.vue';
 const routes: RouteRecordRaw[] = [
     // dashboard
     { path: '/', name: 'home', component: HomeView },
+    // authentication
+    {
+        path: '/auth/sign-in',
+        name: 'sign-in',
+        component: () => import(/* webpackChunkName: "auth-boxed-signin" */ '../views/auth/sign-in.vue'),
+        meta: { layout: 'auth' },
+    },
+    {
+        path: '/auth/forgot-password',
+        name: 'forgot-password',
+        component: () => import(/* webpackChunkName: "forgot-password" */ '../views/auth/forgot-password.vue'),
+        meta: { layout: 'auth' },
+    },
 ];
 
 const router = createRouter({
