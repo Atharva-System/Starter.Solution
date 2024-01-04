@@ -32,6 +32,7 @@ public class AuthController(ILogger<AuthController> logger, IAuthService authSer
     {
         return Ok(await _authService.RefreshTokenAsync(request));
     }
+
     [Authorize]
     [HttpPost("changePassword")]
     public async Task<ActionResult<ChangePasswordResponse>> ChangePasswordAsync(ChangePasswordRequest request)
@@ -42,29 +43,7 @@ public class AuthController(ILogger<AuthController> logger, IAuthService authSer
             return Unauthorized();
         }
 
-        try
-        {
-            var response = await _authService.ChangePasswordAsync(userId, request.CurrentPassword, request.NewPassword, request.ConfirmPassword);
-
-            if (response.Success)
-            {
-                return Ok(response);
-            }
-            else
-            {
-                return BadRequest(response);
-            }
-        }
-        catch (Exception ex)
-        {
-            var errorResponse = new ChangePasswordResponse
-            {
-                Success = false,
-                Message = ex.Message
-            };
-
-            return BadRequest(errorResponse);
-        }
+        return Ok(await _authService.ChangePasswordAsync(userId, request.CurrentPassword, request.NewPassword, request.ConfirmPassword));
     }
 
     [HttpPost("forgotPassword")]
@@ -90,5 +69,5 @@ public class AuthController(ILogger<AuthController> logger, IAuthService authSer
             StatusCode = HttpStatusCodes.OK
         };
     }
-    
+
 }

@@ -60,10 +60,10 @@ public class UsersController(IUsersService userService, IConfiguration configura
     [MustHavePermission(Action.Create, Resource.Users)]
     public async Task<ApiResponse<string>> InviteAsync(CreateUserInvitation request)
     {
-        return await Mediator.Send(new CreateUserInvitationRequest() { request = request, Origion = GetOriginFromRequest(_configuration) });
+            return await Mediator.Send(new CreateUserInvitationRequest() { request = request, Origion = GetOriginFromRequest(_configuration) });
     }
 
-    [HttpPut("{id}/update-profile")]
+    [HttpPut("update-profile/{id}")]
     [MustHavePermission(Action.Update, Resource.Users)]
     public async Task<ApiResponse<string>> UpdateProfileAsync(string id, UpdateProfileRequest request)
     {
@@ -101,5 +101,12 @@ public class UsersController(IUsersService userService, IConfiguration configura
     public async Task<ApiResponse<UserInviteDto>> GetAcceptInviteDetailsAsync(string userId)
     {
         return await _usersService.GetAcceptInviteDetailsAsync(userId);
+    }
+
+    [HttpGet("get-profile-details")]
+    [MustHavePermission(Action.View, Resource.Users)]
+    public async Task<ApiResponse<UserProfileDto>> GetProfileDetailAsync()
+    {
+        return await _usersService.GetProfileDetailAsync();
     }
 }

@@ -2,6 +2,7 @@
   #modalComponent
   class="modal-center animate animate-fade-in"
   (onCancel)="resetForm()"
+  [closeOnOutsideClick]="false"
 >
   <ng-template #modalHeader> <div>Invite User</div> </ng-template>
   <ng-template #modalBody>

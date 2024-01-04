@@ -4,7 +4,8 @@ export class APIs {
   static signupApi = '/Auth/register';
   static refreshTokenApi = '/Auth/refreshToken';
   static forgotPasswordApi = '/Auth/forgotPassword';
-  static reserpasswordApi = '/Auth/resetPassword';
+  static resetPasswordApi = '/Auth/resetPassword';
+  static changePasswordApi = '/Auth/changePassword';
 
   //User
   static searchUserApi = '/Users/search';
@@ -14,4 +15,6 @@ export class APIs {
   static getUserApi = '/Users/';
   static updateUserApi = '/users/';
   static getInviteDetails = '/users/get-invite-details';
+  static getProfileDetails = '/users/get-profile-details';
+  static updateProfile = '/users/update-profile/';
 }

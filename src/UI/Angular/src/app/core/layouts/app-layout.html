@@ -91,7 +91,7 @@
       <!--  BEGIN CONTENT AREA  -->
       <div class="main-content">
         <!--  BEGIN TOP NAVBAR  -->
-        <header></header>
+        <header (openChangePasswordPopup)="openChangePasswordModal()"></header>
         <!--  END TOP NAVBAR  -->
         <div class="animation p-6">
           <router-outlet></router-outlet>
@@ -104,3 +104,6 @@
     </div>
   </div>
 </div>
+<app-change-password-modal
+  #changePasswordModalComponent
+></app-change-password-modal>

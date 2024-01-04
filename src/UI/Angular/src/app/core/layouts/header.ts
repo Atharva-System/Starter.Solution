@@ -1,4 +1,4 @@
-﻿import { Component, inject } from '@angular/core';
+﻿import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
   Router,
@@ -15,6 +15,8 @@ import { FormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
 import { AuthenticationService } from '../services/authentication.service';
 import { appPaths } from '../../shared/constants/routes';
+import { UserService } from '../../module/user/services/user.service';
+import { IUserProfileSignal } from '../../module/user/models/user-profile.interface';
 
 @Component({
   selector: 'header',
@@ -41,18 +43,29 @@ import { appPaths } from '../../shared/constants/routes';
   ],
 })
 export class HeaderComponent {
+  @Output() openChangePasswordPopup = new EventEmitter();
   routes = {
     users: '/' + appPaths.users,
+    profile: '/' + appPaths.profile,
   };
+  
   appSetting = inject(AppService);
   router = inject(Router);
   translate = inject(TranslateService);
   storeData = inject(Store<any>);
   sanitizer = inject(DomSanitizer);
   authenticationService = inject(AuthenticationService);
+  userService = inject(UserService);
+  profileFromSignal = this.userService.profileSignal;
 
   constructor() {
     this.initStore();
+    var userInfo = this.authenticationService.getUser();
+    var profile = {
+      email: userInfo?.email,
+      name: userInfo?.name,
+    } as IUserProfileSignal;
+    this.userService.setProfileSignal(profile);
   }
 
   store: any;
@@ -181,5 +194,9 @@ export class HeaderComponent {
 
   signOut() {
     this.authenticationService.signOut();
+  }
+
+  openChangePasswordModal() {
+    this.openChangePasswordPopup.emit();
   }
 }

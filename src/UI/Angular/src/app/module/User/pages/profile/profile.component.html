@@ -1,0 +1,62 @@
+<div class="pt-5">
+  <div>
+    <div>
+      <form
+        class="mb-5 rounded-md border border-[#ebedf2] bg-white p-4 dark:border-[#191e3a] dark:bg-[#0e1726]"
+      >
+        <h6 class="mb-5 text-lg font-bold">Profile Information</h6>
+        <div class="flex flex-col sm:flex-row">
+          <div class="mb-5 w-full sm:w-2/12 ltr:sm:mr-4 rtl:sm:ml-4">
+            <img
+              src="/assets/images/default_profile.png"
+              alt=""
+              class="mx-auto h-20 w-20 rounded-full object-cover md:h-32 md:w-32"
+            />
+          </div>
+          <form
+            class="grid flex-1 grid-cols-1 gap-5 sm:grid-cols-2"
+            [formGroup]="formProfile"
+            (ngSubmit)="submitFormProfile()"
+            novalidate
+          >
+            <div>
+              <label for="name">First Name</label>
+              <app-input
+                formControlName="firstName"
+                [control]="formProfile.controls['firstName']"
+                [isSubmit]="isSubmitFormProfile"
+                placeholder="Enter First Name"
+              ></app-input>
+            </div>
+            <div>
+              <label for="profession">Last Name</label>
+              <app-input
+                formControlName="lastName"
+                [control]="formProfile.controls['lastName']"
+                [isSubmit]="isSubmitFormProfile"
+                placeholder="Enter Last Name"
+              ></app-input>
+            </div>
+            <div>
+              <label for="profession">Email</label>
+              <app-input
+                formControlName="email"
+                [control]="formProfile.controls['email']"
+                [isSubmit]="isSubmitFormProfile"
+                placeholder="Enter Email"
+              ></app-input>
+            </div>
+            <div class="mt-3 sm:col-span-2">
+              <app-button
+                text="Save"
+                type="submit"
+                classes="btn-primary"
+                class="d-block"
+              ></app-button>
+            </div>
+          </form>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
