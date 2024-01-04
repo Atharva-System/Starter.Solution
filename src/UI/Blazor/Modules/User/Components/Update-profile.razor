@@ -1,0 +1,95 @@
+﻿@page "/update-profile"
+@using Microsoft.AspNetCore.Authorization
+@using Starter.Blazor.Core.AuthProviders
+@using Starter.Blazor.Modules.Login.Services
+@using Starter.Blazor.Modules.User.Models
+@using Starter.Blazor.Modules.User.Services
+@inject IUserService UserService
+@inject NavigationManager navigationManager
+@inject ILocalStorageService LocalStorage
+@inject HttpClient httpClient
+@inject UserAuthID UserAuthId
+@inject IAuthService AuthService
+@attribute [Authorize]
+
+<div class="animate__animated p-6" :class="[$store.app.animation]">
+    <!-- start main content section -->
+    <div>
+        <ul class="flex space-x-2 rtl:space-x-reverse">
+            <li>
+                <a href="javascript:;" class="text-primary hover:underline">Users</a>
+            </li>
+            <li class="before:content-['/'] ltr:before:mr-1 rtl:before:ml-1">
+                <span>Account Settings</span>
+            </li>
+        </ul>
+        <div class="pt-5">
+            <div>
+                <div>
+                    <EditForm class="mb-5 rounded-md border border-[#ebedf2] bg-white p-4 dark:border-[#191e3a] dark:bg-[#0e1726]" Model="@UpdateProfile" OnValidSubmit="HandleUpdateProfile">
+                        <h6 class="mb-5 text-lg font-bold">General Information</h6>
+                        <div class="flex flex-col sm:flex-row">
+                            <div class="mb-5 w-full sm:w-2/12 ltr:sm:mr-4 rtl:sm:ml-4">
+                                <img src="assets//images/profile-34.jpeg"
+                                     alt="image"
+                                     class="mx-auto h-20 w-20 rounded-full object-cover md:h-32 md:w-32" />
+                            </div>
+                            <div class="grid flex-1 grid-cols-1 gap-5 sm:grid-cols-2">
+                                <div>
+                                    <label for="name">First Name</label>
+                                    <InputText id="FirstName" type="text" placeholder="Jimmy" class="form-input" @bind-Value="UpdateProfile.FirstName" />
+                                </div>
+                                <div>
+                                    <label for="profession">Last Nmae</label>
+                                    <InputText id="lastName" type="text" placeholder="Turner" class="form-input" @bind-Value="UpdateProfile.LastName" />
+                                </div>
+                                <div>
+                                    <label for="email">Email</label>
+                                    <InputText id="email" type="email" placeholder="Jimmy@gmail.com" class="form-input" @bind-Value="UpdateProfile.Email" />
+                                </div>
+                                <div class="mt-3 sm:col-span-2">
+                                    <button type="submit" class="btn btn-primary w-full">SIGN IN</button>
+                                </div>
+                            </div>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private UpdateProfileDto UpdateProfile = new UpdateProfileDto();
+    bool isAuthenticated = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isAuthenticated = await AuthService.IsUserAuthenticated();
+        if (!isAuthenticated)
+        {
+            navigationManager.NavigateTo("/login");
+        }
+
+        UpdateProfile = await UserService.GetProfileDetailAsync();
+
+    }
+
+    private async Task HandleUpdateProfile()
+    {
+        UpdateProfile.Id = UserAuthId.GetUserId();
+        var response = await UserService.UpdateUserProfileAsync(UserAuthId.GetUserId(), UpdateProfile);
+
+        if (response != null)
+        {
+            if (response != null)
+            {
+                navigationManager.NavigateTo("/");
+            }
+            else
+            {
+                //errorMessage = result.Messages.FirstOrDefault();
+            }
+        }
+    }
+}

@@ -8,4 +8,6 @@ public interface IUserService
 {
     Task<List<UserlistDto>> GetUserlistsAsync(PaginationRequest param);
     Task<ApiResponse<string>> InviteUserAsync(InviteUserDto userDto);
+    Task<string> UpdateUserProfileAsync(string UserId, UpdateProfileDto userDto);
+    Task<UpdateProfileDto> GetProfileDetailAsync();
 }
