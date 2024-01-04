@@ -6,6 +6,7 @@ export class Regex {
 export class StorageKey {
   static tokenKey = 'authToken';
   static refreshTokenKey = 'refreshToken';
+  static userInfo = 'userInfo';
 }
 
 export class AlertNotification {

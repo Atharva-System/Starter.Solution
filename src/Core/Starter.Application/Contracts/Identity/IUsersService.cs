@@ -20,4 +20,5 @@ public interface IUsersService : ITransientService
     Task<List<string>> GetPermissionAsync(string userId, CancellationToken cancellationToken);
     Task<bool> HasPermissionAsync(string? userId, string permission, CancellationToken cancellationToken = default);
     Task<ApiResponse<UserInviteDto>> GetAcceptInviteDetailsAsync(string userId);
+    Task<ApiResponse<UserProfileDto>> GetProfileDetailAsync();
 }
