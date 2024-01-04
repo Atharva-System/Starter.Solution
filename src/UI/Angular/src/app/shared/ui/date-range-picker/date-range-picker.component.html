@@ -1,0 +1,25 @@
+<div [ngClass]="isSubmit ? (Control.errors ? 'has-error' : '') : ''">
+  <input
+    type="text"
+    class="form-input"
+    mwlFlatpickr
+    [placeholder]="placeholder"
+    [monthSelectorType]="'dropdown'"
+    [dateFormat]="'m/d/y'"
+    [minDate]="minDate"
+    [convertModelValue]="true"
+    [(ngModel)]="rangeValue"
+    mode="range"
+    (flatpickrChange)="selectedDateRange($event.selectedDates)"
+    [ngClass]="classes"
+    id="dateInput"
+  />
+  @if (showClearButton) {
+    <button class="clear-x-btn btn-icon" (click)="clearAndEmit()">
+      <i class="i-x"></i>
+    </button>
+  }
+  @if (isSubmit && Control.errors?.["required"]) {
+    <p class="mt-1 text-danger">This can not be empty</p>
+  }
+</div>

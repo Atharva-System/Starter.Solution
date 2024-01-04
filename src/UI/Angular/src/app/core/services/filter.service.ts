@@ -4,7 +4,7 @@ import { PaginationFilter } from '../models/pagination-filter.interface';
 @Injectable({
   providedIn: 'root',
 })
-export class CommonFilterService {
+export class FilterService {
   defaultFilter: PaginationFilter = {
     AdvancedFilter: null,
     PageNumber: 1,

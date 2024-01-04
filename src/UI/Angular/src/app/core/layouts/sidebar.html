@@ -66,9 +66,10 @@
           </h2>
           <li class="nav-item">
             <ul>
+              @for (item of menuItems; track item) {
               <li class="nav-item">
                 <a
-                  [routerLink]="routes.users"
+                  [routerLink]="item.link"
                   class="group"
                   routerLinkActive="active"
                   (click)="toggleMobileMenu()"
@@ -97,11 +98,12 @@
 
                     <span
                       class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark"
-                      >{{ 'list_users' | translate }}</span
+                      >{{ item.label| translate }}</span
                     >
                   </div>
                 </a>
               </li>
+              }
             </ul>
           </li>
         </ul>

@@ -1,11 +1,17 @@
 /* animation */
 @import 'animate.css';
 
+/* quill editor */
+@import 'quill-editor.css';
+
 /* sweetalert */
 @import 'sweetalert.css';
 
 /* vue3-datatable */
 @import 'datatable.css';
+
+/* flatpickr */
+@import 'flatpickr.css';
 
 /* modal popup */
 @import 'modal.css';

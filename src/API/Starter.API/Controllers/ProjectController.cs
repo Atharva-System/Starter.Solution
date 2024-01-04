@@ -8,6 +8,7 @@ using Starter.Application.Features.Projects.Command.UpdateProject;
 using Starter.Application.Features.Projects.Dtos;
 using Starter.Application.Features.Projects.Query.GetProject;
 using Starter.Application.Features.Projects.Query.GetProjectDetails;
+using Starter.Application.Models.Specification.Filters;
 using Starter.Identity.Authorizations;
 using Starter.Identity.Authorizations.Permissions;
 using Action = Starter.Identity.Authorizations.Action;
@@ -25,9 +26,9 @@ public class ProjectController : BaseApiController
 
     [HttpPost("Search")]
     [MustHavePermission(Action.Search, Resource.Project)]
-    public async Task<IPagedDataResponse<ProjectListDto>> GetListAsync(ListProjectQueryReqeust request)
+    public async Task<IPagedDataResponse<ProjectListDto>> SearchAsync(PaginationFilter request)
     {
-        return await Mediator.Send(request);
+        return await Mediator.Send(new ListProjectQueryReqeust() { PaginationFilter = request });
     }
 
     [HttpGet("{id:guid}")]

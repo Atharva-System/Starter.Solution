@@ -2,16 +2,16 @@ import { NgClass, NgStyle } from '@angular/common';
 import { Component, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DataTableModule, colDef } from '@bhplugin/ng-datatable';
-import { UserService } from '../../services/user.service';
 import { PaginationFilter } from '../../../../core/models/pagination-filter.interface';
 import { FilterService } from '../../../../core/services/filter.service';
-import { ButtonComponent } from '../../../../shared/ui/button/button.component';
-import { InviteUserModalComponent } from '../../components/invite-user-modal/invite-user-modal.component';
-import { DeleteConfirmationModalComponent } from '../../../../shared/ui/delete-confirmation-modal/delete-confirmation-modal.component';
 import { AlertService } from '../../../../shared/services/alert.service';
+import { ButtonComponent } from '../../../../shared/ui/button/button.component';
+import { DeleteConfirmationModalComponent } from '../../../../shared/ui/delete-confirmation-modal/delete-confirmation-modal.component';
+import { ManageProjectModalComponent } from '../../components/manage-project-modal/manage-project-modal.component';
+import { ProjectService } from '../../services/project.service';
 
 @Component({
-  selector: 'app-list-users',
+  selector: 'app-list-projects',
   standalone: true,
   imports: [
     NgClass,
@@ -19,32 +19,33 @@ import { AlertService } from '../../../../shared/services/alert.service';
     DataTableModule,
     FormsModule,
     ButtonComponent,
-    InviteUserModalComponent,
+    ManageProjectModalComponent,
     DeleteConfirmationModalComponent,
   ],
-  templateUrl: './list-users.component.html',
-  styleUrl: './list-users.component.css',
+  templateUrl: './list-projects.component.html',
+  styleUrl: './list-projects.component.css',
 })
-export class ListUsersComponent {
-  @ViewChild('inviteUserModal') inviteUserModal!: InviteUserModalComponent;
-  @ViewChild('deleteUserModal')
-  deleteUserModal!: DeleteConfirmationModalComponent;
+export class ListProjectsComponent {
+  @ViewChild('manageProjectModalComponent')
+  manageProjectModalComponent!: ManageProjectModalComponent;
+  @ViewChild('deleteProjectModal')
+  deleteProjectModal!: DeleteConfirmationModalComponent;
 
-  userService = inject(UserService);
+  projectService = inject(ProjectService);
   filterService = inject(FilterService);
   alertService = inject(AlertService);
   timer: any;
-  deleteUserId = '';
-  editUserId = '';
+  deleteProjectId = '';
+  editProjectId = '';
 
   params: PaginationFilter;
 
   loading: boolean = true;
   cols: Array<colDef> = [
-    { field: 'fullName', title: 'Full Name' },
-    { field: 'email', title: 'Email' },
-    { field: 'status', title: 'Status' },
-    { field: 'role', title: 'Role' },
+    { field: 'projectName', title: 'Project Name' },
+    { field: 'startDateDisplay', title: 'Start Date' },
+    { field: 'endDateDisplay', title: 'End Date' },
+    { field: 'estimatedHours', title: 'Estimated Hours' },
     {
       field: 'action',
       title: 'Action',
@@ -59,12 +60,12 @@ export class ListUsersComponent {
 
   constructor() {
     this.params = { ...this.filterService.defaultFilter };
-    this.getUsers();
+    this.getProject();
   }
 
-  async getUsers() {
+  async getProject() {
     this.loading = true;
-    this.userService.getUsers(this.params).subscribe((data) => {
+    this.projectService.getProjects(this.params).subscribe((data) => {
       this.rows = data?.data;
       this.total_rows = data?.totalCount;
       this.loading = false;
@@ -74,29 +75,29 @@ export class ListUsersComponent {
   changeServer(data: any) {
     this.params.PageNumber = data.current_page;
     this.params.PageSize = data.pagesize;
-    this.params.OrderBy = [data.sort_column + ' ' + data.sort_direction];
+    this.params.OrderBy = [
+      this.getSortColumnName(data.sort_column) + ' ' + data.sort_direction,
+    ];
     this.params = this.filterService.generateFilter(
       data.column_filters,
       this.params,
     );
     if (data.change_type === 'filter') {
-      this.filterUsers();
+      this.filterProjects();
     } else {
-      this.getUsers();
+      this.getProject();
     }
   }
 
-  filterUsers() {
+  filterProjects() {
     clearTimeout(this.timer);
     this.timer = setTimeout(() => {
-      this.getUsers();
+      this.getProject();
     }, 300);
   }
 
   getBadgeColor(status: string): string {
     switch (status) {
-      case 'Invited':
-        return 'badge-outline-info';
       case 'Active':
         return 'badge-outline-success';
       case 'Inactive':
@@ -104,37 +105,49 @@ export class ListUsersComponent {
       default:
         return 'badge-outline-info';
     }
-    return '';
   }
 
-  openInviteUserModal() {
-    this.inviteUserModal.open();
+  getSortColumnName(column: string): string {
+    switch (column) {
+      case 'startDateDisplay':
+        return 'startDate';
+      case 'endDateDisplay':
+        return 'endDate';
+      default:
+        return column;
+    }
   }
 
-  deleteUser(id: string) {
-    this.deleteUserModal.open();
-    this.deleteUserId = id;
+  openCreateProjectModal() {
+    this.manageProjectModalComponent.open();
   }
 
-  editUser(id: string) {
-    this.editUserId = id;
-    this.openInviteUserModal();
+  deleteProject(id: string) {
+    this.deleteProjectModal.open();
+    this.deleteProjectId = id;
+  }
+
+  editProject(id: string) {
+    this.editProjectId = id;
+    this.openCreateProjectModal();
   }
 
   onDelete() {
-    this.userService.deleteUser(this.deleteUserId).subscribe((data) => {
-      this.alertService.showMessage(data.message);
-      this.getUsers();
-      this.deleteUserModal.close();
-    });
+    this.projectService
+      .deleteProject(this.deleteProjectId)
+      .subscribe((data) => {
+        this.alertService.showMessage(data.message);
+        this.getProject();
+        this.deleteProjectModal.close();
+      });
   }
 
   onSave() {
-    this.getUsers();
+    this.getProject();
     this.onCancel();
   }
 
   onCancel() {
-    this.deleteUserId = this.editUserId = '';
+    this.deleteProjectId = this.editProjectId = '';
   }
 }

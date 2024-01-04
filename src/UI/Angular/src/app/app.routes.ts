@@ -10,6 +10,7 @@ import { SigninComponent } from './module/auth/pages/signin/signin.component';
 import { AcceptInvitationComponent } from './module/auth/pages/accept-invitation/accept-invitation.component';
 import { ResetPasswordComponent } from './module/auth/pages/reset-password/reset-password.component';
 import { ProfileComponent } from './module/user/pages/profile/profile.component';
+import { ListProjectsComponent } from './module/project/pages/list-projects/list-projects.component';
 
 export const routes: Routes = [
   {
@@ -30,6 +31,10 @@ export const routes: Routes = [
         path: appPaths.profile,
         component: ProfileComponent,
         title: pageTitle.profile,
+      }, {
+        path: appPaths.projects,
+        component: ListProjectsComponent,
+        title: pageTitle.projects,
       },
     ],
     canActivate: [AuthGuard],

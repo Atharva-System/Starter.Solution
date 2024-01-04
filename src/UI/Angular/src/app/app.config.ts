@@ -17,6 +17,7 @@ import { AppService } from './shared/services/app.service';
 import { indexReducer } from './shared/store/index.reducer';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { routes } from './app.routes';
+import { FlatpickrModule } from 'angularx-flatpickr';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -33,6 +34,7 @@ export const appConfig: ApplicationConfig = {
       }),
       StoreModule.forRoot({ index: indexReducer }),
       NgScrollbarModule,
+      FlatpickrModule.forRoot(),
     ),
     AppService,
     Title,
