@@ -36,6 +36,11 @@ public class UserService(HttpClient http, ILocalStorageService localStorageServi
         }
     }
 
+    public async Task<ApiResponse<AcceptInviteDto>> GetAcceptInviteDetails(string userId)
+    {
+        return await _httpClient.GetFromJsonAsync<ApiResponse<AcceptInviteDto>>($"api/Users/get-invite-details/{userId}");
+    }
+
     public async Task<List<UserlistDto>> GetUserlistsAsync(PaginationRequest param)
     {
         try {
@@ -51,6 +56,35 @@ public class UserService(HttpClient http, ILocalStorageService localStorageServi
         {
             Console.WriteLine($"Error: {ex.Message}");
             return [];
+        }
+    }
+
+    public async Task<ApiResponse<string>> AcceptInvite(UserRegisterDto userRegister)
+    {
+        try
+        {
+            var result = await _httpClient.PostAsJsonAsync("api/Users/accept-invite", userRegister);
+            var newResponse = await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
+            if (newResponse != null && newResponse.Success)
+            {
+                return newResponse;
+            }
+            else
+            {
+                return new ApiResponse<string>
+                {
+                    Success = false,
+                    Messages = newResponse.Messages,
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+            return new ApiResponse<string>
+            {
+                Success = false,
+            };
         }
     }
 
@@ -74,7 +108,7 @@ public class UserService(HttpClient http, ILocalStorageService localStorageServi
                     Messages = newResponse.Messages,
                 };
             }
-    }
+        }
         catch (Exception ex)
         {
             Console.WriteLine($"Error: {ex.Message}");
