@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Starter.Blazor.Core.Auth;
 using Starter.Blazor.Modules.Login.Services;
 using Blazored.LocalStorage;
+using Starter.Blazor.Modules.ForgotPassword.Services;
+using Starter.Blazor.Modules.ResetPassword.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -23,7 +25,8 @@ builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStat
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<CustomAuthenticationStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<CustomAuthenticationStateProvider>());
-
+builder.Services.AddScoped<ForgotPasswordService>();
+builder.Services.AddScoped<ResetPasswordService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
 await builder.Build().RunAsync();

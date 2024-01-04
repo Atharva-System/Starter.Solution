@@ -255,7 +255,7 @@ public class AuthService : IAuthService
 
         _jobService.Enqueue(() => _mailService.SendAsync(mailRequest, CancellationToken.None));
 
-        await _mailService.SendAsync(mailRequest, CancellationToken.None);
+       
     }
 
     public async Task ResetPasswordAsync(string email, string token, string newPassword)
@@ -264,7 +264,6 @@ public class AuthService : IAuthService
 
         if (user == null)
         {
-
             throw new InvalidOperationException($"User with email '{email}' not found.");
         }
 
@@ -285,8 +284,8 @@ public class AuthService : IAuthService
         {
             throw new InvalidOperationException("Invalid token for password reset.");
         }
-
     }
+
 
     #endregion
 
