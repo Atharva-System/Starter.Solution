@@ -1,12 +1,18 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { ApiHandlerService } from '../../../core/services/api-handler.service';
 import { APIs } from '../../../shared/constants/api-endpoints';
 import { IUpdateUser } from '../models/update-user.interface';
+import {
+  IUserProfile,
+  IUserProfileSignal,
+} from '../models/user-profile.interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
+  profileSignal = signal<IUserProfileSignal | undefined>(undefined);
+
   apiHandlerService = inject(ApiHandlerService);
 
   getUsers(params: any) {
@@ -23,5 +29,17 @@ export class UserService {
 
   updateUsers(params: IUpdateUser) {
     return this.apiHandlerService.put(APIs.updateUserApi + params.id, params);
+  }
+
+  getProfileDetail() {
+    return this.apiHandlerService.get(APIs.getProfileDetails);
+  }
+
+  updateProfile(params: IUserProfile) {
+    return this.apiHandlerService.put(APIs.updateProfile + params.id, params);
+  }
+
+  setProfileSignal(param: IUserProfileSignal) {
+    this.profileSignal.set(param);
   }
 }

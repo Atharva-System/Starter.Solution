@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   Component,
   EventEmitter,
@@ -35,9 +35,8 @@ import { IUpdateUser } from '../../models/update-user.interface';
     ReactiveFormsModule,
     InputComponent,
     ButtonComponent,
-    ModalComponent,
-    CommonModule,
-  ],
+    ModalComponent
+],
   templateUrl: './invite-user-modal.component.html',
   styleUrl: './invite-user-modal.component.css',
 })

@@ -54,27 +54,34 @@ public class UserService(HttpClient http, ILocalStorageService localStorageServi
         }
     }
 
-    public async Task<string> InviteUserAsync(InviteUserDto userDto)
+    public async Task<ApiResponse<string>> InviteUserAsync(InviteUserDto userDto)
     {
         try
         {
             var result = await _httpClient.PostAsJsonAsync("api/Users/invite-user", userDto);
 
-            result.EnsureSuccessStatusCode();
-
             var newResponse = await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
 
             if (newResponse != null && newResponse.Success)
             {
-                return newResponse.Data;
+                return newResponse;
             }
-
-            return "";
-        }
+            else
+            {
+                return new ApiResponse<string>
+                {
+                    Success = false,
+                    Messages = newResponse.Messages,
+                };
+            }
+    }
         catch (Exception ex)
         {
             Console.WriteLine($"Error: {ex.Message}");
-            return "";
+            return new ApiResponse<string>
+            {
+                Success = false,
+            };
         }
     }
 
