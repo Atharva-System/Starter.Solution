@@ -35,20 +35,21 @@ public class UserService(HttpClient http) : IUserService
         {
             var result = await _httpClient.PostAsJsonAsync("api/Users/invite-user", userDto);
 
-            result.EnsureSuccessStatusCode();
-
             var newResponse = await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
 
             if (newResponse != null && newResponse.Success)
             {
                 return newResponse;
             }
-
-            return new ApiResponse<string>
+            else
             {
-                Success = false,
-            };
-        }
+                return new ApiResponse<string>
+                {
+                    Success = false,
+                    Messages = newResponse.Messages,
+                };
+            }
+    }
         catch (Exception ex)
         {
             Console.WriteLine($"Error: {ex.Message}");

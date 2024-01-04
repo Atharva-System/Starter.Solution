@@ -181,6 +181,10 @@
             users = await UserService.GetUserlistsAsync(param);
             StateHasChanged();
         }
+        else
+        {
+            showToaster(result.Messages.FirstOrDefault(), "top");
+        }
     }
 
     private void showToaster(string msg, string position)
