@@ -3,6 +3,7 @@ import { useAppStore } from '@/stores/index';
 import appSetting from '@/app-setting';
 
 import HomeView from '../views/index.vue';
+import tokenService from '@/services/token.service';
 
 const routes: RouteRecordRaw[] = [
     // dashboard
@@ -41,7 +42,14 @@ router.beforeEach((to, from, next) => {
     if (to?.meta?.layout == 'auth') {
         store.setMainLayout('auth');
     } else {
-        store.setMainLayout('app');
+        const token = tokenService.getLocalAccessToken();
+        if (token) {
+            store.setMainLayout('app');
+        }
+        else{
+            store.setMainLayout('auth');
+            next('/auth/sign-in');
+        }
     }
     next(true);
 });

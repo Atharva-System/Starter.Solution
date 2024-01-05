@@ -110,7 +110,7 @@
                                     </li>
 
                                     <li>
-                                        <router-link to="/auth/boxed-lockscreen" class="dark:hover:text-white"
+                                        <router-link to="/user/change-password" class="dark:hover:text-white"
                                             @click="close()">
                                             <svg class="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2" width="18" height="18"
                                                 viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
