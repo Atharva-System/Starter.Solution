@@ -8,20 +8,20 @@
                 <div>
                     <label for="email">Email</label>
                     <input id="email" type="email" class="form-input" placeholder="Enter Email" v-model="login.email" @input="v$.login.email.$touch()"/>
-                    <template v-if="v$.login.email.required.$invalid">
+                    <template v-if="isSubmitted && v$.login.email.required.$invalid">
                         <p class="text-danger mt-1">Please fill the Email</p>
                     </template>
-                    <template v-if="v$.login.email.maxLength.$invalid">
+                    <template v-if="isSubmitted && v$.login.email.maxLength.$invalid">
                         <p class="text-danger mt-1">The email must be less than 100 characters.</p>
                     </template>
                 </div>
                 <div>
                     <label for="password">Password</label>
                     <input id="password" type="password" class="form-input" placeholder="Enter Password" v-model="login.password"  @input="v$.login.password.$touch()"/>
-                    <template v-if="v$.login.password.required.$invalid">
+                    <template v-if="isSubmitted && v$.login.password.required.$invalid">
                         <p class="text-danger mt-1">Please fill the Password</p>
                     </template>
-                    <template v-if="v$.login.password.minLength.$invalid">
+                    <template v-if="isSubmitted && v$.login.password.minLength.$invalid">
                         <p class="text-danger mt-1">The password must be longer than 6 characters.</p>
                     </template>
 
