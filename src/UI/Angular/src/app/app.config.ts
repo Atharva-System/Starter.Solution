@@ -9,7 +9,6 @@ import { BrowserModule, Title } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { StoreModule } from '@ngrx/store';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { MenuModule } from 'headlessui-angular';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { AuthInterceptor } from './core/interceptor/auth.interceptor';
 import { ErrorInterceptor } from './core/interceptor/error.interceptor';
@@ -23,7 +22,6 @@ export const appConfig: ApplicationConfig = {
   providers: [
     importProvidersFrom(
       BrowserModule,
-      MenuModule,
       HttpClientModule,
       TranslateModule.forRoot({
         loader: {
@@ -55,7 +53,6 @@ export const appConfig: ApplicationConfig = {
     },
   ],
 };
-
 
 export function httpTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http);

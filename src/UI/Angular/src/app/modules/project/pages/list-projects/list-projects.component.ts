@@ -9,6 +9,12 @@ import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 import { DeleteConfirmationModalComponent } from '../../../../shared/ui/delete-confirmation-modal/delete-confirmation-modal.component';
 import { ManageProjectModalComponent } from '../../components/manage-project-modal/manage-project-modal.component';
 import { ProjectService } from '../../services/project.service';
+import { MenuModule } from 'headlessui-angular';
+import {
+  DropdownComponent,
+  IDropdownItems,
+} from '../../../../shared/ui/dropdown/dropdown.component';
+import { DateRangePickerComponent } from '../../../../shared/ui/date-range-picker/date-range-picker.component';
 
 @Component({
   selector: 'app-list-projects',
@@ -21,6 +27,9 @@ import { ProjectService } from '../../services/project.service';
     ButtonComponent,
     ManageProjectModalComponent,
     DeleteConfirmationModalComponent,
+    MenuModule,
+    DropdownComponent,
+    DateRangePickerComponent,
   ],
   templateUrl: './list-projects.component.html',
   styleUrl: './list-projects.component.css',
@@ -30,6 +39,11 @@ export class ListProjectsComponent {
   manageProjectModalComponent!: ManageProjectModalComponent;
   @ViewChild('deleteProjectModal')
   deleteProjectModal!: DeleteConfirmationModalComponent;
+  search = '';
+  searchDates: { from: any; to: any } = {
+    from: '',
+    to: '',
+  };
 
   projectService = inject(ProjectService);
   filterService = inject(FilterService);
@@ -37,7 +51,8 @@ export class ListProjectsComponent {
   timer: any;
   deleteProjectId = '';
   editProjectId = '';
-
+  selectedFilterDropdownField = 'projectName';
+  searchBoxType = 'text';
   params: PaginationFilter;
 
   loading: boolean = true;
@@ -55,12 +70,42 @@ export class ListProjectsComponent {
     },
   ];
 
+  filterDropdownDs: IDropdownItems[] = [
+    {
+      text: 'Project Name',
+      value: 'projectName',
+      selected: true,
+      type: 'string',
+    },
+    { text: 'Start Date', value: 'startDate', type: 'date' },
+    { text: 'End Date', value: 'endDate', type: 'date' },
+    { text: 'Estimated Hours', value: 'estimatedHours', type: 'decimal' },
+  ];
+
   rows: Array<any> = [];
   total_rows: number = 0;
 
   constructor() {
     this.params = { ...this.filterService.defaultFilter };
     this.getProject();
+  }
+
+  selectFilterDropdown(field: string) {
+    if (field == 'estimatedHours') {
+      this.searchBoxType = 'number';
+    } else if (field == 'startDate' || field == 'endDate') {
+      this.searchBoxType = 'date';
+    } else {
+      this.searchBoxType = 'string';
+    }
+    this.selectedFilterDropdownField = field;
+    if (
+      this.search != '' ||
+      this.searchDates.from != '' ||
+      this.searchDates.to != ''
+    ) {
+      this.clearSearchBox();
+    }
   }
 
   async getProject() {
@@ -78,22 +123,7 @@ export class ListProjectsComponent {
     this.params.OrderBy = [
       this.getSortColumnName(data.sort_column) + ' ' + data.sort_direction,
     ];
-    this.params = this.filterService.generateFilter(
-      data.column_filters,
-      this.params,
-    );
-    if (data.change_type === 'filter') {
-      this.filterProjects();
-    } else {
-      this.getProject();
-    }
-  }
-
-  filterProjects() {
-    clearTimeout(this.timer);
-    this.timer = setTimeout(() => {
-      this.getProject();
-    }, 300);
+    this.getProject();
   }
 
   getBadgeColor(status: string): string {
@@ -149,5 +179,77 @@ export class ListProjectsComponent {
 
   onCancel() {
     this.deleteProjectId = this.editProjectId = '';
+  }
+
+  clearSearchBox() {
+    this.search = '';
+    this.searchDates = {
+      from: '',
+      to: '',
+    };
+    this.params.AdvancedFilter = null;
+    this.getProject();
+  }
+
+  private searchTimeout: any;
+  onSearch() {
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout);
+    }
+    this.searchTimeout = setTimeout(() => {
+      this.params = this.filterService.generateSingleFilter(
+        this.getCondition(this.selectedFilterDropdownField),
+        this.selectedFilterDropdownField,
+        this.parsValue(this.selectedFilterDropdownField, this.search),
+        this.params,
+      );
+      this.getProject();
+      this.searchTimeout = null;
+    }, 1000);
+  }
+
+  parsValue(column: string, value: any): any {
+    switch (column) {
+      case 'estimatedHours':
+        return parseFloat(value);
+      default:
+        return value;
+    }
+  }
+
+  getCondition(column: string): any {
+    switch (column) {
+      case 'projectName':
+        return 'contain';
+      default:
+        return 'equal';
+    }
+  }
+
+  private searchDateTimeout: any;
+  dateRangeSelect(dates: any) {
+    if (!dates || !dates.from || !dates.to) return;
+    var fromDate = dates.from.toISOString().substring(0, 10);
+    var toDate = dates.to.toISOString().substring(0, 10);
+    this.searchDates = dates;
+    if (this.searchDateTimeout) {
+      clearTimeout(this.searchDateTimeout);
+    }
+    this.searchDateTimeout = setTimeout(() => {
+      this.params = this.filterService.dateRangeSingleFilter(
+        {
+          start: this.selectedFilterDropdownField,
+          to: this.selectedFilterDropdownField,
+        },
+        { start: fromDate, to: toDate },
+        this.params,
+      );
+      this.getProject();
+      this.searchDateTimeout = null;
+    }, 1000);
+  }
+
+  dateRangeclear() {
+    this.clearSearchBox();
   }
 }

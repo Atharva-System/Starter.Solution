@@ -1,7 +1,55 @@
 <div class="panel mt-6 pb-0">
   <div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
     <h5 class="text-lg font-semibold dark:text-white-light">Projects</h5>
-    <div class="ltr:ml-auto rtl:mr-auto">
+
+    <div class="flex items-center gap-5 ltr:ml-auto rtl:mr-auto">
+      Filter By:
+      <app-dropdown
+        text="Project Name"
+        [cols]="filterDropdownDs"
+        (selectedValue)="selectFilterDropdown($event)"
+      ></app-dropdown>
+      <div class="group relative" style="width: 200px">
+        @if (searchBoxType == "date") {
+          <app-date-range-picker
+            [placeholder]="'Search'"
+            (onSelect)="dateRangeSelect($event)"
+            (onClear)="dateRangeclear()"
+            [rangeValue]="searchDates"
+          ></app-date-range-picker>
+        } @else {
+          <input
+            [type]="searchBoxType"
+            placeholder="Search"
+            class="peer form-input ltr:pr-8 rtl:pl-8"
+            [(ngModel)]="search"
+            (input)="onSearch()"
+          />
+          @if (search) {
+            <div
+              class="absolute top-1/2 -translate-y-1/2 peer-focus:text-primary ltr:right-[11px] rtl:left-[11px]"
+            >
+              <svg
+                style="cursor: pointer"
+                (click)="clearSearchBox()"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24px"
+                height="24px"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="h-5 w-5"
+              >
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </div>
+          }
+        }
+      </div>
       <app-button
         text="Create"
         type="button"

@@ -37,8 +37,6 @@ export class DateRangePickerComponent implements ControlValueAccessor {
   @Output() onSelect: EventEmitter<{ from: Date; to: Date } | null> =
     new EventEmitter<{ from: Date; to: Date } | null>();
   @Output() onClear: EventEmitter<void> = new EventEmitter<void>();
-  @Input() showClearButton: boolean = false;
-  Language = '';
   @Input() rangeValue: { from: any; to: any } = {
     from: '',
     to: '',
@@ -72,12 +70,9 @@ export class DateRangePickerComponent implements ControlValueAccessor {
         from: startDateUtcDate,
         to: endDateUtcDate,
       };
-
-      this.showClearButton = true;
       this.onChange(range);
       this.onSelect.emit(range);
     } else {
-      this.showClearButton = false;
       this.onSelect.emit(null);
       this.onChange(null);
     }
@@ -85,7 +80,6 @@ export class DateRangePickerComponent implements ControlValueAccessor {
 
   writeValue(obj: any): void {
     this.rangeValue = obj;
-    this.showClearButton = obj != '' && obj != null;
   }
 
   registerOnChange(fn: any): void {
@@ -108,7 +102,6 @@ export class DateRangePickerComponent implements ControlValueAccessor {
       this.Control.markAsTouched();
       this.Control.updateValueAndValidity();
     }
-    this.showClearButton = false;
   }
 
   clearAndEmit() {
