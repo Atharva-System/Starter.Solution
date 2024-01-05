@@ -12,4 +12,5 @@ public interface IUserService
     Task<ApiResponse<string>> AcceptInvite(UserRegisterDto userRegister);
     Task<string> UpdateUserProfileAsync(string UserId, UpdateProfileDto userDto);
     Task<UpdateProfileDto> GetProfileDetailAsync();
+    Task<ApiResponse<string>> DeleteUser(UserlistDto user);
 }
