@@ -145,4 +145,24 @@ public class UserService(HttpClient http, ILocalStorageService localStorageServi
             return "";
         }
     }
+
+    public async Task<ApiResponse<string>> DeleteUser(UserlistDto user)
+    {
+            var result = await _httpClient.DeleteAsync($"api/Users/{user.Id}");
+
+            var newResponse = await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
+
+            if (newResponse != null && newResponse.Success)
+            {
+                return newResponse;
+            }
+            else
+            {
+                return new ApiResponse<string>
+                {
+                    Success = false,
+                    Messages = newResponse.Messages,
+                };
+            }
+    }
 }
