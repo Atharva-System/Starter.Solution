@@ -2,15 +2,15 @@ import { Routes } from '@angular/router';
 import { AuthGuard } from './core/guard/auth.guard';
 import { AppLayout } from './core/layouts/app-layout';
 import { AuthLayout } from './core/layouts/auth-layout';
-import { SignupComponent } from './module/auth/pages/signup/signup.component';
+import { SignupComponent } from './modules/auth/pages/signup/signup.component';
 import { appPaths, authPaths, pageTitle } from './shared/constants/routes';
-import { ForgotPasswordComponent } from './module/auth/pages/forgot-password/forgot-password.component';
-import { ListUsersComponent } from './module/user/pages/list-users/list-users.component';
-import { SigninComponent } from './module/auth/pages/signin/signin.component';
-import { AcceptInvitationComponent } from './module/auth/pages/accept-invitation/accept-invitation.component';
-import { ResetPasswordComponent } from './module/auth/pages/reset-password/reset-password.component';
-import { ProfileComponent } from './module/user/pages/profile/profile.component';
-import { ListProjectsComponent } from './module/project/pages/list-projects/list-projects.component';
+import { ForgotPasswordComponent } from './modules/auth/pages/forgot-password/forgot-password.component';
+import { ListUsersComponent } from './modules/user/pages/list-users/list-users.component';
+import { SigninComponent } from './modules/auth/pages/signin/signin.component';
+import { AcceptInvitationComponent } from './modules/auth/pages/accept-invitation/accept-invitation.component';
+import { ResetPasswordComponent } from './modules/auth/pages/reset-password/reset-password.component';
+import { ProfileComponent } from './modules/user/pages/profile/profile.component';
+import { ListProjectsComponent } from './modules/project/pages/list-projects/list-projects.component';
 
 export const routes: Routes = [
   {

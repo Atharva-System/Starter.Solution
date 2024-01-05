@@ -15,8 +15,8 @@ import { FormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
 import { AuthenticationService } from '../services/authentication.service';
 import { appPaths } from '../../shared/constants/routes';
-import { UserService } from '../../module/user/services/user.service';
-import { IUserProfileSignal } from '../../module/user/models/user-profile.interface';
+import { UserService } from '../../modules/user/services/user.service';
+import { IUserProfileSignal } from '../../modules/user/models/user-profile.interface';
 import { MenuService } from '../services/menu.service';
 
 @Component({
