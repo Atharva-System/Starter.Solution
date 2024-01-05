@@ -31,6 +31,16 @@ export class ErrorInterceptor implements HttpInterceptor {
               error.error.Messages[0],
               AlertNotification.type.error,
             );
+          } else if (error.error.Message) {
+            this.alertService.showMessage(
+              error.error.Message,
+              AlertNotification.type.error,
+            );
+          } else {
+            this.alertService.showMessage(
+              'Something went wrong, please try again!',
+              AlertNotification.type.error,
+            );
           }
         }
         return throwError(() => error);

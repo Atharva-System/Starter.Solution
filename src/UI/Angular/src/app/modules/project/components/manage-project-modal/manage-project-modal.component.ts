@@ -28,6 +28,7 @@ import { ICreateProject } from '../../models/create-project.interface';
 import { QuillModule } from 'ngx-quill';
 import { DateRangePickerComponent } from '../../../../shared/ui/date-range-picker/date-range-picker.component';
 import { CommonService } from '../../../../core/services/common.service';
+import { Regex } from '../../../../shared/constants/constants';
 
 @Component({
   selector: 'app-manage-project-modal',
@@ -109,7 +110,13 @@ export class ManageProjectModalComponent implements OnChanges {
       projectName: ['', Validators.compose([Validators.required])],
       description: [''],
       deadline: ['', Validators.compose([Validators.required])],
-      estimatedHours: ['', Validators.compose([Validators.required])],
+      estimatedHours: [
+        '',
+        Validators.compose([
+          Validators.required,
+          Validators.pattern(Regex.decimalValidationPattern),
+        ]),
+      ],
     });
   }
 

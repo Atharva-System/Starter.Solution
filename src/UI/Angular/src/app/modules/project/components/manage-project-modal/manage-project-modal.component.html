@@ -6,7 +6,7 @@
 >
   <ng-template #modalHeader> <div>Create Project</div> </ng-template>
   <ng-template #modalBody>
-    <form class="space-y-5" [formGroup]="formCreateProject" novalidate>
+    <form class="space-y-5" [formGroup]="formCreateProject" novalidate (keydown.enter)="submitForm()">
       <div>
         <label for="projectName">Name</label>
         <app-input

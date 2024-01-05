@@ -14,5 +14,5 @@ public class ProjectListDto
     public DateTime EndDate { get; set; }
     public string StartDateDisplay { get; set; }
     public string EndDateDisplay { get; set; }
-    public TimeOnly EstimatedHours { get; set; }
+    public decimal EstimatedHours { get; set; }
 }
