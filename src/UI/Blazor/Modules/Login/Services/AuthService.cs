@@ -2,6 +2,7 @@
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Starter.Blazor.Core.Response;
 using Starter.Blazor.Modules.Login.Model;
 
 namespace Starter.Blazor.Modules.Login.Services;
@@ -11,10 +12,13 @@ public class AuthService : IAuthService
     private readonly HttpClient _http;
     private readonly AuthenticationStateProvider _authStateProvider;
     private const string AuthBaseURL = "api/auth/";
-    public AuthService(HttpClient http, AuthenticationStateProvider authStateProvider)
+    private readonly ILocalStorageService _localStorageService;
+    private readonly NavigationManager _navigationManager;
+    public AuthService(ILocalStorageService localStorageService, HttpClient http, AuthenticationStateProvider authStateProvider)
     {
         _http = http;
         _authStateProvider = authStateProvider;
+        _localStorageService = localStorageService;
     }
     public async Task<bool> IsUserAuthenticated()
     {
@@ -33,7 +37,7 @@ public class AuthService : IAuthService
 
     public async Task<string> RefreshToken()
     {
-        var token = await _localStorage.GetItemAsync<string>("authToken");
+        var token = await _localStorageService.GetItemAsync<string>("authToken");
         var request = new RefreshTokenRequest() { CurrentToken = token };
 
         var result = await _http.PostAsJsonAsync($"{AuthBaseURL}refreshToken", request);
@@ -43,7 +47,7 @@ public class AuthService : IAuthService
         {
             if (response.Success)
             {
-                await _localStorage.SetItemAsync("authToken", response.Data.Token);
+                await _localStorageService.SetItemAsync("authToken", response.Data.Token);
                 await _authStateProvider.GetAuthenticationStateAsync();
                 return response.Data.Token;
             }
