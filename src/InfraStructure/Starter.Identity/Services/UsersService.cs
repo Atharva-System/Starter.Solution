@@ -150,7 +150,7 @@ public partial class UsersService(UserManager<ApplicationUser> userManager,
 
         if (user.IsSuperAdmin == true && user.Email == _configuration["AppSettings:UserEmail"])
         {
-            throw new Exception($"Not allowed to deleted '{userId}' member.");
+            throw new Exception($"Not allowed to deleted member.");
         }
 
         //Check for any task assigned to user
@@ -158,7 +158,7 @@ public partial class UsersService(UserManager<ApplicationUser> userManager,
 
         if (userTask)
         {
-            throw new Exception($"Cannot delete as Task is assigned to '{userId}' user.");
+            throw new Exception($"Cannot delete as Task is assigned to user.");
         }
 
         user.NormalizedUserName = user.UserName = user.UserName + "_" + Guid.NewGuid().ToString();
@@ -219,6 +219,32 @@ public partial class UsersService(UserManager<ApplicationUser> userManager,
             Data = "Profile updated successfully.",
             StatusCode = result.Succeeded ? HttpStatusCodes.OK : HttpStatusCodes.BadRequest,
             Message = result.Succeeded ? $"User {ConstantMessages.UpdatedSuccessfully}" : $"{ConstantMessages.FailedToUpdate} user profile."
+        };
+    }
+
+    public async Task<ApiResponse<UserProfileDto>> GetProfileDetailAsync()
+    {
+        var userDetail = await _userManager.FindByIdAsync(_currentUserService.UserId);
+
+        if (userDetail == null)
+        {
+            throw new NotFoundException("User not found", _currentUserService.UserId);
+        }
+
+        var profileDetail = new UserProfileDto()
+        {
+            Id = userDetail.Id,
+            Email = userDetail.Email,
+            ImageUrl = userDetail.ImageUrl,
+            FirstName = userDetail.FirstName,
+            LastName = userDetail.LastName
+        };
+
+        return new ApiResponse<UserProfileDto>
+        {
+            Success = true,
+            Data = profileDetail,
+            StatusCode = HttpStatusCodes.OK
         };
     }
 }

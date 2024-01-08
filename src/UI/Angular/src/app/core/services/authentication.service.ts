@@ -28,6 +28,14 @@ export class AuthenticationService {
 
   setToken(token: string): void {
     localStorage.setItem(StorageKey.tokenKey, token);
+    this.setUser();
+  }
+
+  setUser() {
+    localStorage.setItem(
+      StorageKey.userInfo,
+      JSON.stringify(this.decodeToken(this.getToken() ?? '')),
+    );
   }
 
   getToken(): string | null {
@@ -45,6 +53,7 @@ export class AuthenticationService {
   clearToken(): void {
     localStorage.removeItem(StorageKey.tokenKey);
     localStorage.removeItem(StorageKey.refreshTokenKey);
+    localStorage.removeItem(StorageKey.userInfo);
   }
 
   isAuthenticated(): boolean {
@@ -64,6 +73,10 @@ export class AuthenticationService {
     return decodedToken;
   }
 
+  getUser(): TokenClaims | null {
+    return JSON.parse(localStorage.getItem(StorageKey.userInfo) ?? '');
+  }
+
   signOut() {
     this.clearToken();
     this.router.navigate(['/' + authPaths.signin]);
@@ -75,5 +88,17 @@ export class AuthenticationService {
       refreshToken: this.getRefreshToken() ?? '',
     };
     return this.apiHandlerService.post(APIs.refreshTokenApi, requestBody);
+  }
+
+  updateStorageUserInfo(name: string, email: string) {
+    let token = this.getToken();
+    if (token) {
+      var user = this.decodeToken(token);
+      if (user) {
+        user.name = name;
+        user.email = email;
+        localStorage.setItem(StorageKey.userInfo, JSON.stringify(user));
+      }
+    }
   }
 }

@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -20,7 +19,7 @@ import {
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 import { InputComponent } from '../../../../shared/ui/input/input.component';
 import { Router } from '@angular/router';
-import { FieldValidation } from '../../../../shared/constants/constants';
+import { FieldValidation, Regex } from '../../../../shared/constants/constants';
 import { authPaths } from '../../../../shared/constants/routes';
 import { AlertService } from '../../../../shared/services/alert.service';
 import { AuthService } from '../../../auth/services/auth.service';
@@ -36,7 +35,6 @@ import { IUpdateUser } from '../../models/update-user.interface';
     InputComponent,
     ButtonComponent,
     ModalComponent,
-    CommonModule,
   ],
   templateUrl: './invite-user-modal.component.html',
   styleUrl: './invite-user-modal.component.css',
@@ -87,6 +85,7 @@ export class InviteUserModalComponent implements OnChanges {
         Validators.compose([
           Validators.required,
           Validators.maxLength(FieldValidation.firstNameMaxLength),
+          Validators.pattern(Regex.noSpaceValidationPattern),
         ]),
       ],
       lastName: [
@@ -94,6 +93,7 @@ export class InviteUserModalComponent implements OnChanges {
         Validators.compose([
           Validators.required,
           Validators.maxLength(FieldValidation.lastNameMaxLength),
+          Validators.pattern(Regex.noSpaceValidationPattern),
         ]),
       ],
       email: [

@@ -230,11 +230,20 @@
       <div class="dropdown shrink-0">
         <div hlMenu class="!block">
           <button type="button" hlMenuButton class="group relative block">
+            @if (profileFromSignal()?.imageUrl) {
             <img
               class="h-9 w-9 rounded-full object-cover saturate-50 group-hover:saturate-100"
-              src="/assets/images/user-profile.jpeg"
+              src="/assets/images/default_profile.png"
               alt=""
-            />
+            />}@else {
+            <div
+              class="grid h-9 w-9 place-content-center rounded-full bg-gray-300 text-sm font-semibold dark:bg-gray-700 ng-tns-c41-2 ng-star-inserted"
+            >
+              {{profileFromSignal()?.name?.charAt(0)+ '' +
+              profileFromSignal()?.name?.charAt((profileFromSignal()?.name?.indexOf('
+              ')??0) + 1) }}
+            </div>
+            }
           </button>
           <ul
             *hlMenuItems
@@ -244,30 +253,38 @@
             <li>
               <div class="flex items-center px-4 py-4">
                 <div class="flex-none">
+                  @if (profileFromSignal()?.imageUrl) {
                   <img
                     class="h-10 w-10 rounded-md object-cover"
-                    src="/assets/images/user-profile.jpeg"
+                    src="/assets/images/default_profile.png"
                     alt=""
                   />
+                  }@else {
+                  <div
+                    class="grid h-10 w-10 place-content-center rounded-full bg-gray-300 text-sm font-semibold dark:bg-gray-700 ng-tns-c41-2 ng-star-inserted"
+                  >
+                    {{profileFromSignal()?.name?.charAt(0)+ '' +
+                    profileFromSignal()?.name?.charAt((profileFromSignal()?.name?.indexOf('
+                    ')??0) + 1) }}
+                  </div>
+                  }
                 </div>
                 <div class="truncate ltr:pl-4 rtl:pr-4">
-                  <h4 class="text-base">
-                    John Doe<span
-                      class="rounded bg-success-light px-1 text-xs text-success ltr:ml-2 rtl:ml-2"
-                      >Pro</span
-                    >
+                  <h4 class="text-base" [title]="profileFromSignal()?.name">
+                    {{profileFromSignal()?.name}}
                   </h4>
-                  <a
-                    class="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white"
-                    href="javascript:;"
-                    >johndoe&#64;gmail.com</a
+                  <p
+                    [title]="profileFromSignal()?.email"
+                    class="text-black/60 dark:text-dark-light/60"
                   >
+                    {{profileFromSignal()?.email}}
+                  </p>
                 </div>
               </div>
             </li>
             <li>
               <a
-                routerLink="/profile"
+                [routerLink]="routes.profile"
                 *hlMenuItem="let menuItem"
                 class="dark:hover:text-white"
               >

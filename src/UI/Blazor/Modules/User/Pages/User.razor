@@ -2,87 +2,261 @@
 @using Starter.Blazor.Modules.Common
 @using Starter.Blazor.Modules.User.Models
 @using Starter.Blazor.Modules.User.Services
+@inject IJSRuntime JSRuntime
 @inject IUserService UserService
 
-<div class="panel h-full w-full">
-    <div class="mb-5 flex items-center justify-between">
-        <h5 class="text-lg font-semibold dark:text-white-light">Users List</h5>
-    </div>
-    <div class="table-responsive">
-        <table>
-            <thead>
-                <tr>
-                    <th class="ltr:rounded-l-md rtl:rounded-r-md">Name</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Status</th>
-                    <th class="ltr:rounded-r-md rtl:rounded-l-md">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach(var user in users)
-                {
-                    <tr class="group text-white-dark hover:text-black dark:hover:text-white-light/90">
-                        <td class="min-w-[150px] text-black dark:text-white">
-                            <div class="flex items-center">
-                                <img class="h-8 w-8 rounded-md object-cover ltr:mr-3 rtl:ml-3"
-                                     src="assets/images/profile-6.jpeg"
-                                     alt="avatar" />
-                                <span class="whitespace-nowrap">@user.FullName</span>
-                            </div>
-                        </td>
-                        <td>@user.Email</td>
-                        <td class="text-primary">@user.Role</td>
-                        <td>
-                            <span class="badge @(user.Status == "Active" ? "bg-success" : "bg-secondary") shadow-md dark:group-hover:bg-transparent">
-                                @user.Status
-                            </span>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-</div>
-
 <div x-data="modal">
-    <!-- button -->
-    <button type="button" class="btn btn-primary" @* @click="toggle" *@>Invite User</button>
+    <div class="panel h-full w-full">
+        <div class="mb-5 flex items-center justify-between">
+            <h5 class="text-lg font-semibold dark:text-white-light">Users List</h5>
 
+            <button type="button" class="btn btn-primary" @click="toggle">Invite User</button>
+
+        </div>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="ltr:rounded-l-md rtl:rounded-r-md">Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th class="ltr:rounded-r-md rtl:rounded-l-md">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in users)
+                    {
+                        <tr class="group text-white-dark hover:text-black dark:hover:text-white-light/90">
+                            <td class="min-w-[150px] text-black dark:text-white">
+                                <div class="flex items-center">
+                                    <img class="h-8 w-8 rounded-md object-cover ltr:mr-3 rtl:ml-3"
+                                         src="assets/images/profile-6.jpeg"
+                                         alt="avatar" />
+                                    <span class="whitespace-nowrap">@user.FullName</span>
+                                </div>
+                            </td>
+                            <td>@user.Email</td>
+                            <td class="text-primary">@user.Role</td>
+                            <td>
+                                <span class="badge @(user.Status == "Active" ? "badge-outline-success" : "badge-outline-secondary") shadow-md dark:group-hover:bg-transparent">
+                                    @user.Status
+                                </span>
+                            </td>
+                            <td>
+                                @* <button type="button" class="btn btn-outline-danger" @onclick="() => DeleteUser(user)">Delete</button> *@
+                                <div  x-data="deletemodal">
+                                    <!-- button -->
+                                    <div>
+                                        <button type="button" class="btn btn-outline-danger" @click="toggle">Delete</button>
+                                    </div>
+
+                                    <!--delete modal -->
+                                    <div class="fixed inset-0 bg-[black]/60 z-[999] hidden overflow-y-auto" :class="dopen && '!block'">
+                                        <div class="flex items-center justify-center min-h-screen px-4" >
+                                            <div x-show="dopen" x-transition x-transition.duration.300 class="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-lg my-8">
+                                                <div class="flex bg-[#fbfbfb] dark:bg-[#121c2c] items-center justify-between px-5 py-3">
+                                                    <h5 class="font-bold text-lg">Delete User</h5>
+                                                    <button type="button" class="text-white-dark hover:text-dark" @click="toggle">
+                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                             width="24px"
+                                                             height="24px"
+                                                             viewBox="0 0 24 24"
+                                                             fill="none"
+                                                             stroke="currentColor"
+                                                             stroke-width="1.5"
+                                                             stroke-linecap="round"
+                                                             stroke-linejoin="round"
+                                                             class="h-6 w-6">
+                                                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                                                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                                <div class="p-5 mb-5 text-center">
+                                                    <div class="mx-auto w-fit rounded-full bg-danger p-4 text-white ring-4 ring-danger/30">
+                                                        <svg width="24"
+                                                             height="24"
+                                                             viewBox="0 0 24 24"
+                                                             fill="none"
+                                                             xmlns="http://www.w3.org/2000/svg"
+                                                             class="mx-auto h-7 w-7">
+                                                            <path d="M20.5001 6H3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                                                            <path d="M18.8334 8.5L18.3735 15.3991C18.1965 18.054 18.108 19.3815 17.243 20.1907C16.378 21 15.0476 21 12.3868 21H11.6134C8.9526 21 7.6222 21 6.75719 20.1907C5.89218 19.3815 5.80368 18.054 5.62669 15.3991L5.16675 8.5"
+                                                                  stroke="currentColor"
+                                                                  stroke-width="1.5"
+                                                                  stroke-linecap="round"></path>
+                                                            <path opacity="0.5"
+                                                                  d="M9.5 11L10 16"
+                                                                  stroke="currentColor"
+                                                                  stroke-width="1.5"
+                                                                  stroke-linecap="round"></path>
+                                                            <path opacity="0.5"
+                                                                  d="M14.5 11L14 16"
+                                                                  stroke="currentColor"
+                                                                  stroke-width="1.5"
+                                                                  stroke-linecap="round"></path>
+                                                            <path opacity="0.5"
+                                                                  d="M6.5 6C6.55588 6 6.58382 6 6.60915 5.99936C7.43259 5.97849 8.15902 5.45491 8.43922 4.68032C8.44784 4.65649 8.45667 4.62999 8.47434 4.57697L8.57143 4.28571C8.65431 4.03708 8.69575 3.91276 8.75071 3.8072C8.97001 3.38607 9.37574 3.09364 9.84461 3.01877C9.96213 3 10.0932 3 10.3553 3H13.6447C13.9068 3 14.0379 3 14.1554 3.01877C14.6243 3.09364 15.03 3.38607 15.2493 3.8072C15.3043 3.91276 15.3457 4.03708 15.4286 4.28571L15.5257 4.57697C15.5433 4.62992 15.5522 4.65651 15.5608 4.68032C15.841 5.45491 16.5674 5.97849 17.3909 5.99936C17.4162 6 17.4441 6 17.5 6"
+                                                                  stroke="currentColor"
+                                                                  stroke-width="1.5"></path>
+                                                        </svg>
+                                                    </div>
+                                                    <div class="dark:text-white-dark/70 text-base font-medium text-[#1f2937] pt-5">
+                                                        <p>Are you sure, You want to delete this user?</p>
+                                                    </div>
+                                                    <div class="flex justify-center items-center mt-8">
+                                                        <button type="button" class="btn btn-outline-danger" @click="toggle">Cancel</button>
+                                                        <button type="button" class="btn btn-primary ltr:ml-4 rtl:mr-4" @onclick="() => DeleteUser(user)">Delete</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- button -->
     <!-- modal -->
     <div class="fixed inset-0 bg-[black]/60 z-[999] hidden overflow-y-auto" :class="open && '!block'">
-        <div class="flex items-start justify-center min-h-screen px-4">
+        <div class="flex items-center justify-center min-h-screen px-4">
             <div x-show="open" x-transition x-transition.duration.300 class="panel border-0 py-1 px-4 rounded-lg overflow-hidden w-full max-w-sm my-8">
                 <div class="flex items-center justify-between p-5 font-semibold text-lg dark:text-white">
                     Invite User
-                    @* <button type="button" @click="toggle" class="text-white-dark hover:text-dark">
-                    </button> *@
+                    <button type="button" @click="toggle" class="text-white-dark hover:text-dark">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="24px"
+                             height="24px"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.5"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             class="h-6 w-6">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
                 </div>
                 <div class="p-5">
-                    <form @onsubmit="InviteUser">
+                    <EditForm Model="@inviteUser" OnValidSubmit="InviteUser">
+                        <DataAnnotationsValidator />
                         <div class="relative mb-4">
-                            <input type="text" placeholder="First Name" class="form-input" @bind="inviteUser.FirstName" />
+                            <span class="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
+                                <svg width="24"
+                                     height="24"
+                                     viewBox="0 0 24 24"
+                                     fill="none"
+                                     xmlns="http://www.w3.org/2000/svg"
+                                     class="h-5 w-5">
+                                    <circle cx="12" cy="6" r="4" stroke="currentColor" stroke-width="1.5" />
+                                    <ellipse opacity="0.5"
+                                             cx="12"
+                                             cy="17"
+                                             rx="7"
+                                             ry="4"
+                                             stroke="currentColor"
+                                             stroke-width="1.5" />
+                                </svg>
+                            </span>
+                            <input type="text" placeholder="First Name" class="form-input ltr:pl-10 rtl:pr-10" @bind-value="inviteUser.FirstName" />
+                            <p class="mt-1 text-danger"><ValidationMessage For="@(() => inviteUser.FirstName)" /></p>
+                        </div>
+
+
+                        <div class="relative mb-4">
+                            <span class="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
+                                <svg width="24"
+                                     height="24"
+                                     viewBox="0 0 24 24"
+                                     fill="none"
+                                     xmlns="http://www.w3.org/2000/svg"
+                                     class="h-5 w-5">
+                                    <circle cx="12" cy="6" r="4" stroke="currentColor" stroke-width="1.5" />
+                                    <ellipse opacity="0.5"
+                                             cx="12"
+                                             cy="17"
+                                             rx="7"
+                                             ry="4"
+                                             stroke="currentColor"
+                                             stroke-width="1.5" />
+                                </svg>
+                            </span>
+                            <input type="text" placeholder="Last Name" class="form-input ltr:pl-10 rtl:pr-10" @bind="inviteUser.LastName" />
                         </div>
                         <div class="relative mb-4">
-                            <input type="text" placeholder="Last Name" class="form-input" @bind="inviteUser.LastName" />
-                        </div>
-                        <div class="relative mb-4">
-                            <input type="email" placeholder="Email" class="form-input" @bind="inviteUser.Email" />
+                            <span class="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
+                                <svg width="24"
+                                     height="24"
+                                     viewBox="0 0 24 24"
+                                     fill="none"
+                                     xmlns="http://www.w3.org/2000/svg"
+                                     class="h-5 w-5">
+                                    <path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 12.7215 17.8726 13.4133 17.6392 14.054C17.5551 14.285 17.4075 14.4861 17.2268 14.6527L17.1463 14.727C16.591 15.2392 15.7573 15.3049 15.1288 14.8858C14.6735 14.5823 14.4 14.0713 14.4 13.5241V12M14.4 12C14.4 13.3255 13.3255 14.4 12 14.4C10.6745 14.4 9.6 13.3255 9.6 12C9.6 10.6745 10.6745 9.6 12 9.6C13.3255 9.6 14.4 10.6745 14.4 12Z"
+                                          stroke="currentColor"
+                                          stroke-width="1.5"
+                                          stroke-linecap="round" />
+                                    <path opacity="0.5"
+                                          d="M2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12Z"
+                                          stroke="currentColor"
+                                          stroke-width="1.5" />
+                                </svg>
+                            </span>
+                            <input type="text" placeholder="Email" class="form-input ltr:pl-10 rtl:pr-10" @bind="inviteUser.Email" />
+                            <ValidationMessage For="@(() => inviteUser.Email)" />
                         </div>
                         <button type="submit" class="btn btn-primary w-full">Invite</button>
-                    </form>
+                    </EditForm>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+
+<script>
+    function modal() {
+        return {
+            open: false,
+            toggle() {
+                this.open = !this.open;
+            },
+            
+        };
+    }
+
+    function deletemodal() {
+        return {
+            dopen: false, 
+            toggle() {
+                this.dopen = !this.dopen;
+            },
+            
+        };
+    }
+</script>
+
 @code {
     private List<UserlistDto> users = new List<UserlistDto>();
-    private PaginationRequest param  = new PaginationRequest { PageNumber = 0, PageSize = 10, OrderBy = new[] { "FullName" }};
+    private PaginationRequest param = new PaginationRequest { PageNumber = 0, PageSize = 10, OrderBy = new[] { "FullName" } };
+    private InviteUserDto inviteUser = new InviteUserDto();
+    private readonly string toastScriptConstant = @"
+        const toast = window.Swal.mixin({
+            toast: true,
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            showCloseButton: true,
+        });";
 
-    private InviteUserDto inviteUser = new InviteUserDto(); 
-   
     protected override async Task OnInitializedAsync()
     {
         users =  UserService.GetUserlistsAsync(param).Result.Data;
@@ -91,5 +265,42 @@
     private async Task InviteUser()
     {
         var result = await UserService.InviteUserAsync(inviteUser);
+        if (result.Success)
+        {
+            showToaster(result.Data, "top");
+
+            inviteUser.FirstName = string.Empty;
+            inviteUser.LastName = string.Empty;
+            inviteUser.Email = string.Empty;
+
+            users = await UserService.GetUserlistsAsync(param);
+            StateHasChanged();
+        }
+        else
+        {
+            showToaster(result.Messages.FirstOrDefault(), "top");
+        }
+    }
+
+    private async Task DeleteUser(UserlistDto user)
+    {
+        var result = await UserService.DeleteUser(user);
+
+        if (result.Success)
+        {
+            showToaster(result.Data, "top");
+            users = await UserService.GetUserlistsAsync(param);
+            StateHasChanged();
+        }
+        else
+        {
+            showToaster(result.Messages.FirstOrDefault(), "top");
+        }
+    }
+
+    private void showToaster(string msg, string position)
+    {
+        string toastScript = $"{toastScriptConstant} toast.fire({{ title: '{msg}' }});";
+        JSRuntime.InvokeVoidAsync("eval", toastScript);
     }
 }

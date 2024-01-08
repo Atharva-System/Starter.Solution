@@ -5,6 +5,7 @@ export const pageTitle = {
   users: 'Users',
   acceptInvitation: 'Accept Invitation',
   resetPassword: 'Reset Password',
+  profile: 'Profile',
 };
 
 export const authPaths = {
@@ -17,4 +18,5 @@ export const authPaths = {
 
 export const appPaths = {
   users: 'users',
+  profile: 'profile',
 };

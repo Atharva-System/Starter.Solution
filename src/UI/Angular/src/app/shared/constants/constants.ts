@@ -1,11 +1,13 @@
 export class Regex {
   static passwordValidationPattern =
     '^(?=.*[A-Z])(?=.*[a-z])(?=.*[^a-zA-Z0-9]).{8,}$';
+  static noSpaceValidationPattern = '^\\S*$';
 }
 
 export class StorageKey {
   static tokenKey = 'authToken';
   static refreshTokenKey = 'refreshToken';
+  static userInfo = 'userInfo';
 }
 
 export class AlertNotification {

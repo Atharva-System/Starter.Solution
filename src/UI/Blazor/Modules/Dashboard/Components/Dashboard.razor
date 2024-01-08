@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@page "/dashboard"
 @using Microsoft.AspNetCore.Authorization
 @using Starter.Blazor.Modules.Login.Services
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -309,7 +309,7 @@
         isAuthenticated = await AuthService.IsUserAuthenticated();
         if (!isAuthenticated)
         {
-            navigationManager.NavigateTo("/login");
+            navigationManager.NavigateTo("/");
         }
     }
 }
