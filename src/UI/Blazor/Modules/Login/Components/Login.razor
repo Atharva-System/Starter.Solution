@@ -123,13 +123,9 @@
 
     private async Task HandleLogin()
     {
-        // var response = await httpClient.PostAsJsonAsync<loginModel>("api/auth/signin", LoginDto);
         var response = await AuthService.Login(LoginDto);
         if (response != null)
         {
-            //errorMessage = string.Empty;
-            //await JSRuntime.InvokeVoidAsync("sessionStorage.setItem", "UserAuthID", response.Id);
-            //await LocalStorage.SetItemAsync("UserAuthID", response.Id);
             await LocalStorage.SetItemAsync("authToken", response.Token);
             UserAuthId.SetUserId(response.Id);
             await AuthenticationStateProvider.GetAuthenticationStateAsync();

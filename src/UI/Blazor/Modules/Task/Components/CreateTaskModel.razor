@@ -14,11 +14,7 @@
             <label for="assignee">Assignee</label>
             <InputSelect id="assignee" class="form-select" @bind-Value="taskDetailsDto.AssignedTo">
                 <option value="">Select Assignee</option>
-                <option value="John Smith">John Smith</option>
-                <option value="Kia Vega">Kia Vega</option>
-                <option value="Sandy Doe">Sandy Doe</option>
-                <option value="Jane Foster">Jane Foster</option>
-                <option value="Donna Frank">Donna Frank</option>
+                <option value="459299df-5cc1-4c70-bf77-6b573e06b83a">Stater Admin</option>
             </InputSelect>
         </div>
         <div class="mb-5 flex justify-between gap-4">
@@ -43,7 +39,15 @@
         </div>
         <div class="mb-5">
             <label for="status">Status</label>
-            <InputNumber id="status" class="form-input" @bind-Value="taskDetailsDto.Status" />
+            <InputSelect id="status" class="form-input" @bind-Value="taskDetailsDto.Status">
+                <option value="">Select Status</option>
+                <option value="1">In Progress</option>
+                <option value="2">Partial Done</option>
+                <option value="3">Done</option>
+                <option value="4">Under Review</option>
+                <option value="5">Deployed</option>
+                <option value="6">Bug</option>
+            </InputSelect>
         </div>
         <div class="mb-5">
             <label for="projectId">Project</label>
@@ -61,23 +65,49 @@
 </CascadingBlazoredModal>
 
 @code {
-    [CascadingParameter] public ITaskService ModalService { get; set; }
 
     [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
 
-    private TaskDetailsDto taskDetailsDto = new TaskDetailsDto();
-    private string buttonText = "Add";
+    private TaskDetailsDto taskDetailsDto = new TaskDetailsDto
+    {
+        StartDate = DateTime.Now.Date,
+        EndDate = DateTime.Now.Date
+    };
+
+    private string mode;
+    private string buttonText;
+
+    protected override void OnInitialized()
+    {
+        if (taskDetailsDto == null) //|| taskDetailsDto.Id == Guid.Empty
+        {
+            mode = "create";
+            taskDetailsDto = new TaskDetailsDto();
+            buttonText = "Add";
+        }
+        else
+        {
+            mode = "edit";
+            buttonText = "Update";
+        }
+    }
 
     private async void SaveTask()
     {
         try
         {
-            var response = await TaskService.CreateTaskAsync(taskDetailsDto);
+            if (mode == "create")
+            {
+                var response = await TaskService.CreateTaskAsync(taskDetailsDto);
+            }
+            else
+            {
+                //var response = await TaskService.UpdateTaskAsync(taskDetailsDto);
+            }
         }
         catch (Exception ex)
         {
-            
-            throw;
+            Console.WriteLine($"Error: {ex.Message}");
         }
         await BlazoredModal.CloseAsync();
     }

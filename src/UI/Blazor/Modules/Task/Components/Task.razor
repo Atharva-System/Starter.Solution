@@ -1,6 +1,14 @@
 ﻿@page "/task-list"
+@using Microsoft.AspNetCore.Authorization
+@using Starter.Blazor.Modules.Common
+@using Starter.Blazor.Modules.Login.Services
 @using Starter.Blazor.Modules.Task.Model
+@using Starter.Blazor.Modules.Task.Services
 @inject IJSRuntime JSRuntime
+@inject NavigationManager navigationManager
+@inject IAuthService AuthService
+@inject ITaskService TaskService
+@attribute [Authorize]
 
 <div>
     <div class="relative flex h-full gap-5 sm:h-[calc(100vh_-_150px)]">
@@ -17,7 +25,6 @@
                                 Add New Task
                             </button>
                         </div>
-                        @* <button @onclick="@(() => Modal.Show<CreateTaskModel>("Add Task"))">View Movies</button> *@
                         <button type="button"
                                 class="block hover:text-primary ltr:mr-3 rtl:ml-3 xl:hidden"
                                 @click="isShowTaskMenu = !isShowTaskMenu">
@@ -47,8 +54,7 @@
                     <div class="flex flex-1 items-center justify-center sm:flex-auto sm:justify-end">
                         <p class="ltr:mr-3 rtl:ml-3"></p>
                         <button type="button"
-                                class="rounded-md bg-[#f4f4f4] p-1 enabled:hover:bg-primary-light disabled:cursor-not-allowed disabled:opacity-60 ltr:mr-3 rtl:ml-3 dark:bg-white-dark/20 enabled:dark:hover:bg-white-dark/30"
-                                >
+                                class="rounded-md bg-[#f4f4f4] p-1 enabled:hover:bg-primary-light disabled:cursor-not-allowed disabled:opacity-60 ltr:mr-3 rtl:ml-3 dark:bg-white-dark/20 enabled:dark:hover:bg-white-dark/30">
                             <svg width="24"
                                  height="24"
                                  viewBox="0 0 24 24"
@@ -63,8 +69,7 @@
                             </svg>
                         </button>
                         <button type="button"
-                                class="rounded-md bg-[#f4f4f4] p-1 enabled:hover:bg-primary-light disabled:cursor-not-allowed disabled:opacity-60 dark:bg-white-dark/20 enabled:dark:hover:bg-white-dark/30"
-                                >
+                                class="rounded-md bg-[#f4f4f4] p-1 enabled:hover:bg-primary-light disabled:cursor-not-allowed disabled:opacity-60 dark:bg-white-dark/20 enabled:dark:hover:bg-white-dark/30">
                             <svg width="24"
                                  height="24"
                                  viewBox="0 0 24 24"
@@ -80,20 +85,28 @@
                         </button>
                     </div>
                 </div>
-                <div class="h-px w-full border-b border-[#e0e6ed] dark:border-[#1b2e4b]"></div>
+                @foreach (TaskListDto x in Tasks)
+                {
+                    <div>
+                        <p>Tasks.TaskName</p>
+                        <p>Tasks.Description</p>
+                        <p>
+                            <button class="edit-icon" @onclick="@(() => Modal.Show<CreateTaskModel>("Add New Task"))" @onclick="() => OpenEditModal(task.Id)">
+                                <img src="edit-icon.png" alt="Edit" />
+                            </button>
+                        </p>
+                    </div>
+                }
             </div>
         </div>
 
         <div class="fixed inset-0 z-[999] hidden overflow-y-auto bg-[black]/60 px-4">
             <div class="flex min-h-screen items-center justify-center">
-                <div 
-                     x-transition
+                <div x-transition
                      x-transition.duration.300
-                     
                      class="panel my-8 w-[90%] max-w-lg overflow-hidden rounded-lg border-0 p-0 md:w-full">
                     <button type="button"
-                            class="absolute top-4 text-white-dark hover:text-dark ltr:right-4 rtl:left-4"
-                           >
+                            class="absolute top-4 text-white-dark hover:text-dark ltr:right-4 rtl:left-4">
                         <svg xmlns="http://www.w3.org/2000/svg"
                              width="24px"
                              height="24px"
@@ -108,8 +121,7 @@
                             <line x1="6" y1="6" x2="18" y2="18"></line>
                         </svg>
                     </button>
-                    <div class="bg-[#fbfbfb] py-3 text-lg font-medium ltr:pl-5 ltr:pr-[50px] rtl:pr-5 rtl:pl-[50px] dark:bg-[#121c2c]"
-                        ></div>
+                    <div class="bg-[#fbfbfb] py-3 text-lg font-medium ltr:pl-5 ltr:pr-[50px] rtl:pr-5 rtl:pl-[50px] dark:bg-[#121c2c]"></div>
                     <div class="p-5">
                         <form>
                             <div class="mb-5">
@@ -118,7 +130,7 @@
                             </div>
                             <div class="mb-5">
                                 <label for="assignee">Assignee</label>
-                                <select id="assignee" class="form-select" >
+                                <select id="assignee" class="form-select">
                                     <option value="">Select Assignee</option>
                                     <option value="John Smith">John Smith</option>
                                     <option value="Kia Vega">Kia Vega</option>
@@ -151,7 +163,7 @@
                                 <div x-ref="editor"></div>
                             </div>
                             <div class="mt-8 flex items-center justify-end ltr:text-right rtl:text-left">
-                                <button type="button" class="btn btn-outline-danger" >Cancel</button>
+                                <button type="button" class="btn btn-outline-danger">Cancel</button>
                                 <button type="submit" class="btn btn-primary ltr:ml-4 rtl:mr-4">
                                     Add
                                 </button>
@@ -166,8 +178,7 @@
             <div class="flex min-h-screen items-center justify-center px-4">
                 <div class="panel my-8 w-[90%] max-w-lg overflow-hidden rounded-lg border-0 p-0 md:w-full">
                     <button type="button"
-                            class="absolute top-4 text-white-dark hover:text-dark ltr:right-4 rtl:left-4"
-                            >
+                            class="absolute top-4 text-white-dark hover:text-dark ltr:right-4 rtl:left-4">
                         <svg xmlns="http://www.w3.org/2000/svg"
                              width="24px"
                              height="24px"
@@ -183,9 +194,8 @@
                         </svg>
                     </button>
                     <div class="flex flex-wrap items-center gap-2 bg-[#fbfbfb] py-3 text-lg font-medium ltr:pl-5 ltr:pr-[50px] rtl:pr-5 rtl:pl-[50px] dark:bg-[#121c2c]">
-                        <div ></div>
-                        <div class="badge rounded-3xl capitalize"
-                             ></div>
+                        <div></div>
+                        <div class="badge rounded-3xl capitalize"></div>
 
                         <div class="badge rounded-3xl capitalize"></div>
                     </div>
@@ -193,7 +203,7 @@
                         <div class="prose text-base"></div>
 
                         <div class="mt-8 flex items-center justify-end">
-                            <button type="button" class="btn btn-outline-danger" >Close</button>
+                            <button type="button" class="btn btn-outline-danger">Close</button>
                         </div>
                     </div>
                 </div>
@@ -206,5 +216,25 @@
 
     [CascadingParameter] public IModalService Modal { get; set; }
 
+    private bool isAuthenticated;
+
+    private List<TaskListDto> Tasks = new List<TaskListDto>();
+
+    private PaginationRequest param = new PaginationRequest { PageNumber = 0, PageSize = 10, OrderBy = new[] { "TaskName" } };
+
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
+    {
+        isAuthenticated = await AuthService.IsUserAuthenticated();
+
+        if (!isAuthenticated)
+        {
+            navigationManager.NavigateTo("/");
+        }
+
+        // get Tasks
+
+        Tasks = await TaskService.GetTasklistsAsync(param);
+
+    }
 
 }

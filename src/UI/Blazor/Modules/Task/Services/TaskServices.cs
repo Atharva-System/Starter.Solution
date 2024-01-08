@@ -1,7 +1,9 @@
 ﻿using System.Net.Http.Json;
 using Blazored.Modal.Services;
 using Starter.Blazor.Core.Response;
+using Starter.Blazor.Modules.Common;
 using Starter.Blazor.Modules.Task.Model;
+using Starter.Blazor.Shared.Response;
 
 namespace Starter.Blazor.Modules.Task.Services;
 
@@ -10,16 +12,6 @@ public class TaskServices(HttpClient http) : ModalService, ITaskService
     private readonly HttpClient _httpClient = http;
 
     public event Func<Task<string>> OnClose;
-
-    public async Task<string> CancelAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<string> CloseAsync(ModalResult result = null)
-    {
-        throw new NotImplementedException();
-    }
 
     public async Task<string> CreateTaskAsync(TaskDetailsDto dto)
     {
@@ -44,6 +36,23 @@ public class TaskServices(HttpClient http) : ModalService, ITaskService
         {
             Console.WriteLine($"Error: {ex.Message}");
             return "";
+        }
+    }
+
+    public async Task<List<TaskListDto>> GetTasklistsAsync(PaginationRequest param)
+    {
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/Task/search", param);
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadFromJsonAsync<PagedDataResponse<List<TaskListDto>>>();
+            return result?.Data ?? [];
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+            return [];
         }
     }
 }
