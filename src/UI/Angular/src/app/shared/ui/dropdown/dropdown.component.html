@@ -1,17 +1,17 @@
 <div hlMenu class="dropdown">
   <button
-    hlMenuButton
     type="button"
-    class="flex items-center rounded-md border border-[#e0e6ed] px-4 py-2 text-sm font-semibold dark:border-[#253b5c] dark:bg-[#1b2e4b] dark:text-white-dark"
+    hlMenuButton
+    class="btn btn-sm btn-outline-primary dropdown-toggle"
   >
-    <span class="ltr:mr-1 rtl:ml-1">{{ text }}</span>
+    {{ text }}
     <svg
       width="24"
       height="24"
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      class="h-5 w-5"
+      class="inline-block h-4 w-4 ltr:ml-1 rtl:mr-1"
     >
       <path
         d="M19 9L12 15L5 9"
@@ -22,14 +22,19 @@
       />
     </svg>
   </button>
-  <ul *hlMenuItems @toggleAnimation class="w-max ltr:left-0 rtl:right-0">
+  <ul
+    *hlMenuItems
+    @toggleAnimation
+    class="whitespace-nowrap ltr:right-0 rtl:left-0"
+  >
     @for (col of cols; track col; let i = $index) {
-      <li (click)="col.disable ? null : onSelect(col)">
-        <div class="flex items-center px-4 py-1">
-          <label [for]="'chk-' + i" class="mb-0 cursor-pointer">
-            <span class="ltr:ml-2 rtl:mr-2">{{ col.text }}</span>
-          </label>
-        </div>
+      <li>
+        <a
+          (click)="col.disable ? null : onSelect(col)"
+          href="javascript:;"
+          *hlMenuItem="let menuItem"
+          >{{ col.text }}</a
+        >
       </li>
     }
   </ul>
