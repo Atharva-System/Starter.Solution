@@ -14,3 +14,11 @@ services:
   starter.blazor:
     environment:
       - apiURL=http://localhost:10001
+
+  starter.vue:
+    environment:
+      - NODE_ENV=docker
+  
+  starter.angular:
+    environment:
+      - NODE_ENV=docker
