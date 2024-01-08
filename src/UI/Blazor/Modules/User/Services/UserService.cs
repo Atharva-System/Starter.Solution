@@ -10,7 +10,7 @@ public class UserService(HttpClient http) : IUserService
 {
     private readonly HttpClient _httpClient = http;
 
-    public async Task<List<UserlistDto>> GetUserlistsAsync(PaginationRequest param)
+    public async Task<PagedDataResponse<List<UserlistDto>>> GetUserlistsAsync(PaginationRequest param)
     {
         try {
             var response = await _httpClient.PostAsJsonAsync("api/Users/search", param);
@@ -19,13 +19,13 @@ public class UserService(HttpClient http) : IUserService
 
             var result = await response.Content.ReadFromJsonAsync<PagedDataResponse<List<UserlistDto>>>();
 
-            return result?.Data ?? [];
+            return result;
         }
         catch (Exception ex)
         {
             // Log or handle the exception
             Console.WriteLine($"Error: {ex.Message}");
-            return [];
+            return null;
         }
     }
 

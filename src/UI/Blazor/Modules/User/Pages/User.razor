@@ -85,7 +85,7 @@
    
     protected override async Task OnInitializedAsync()
     {
-        users = await UserService.GetUserlistsAsync(param);
+        users =  UserService.GetUserlistsAsync(param).Result.Data;
     }
 
     private async Task InviteUser()
