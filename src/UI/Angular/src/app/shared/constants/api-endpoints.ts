@@ -17,4 +17,11 @@ export class APIs {
   static getInviteDetails = '/users/get-invite-details';
   static getProfileDetails = '/users/get-profile-details';
   static updateProfile = '/users/update-profile/';
+
+    //Projects
+    static searchProjectsApi = '/project/search';
+    static deleteProjectApi = '/project/';
+    static getProjectApi = '/project/';
+    static updateProjectApi = '/project/';
+    static createProjectApi = '/project/Create';
 }

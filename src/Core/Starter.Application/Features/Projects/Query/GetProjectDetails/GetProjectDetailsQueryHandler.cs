@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Starter.Application.Exceptions;
+﻿using Starter.Application.Exceptions;
 using Starter.Application.Features.Common;
 using Starter.Application.Features.Projects.Dtos;
 using Starter.Application.UnitOfWork;
@@ -8,9 +6,10 @@ using Starter.Domain.Entities;
 
 namespace Starter.Application.Features.Projects.Query.GetProjectDetails;
 public record GetProjectDetailsQueryRequest(Guid id) : IRequest<ApiResponse<ProjectDto>>;
-public class GetProjectDetailsQueryHandler : IRequestHandler<GetProjectDetailsQueryRequest, ApiResponse<ProjectDto>>
+public class GetProjectDetailsQueryHandler(IQueryUnitOfWork query) : IRequestHandler<GetProjectDetailsQueryRequest, ApiResponse<ProjectDto>>
 {
-    private readonly IQueryUnitOfWork _query;
+
+    private readonly IQueryUnitOfWork _query = query;
 
     public async Task<ApiResponse<ProjectDto>> Handle(GetProjectDetailsQueryRequest request, CancellationToken cancellationToken)
     {

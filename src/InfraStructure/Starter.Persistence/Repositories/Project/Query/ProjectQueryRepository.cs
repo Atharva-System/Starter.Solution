@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Starter.Application.Contracts.Persistence.Repositoris.Queries;
 using Starter.Application.Contracts.Responses;
+using Starter.Application.Extensions;
 using Starter.Application.Features.Common;
 using Starter.Application.Features.Projects.Dtos;
 using Starter.Persistence.Database;
@@ -18,11 +19,14 @@ public class ProjectQueryRepository : QueryRepository<Starter.Domain.Entities.Pr
         var projectList = from c in context.Projects.AsNoTracking()
                           select new ProjectListDto()
                           {
+                              Id = c.Id,
                               Description = c.Description,
                               EndDate = c.EndDate,
                               EstimatedHours = c.EstimatedHours,
                               ProjectName = c.ProjectName,
-                              StartDate = c.StartDate
+                              StartDate = c.StartDate,
+                              StartDateDisplay = CommonFunction.ConvertDateToStringForDisplay(c.StartDate),
+                              EndDateDisplay = CommonFunction.ConvertDateToStringForDisplay(c.EndDate)
                           };
 
         var projects = await projectList.ApplySpecification(spec);
