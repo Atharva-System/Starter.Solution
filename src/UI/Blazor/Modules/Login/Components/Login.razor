@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using System.Text
 @using System.Text.Json
+@using Starter.Blazor.Core
 @using Starter.Blazor.Core.AuthProviders
 @using Starter.Blazor.Modules.Login.Services
 @layout Layout.Public.AuthLayout
@@ -121,23 +122,26 @@
 @code {
     private loginModel LoginDto = new loginModel();
 
+    [Inject]
+    public HttpInterceptorService Interceptor { get; set; }
+
     private async Task HandleLogin()
     {
-        // var response = await httpClient.PostAsJsonAsync<loginModel>("api/auth/signin", LoginDto);
         var response = await AuthService.Login(LoginDto);
         if (response != null)
         {
-            //errorMessage = string.Empty;
-            //await JSRuntime.InvokeVoidAsync("sessionStorage.setItem", "UserAuthID", response.Id);
-            //await LocalStorage.SetItemAsync("UserAuthID", response.Id);
+            Interceptor.RegisterEvent();
             await LocalStorage.SetItemAsync("authToken", response.Token);
-            UserAuthId.SetUserId(response.Id);
             await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            navigationManager.NavigateTo("/dashboard");
+            navigationManager.NavigateTo("/");
         }
         else
         {
-            //errorMessage = result.Messages.FirstOrDefault();
         }
+    }
+
+    public void Dispose()
+    {
+        Interceptor.DisposeEvent();
     }
 }
