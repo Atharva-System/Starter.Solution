@@ -2,53 +2,183 @@
 @using Starter.Blazor.Modules.Common
 @using Starter.Blazor.Modules.Projects.Models
 @using Starter.Blazor.Modules.Projects.Services
+@inject IJSRuntime JSRuntime
 @inject IProjectService ProjectService
 
-<div class="panel h-full w-full">
-    <div class="mb-5 flex items-center justify-between">
-        <h5 class="text-lg font-semibold dark:text-white-light">Projects</h5>
 
-        <button type="button" class="btn btn-primary" @click="toggle">Add Project</button>
+<div x-data="modal">
+    <!-- list -->
+    <div class="panel h-full w-full">
+        <div class="mb-5 flex items-center justify-between">
+            <h5 class="text-lg font-semibold dark:text-white-light">Projects</h5>
+            <button type="button" class="btn btn-primary" @click="toggle">Add Project</button>
+        </div>
 
-    </div>
-    <div class="table-responsive">
-        <table>
-            <thead>
-                <tr>
-                    <th class="ltr:rounded-l-md rtl:rounded-r-md">Name</th>
-                    <th>Description</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Hours</th>
-                    <th class="ltr:rounded-r-md rtl:rounded-l-md">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var project in projects)
-                {
-                    <tr class="group text-white-dark hover:text-black dark:hover:text-white-light/90">
-                        <td class="min-w-[150px] text-black dark:text-white">
-                           @project.ProjectName
-                        </td>
-                        <td class="text-dark">@project.Description</td>
-                        <td class="text-dark">@project.StartDateDisplay</td>
-                        <td class="text-dark">@project.EndDateDisplay</td>
-                        <td class="text-dark">@project.EstimatedHours</td>
-                        <td>
-                        </td>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="ltr:rounded-l-md rtl:rounded-r-md">Name</th>
+                        <th>Description</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Hours</th>
+                        <th class="ltr:rounded-r-md rtl:rounded-l-md">Action</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var project in projects)
+                    {
+                        <tr class="group text-white-dark hover:text-black dark:hover:text-white-light/90">
+                            <td class="min-w-[150px] text-black dark:text-white">
+                                @project.ProjectName
+                            </td>
+                            <td class="text-dark">@project.Description</td>
+                            <td class="text-dark">@project.StartDateDisplay</td>
+                            <td class="text-dark">@project.EndDateDisplay</td>
+                            <td class="text-dark">@project.EstimatedHours</td>
+                            <td>
+                                <div x-data="{}">
+                                    <button x-on:click="() => toggle()" @onclick="() => EditProject(project)">Edit</button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <!-- modal -->
+    <div class="fixed inset-0 bg-[black]/60 z-[999] hidden overflow-y-auto" :class="open && '!block'">
+        <div class="flex items-center justify-center min-h-screen px-4">
+            <div x-show="open" x-transition x-transition.duration.300 class="panel border-0 py-1 px-4 rounded-lg overflow-hidden w-full max-w-sm my-8">
+                <div class="flex items-center justify-between p-5 font-semibold text-lg dark:text-white">
+                    Add Project
+                    <button type="button" @click="toggle" class="text-white-dark hover:text-dark">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="24px"
+                             height="24px"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.5"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             class="h-6 w-6">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                <!-- form -->
+                <div class="p-5">
+                    <EditForm class="space-y-5" Model="@addProject" OnValidSubmit="AddProject">
+                        <DataAnnotationsValidator />
+                        <div>
+                            <label for="projectName">Project Name</label>
+                            <input id="projectName" type="text" class="form-input" placeholder="Enter Project Name" @bind="addProject.ProjectName"/>
+                            <ValidationMessage For="@(() => addProject.ProjectName)" />
+                        </div>
+                        <div>
+                            <label for="desc">Description</label>
+                            <textarea id="desc"
+                                      rows="3"
+                                      class="form-textarea min-h-[130px] "
+                                      placeholder="Enter Description"
+                                      @bind="addProject.Description">
+                            </textarea>
+                        </div>
+                        <div>
+                            <label for="EstHour">Estimated Hours</label>
+                            <input id="EstHour" type="number" class="form-input" placeholder="Enter Estimated Hours" @bind-value="addProject.EstimatedHours"/>
+                            <ValidationMessage For="@(() => addProject.EstimatedHours)" />
+                        </div>
+                        <div class="flex space-x-2">
+                            <div>
+                                <label for="startDate">Start Date</label>
+                                <input id="startDate"
+                                       type="date"
+                                       name="inv-date"
+                                       class="form-input" 
+                                       @bind-value="addProject.StartDate"/>
+                                <ValidationMessage For="@(() => addProject.StartDate)" />
+                            </div>
+                            <div>
+                                <label for="startDate">End Date</label>
+                                <input id="startDate"
+                                       type="date"
+                                       name="inv-date"
+                                       class="form-input" 
+                                       @bind-value="addProject.EndDate"/>
+                                <ValidationMessage For="@(() => addProject.EndDate)" />
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-full">Create</button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
 
 @code {
     private List<ProjectDto> projects = new List<ProjectDto>();
     private PaginationRequest param = new PaginationRequest { PageNumber = 0, PageSize = 10, OrderBy = new[] { "projectName" } };
+    private AddEditProject addProject = new AddEditProject();
+    private ProjectDetailsDto projectDetailsdto = new ProjectDetailsDto();
+    private readonly string toastScriptConstant = @"
+        const toast = window.Swal.mixin({
+            toast: true,
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            showCloseButton: true,
+        });";
 
     protected override async Task OnInitializedAsync()
     {
         projects = await ProjectService.GetProjectlistsAsync(param);
+    }
+
+    private async Task AddProject()
+    {
+        var result = await ProjectService.AddProjectAsync(addProject);
+        if (result.Success)
+        {
+            showToaster(result.Message, "top");
+
+            addProject = new AddEditProject();
+
+            projects = await ProjectService.GetProjectlistsAsync(param);
+            StateHasChanged();
+        }
+        else
+        {
+            showToaster(result.Message, "top");
+        }
+    }
+
+    private async Task EditProject(ProjectDto project)
+    {
+        var projectDetails = await ProjectService.GetProjectDetails(project.Id);
+        if (projectDetails.Success)
+        {
+            projectDetailsdto = projectDetails.Data;
+            addProject.ProjectName = projectDetailsdto.ProjectName;
+            addProject.Description = projectDetailsdto.Description;
+            addProject.EstimatedHours = projectDetailsdto.EstimatedHours;
+            addProject.StartDate = projectDetailsdto.StartDate;
+            addProject.EndDate = projectDetailsdto.EndDate;
+            addProject.Id = project.Id;
+        }
+    }
+
+    private void showToaster(string msg, string position)
+    {
+        string toastScript = $"{toastScriptConstant} toast.fire({{ title: '{msg}' }});";
+        JSRuntime.InvokeVoidAsync("eval", toastScript);
     }
 }
