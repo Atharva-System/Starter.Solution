@@ -21,7 +21,7 @@ RUN npm run build
 FROM public.ecr.aws/nginx/nginx:latest AS ngi
 # Copying compiled code and nginx config to different folder
 # NOTE: This path may change according to your project's output folder
-COPY --from=build /src/angular/dist/starter.angular /usr/share/nginx/html
+COPY --from=build /src/angular/dist/starter.angular/browser /usr/share/nginx/html
 COPY ["src/UI/Angular/conf/default.conf", "/etc/nginx/conf.d/default.conf"]
 # Exposing a port, here it means that inside the container
 # the app will be using Port 80 while running
