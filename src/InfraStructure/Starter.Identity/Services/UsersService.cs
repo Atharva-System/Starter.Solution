@@ -150,7 +150,7 @@ public partial class UsersService(UserManager<ApplicationUser> userManager,
 
         if (user.IsSuperAdmin == true && user.Email == _configuration["AppSettings:UserEmail"])
         {
-            throw new Exception($"Not allowed to deleted '{userId}' member.");
+            throw new Exception($"Not allowed to deleted member.");
         }
 
         //Check for any task assigned to user
@@ -158,7 +158,7 @@ public partial class UsersService(UserManager<ApplicationUser> userManager,
 
         if (userTask)
         {
-            throw new Exception($"Cannot delete as Task is assigned to '{userId}' user.");
+            throw new Exception($"Cannot delete as Task is assigned to user.");
         }
 
         user.NormalizedUserName = user.UserName = user.UserName + "_" + Guid.NewGuid().ToString();

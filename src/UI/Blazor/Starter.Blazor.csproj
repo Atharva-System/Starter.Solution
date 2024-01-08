@@ -1,6 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <ItemGroup>
+    <Compile Remove="Modules\Settings\**" />
+    <Compile Remove="Modules\Users\**" />
+    <Content Remove="Modules\Settings\**" />
+    <Content Remove="Modules\Users\**" />
+    <EmbeddedResource Remove="Modules\Settings\**" />
+    <EmbeddedResource Remove="Modules\Users\**" />
+    <None Remove="Modules\Settings\**" />
+    <None Remove="Modules\Users\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" />
@@ -24,7 +35,6 @@
     <Folder Include="Modules\ForgotPassword\" />
     <Folder Include="Modules\ResetPassword\" />
     <Folder Include="Modules\Task\" />
-    <Folder Include="Modules\User\Components\" />
     <Folder Include="Shared\Components\Button\" />
     <Folder Include="Shared\Components\Grid\" />
     <Folder Include="Shared\Utility\" />
