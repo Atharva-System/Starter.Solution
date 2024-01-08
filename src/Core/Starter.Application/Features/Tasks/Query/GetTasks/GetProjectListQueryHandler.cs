@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Starter.Application.Contracts.Responses;
-using Starter.Application.Features.Tasks.Dto;
+﻿using Starter.Application.Features.Tasks.Dto;
 using Starter.Application.UnitOfWork;
 
 namespace Starter.Application.Features.Tasks.Query.GetTasks;

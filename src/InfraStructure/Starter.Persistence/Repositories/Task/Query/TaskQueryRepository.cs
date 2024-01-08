@@ -1,12 +1,9 @@
-﻿using System.Threading;
-using Ardalis.Specification;
+﻿using Ardalis.Specification;
 using Microsoft.EntityFrameworkCore;
 using Starter.Application.Contracts.Persistence.Repositoris.Task;
-using Starter.Application.Contracts.Persistence.Repositoris.TodoRepository;
 using Starter.Application.Contracts.Responses;
 using Starter.Application.Features.Common;
 using Starter.Application.Features.Tasks.Dto;
-using Starter.Application.Models.Task;
 using Starter.Persistence.Database;
 using Starter.Persistence.Repositories.Base;
 using Starter.Persistence.Services;
@@ -14,7 +11,7 @@ using Starter.Persistence.Services;
 
 namespace Starter.Persistence.Repositories.Tasks.Query;
 
-    public class TaskQueryRepository : QueryRepository<Starter.Domain.Entities.Tasks>, ITaskQueryRepository
+public class TaskQueryRepository : QueryRepository<Starter.Domain.Entities.Tasks>, ITaskQueryRepository
     {
         public TaskQueryRepository(AppDbContext context) : base(context)
         { }

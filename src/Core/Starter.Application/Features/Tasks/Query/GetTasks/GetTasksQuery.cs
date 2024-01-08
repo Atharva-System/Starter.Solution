@@ -1,8 +1,4 @@
-﻿using MediatR;
-using Starter.Application.Contracts.Responses;
-using Starter.Application.Models.Task;
-using Starter.Application.Models.Specification.Filters;
-using System.Collections.Generic;
+﻿using Starter.Application.Contracts.Responses;
 using Starter.Application.Features.Tasks.Dto;
 using Starter.Application.Models.Task.Dto;
 
