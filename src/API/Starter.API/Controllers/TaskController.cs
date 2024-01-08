@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using Starter.API.Controllers.Base;
 using Starter.Application.Contracts.Responses;
 using Starter.Application.Features.Common;
@@ -6,6 +7,7 @@ using Starter.Application.Features.Tasks.Command;
 using Starter.Application.Features.Tasks.Command.UpdateTask;
 using Starter.Application.Features.Tasks.Dto;
 using Starter.Application.Features.Tasks.Query;
+using Starter.Application.Features.Tasks.Query.GetTasks;
 using Starter.Application.Models.Task.Dto;
 using Starter.Identity.Authorizations;
 using Starter.Identity.Authorizations.Permissions;
@@ -57,6 +59,20 @@ public class TaskController : BaseApiController
     public async Task<IPagedDataResponse<TaskListDto>> GetListAsync(TaskFilter filter)
     {
         var request = new GetTasksQuery { Filter = filter };
+        return await Mediator.Send(request);
+    }
+
+    [HttpGet("Project")]
+    [MustHavePermission(Action.View, Resource.Project)]
+    public async Task<ActionResult<List<ProjectDropdownDto>>> GetProjectListAsync()
+    {
+        var userId = User.FindFirstValue("uid");
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized();
+        }
+
+        var request = new GetProjectListQuery { userId = userId };
         return await Mediator.Send(request);
     }
 }

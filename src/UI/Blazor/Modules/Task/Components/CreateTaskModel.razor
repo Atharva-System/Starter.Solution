@@ -51,7 +51,9 @@
         </div>
         <div class="mb-5">
             <label for="projectId">Project</label>
-            <InputText id="projectId" type="text" placeholder="Enter Project ID" class="form-input" @bind-Value="projectIdString" />
+            <InputSelect id="projectId" type="text" placeholder="Enter Project ID" class="form-input" @bind-Value="projectIdString">
+                <option value="C24E05D4-B41E-4771-353C-08DC102AAA10">Test Project</option>
+            </InputSelect>
         </div>
         <div class="mb-5">
             <label>Description</label>

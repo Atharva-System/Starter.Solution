@@ -12,4 +12,5 @@ namespace Starter.Application.Contracts.Persistence.Repositoris.Task;
 public interface ITaskQueryRepository : IQueryRepository<Domain.Entities.Tasks>
 {
     Task<IPagedDataResponse<TaskListDto>> SearchAsync(ISpecification<TaskListDto> spec, int pageNumber, int pageSize, CancellationToken cancellationToken);
+    Task<List<ProjectDropdownDto>> GetProjectListAsync(string UserId);
 }
