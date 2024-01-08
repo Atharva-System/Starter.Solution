@@ -1,7 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="Hangfire" />
+    <PackageReference Include="IdentityStream.Hangfire.Console" />
+    <PackageReference Include="MailKit" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+    <PackageReference Include="RazorEngineCore" />
+    <PackageReference Include="Serilog" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,0 +1,19 @@
+<modal #saveOrDiscardChangesModal class="modal-center animate animate-fade-in">
+    <ng-template #modalHeader> <div>Save Changes?</div> </ng-template>
+    <ng-template #modalBody>
+      Are you sure you want to discard the changes?
+    </ng-template>
+    <ng-template #modalFooter>
+      <button type="button" (click)="discard()" class="btn btn-outline-danger">
+        Discard
+      </button>
+      <app-button
+        text="Save"
+        type="submit"
+        classes="btn-primary ltr:ml-4 rtl:mr-4"
+        class="d-block"
+        (click)="save()"
+      ></app-button>
+    </ng-template>
+  </modal>
+  

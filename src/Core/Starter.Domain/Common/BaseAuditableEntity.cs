@@ -1,6 +1,8 @@
-﻿namespace Starter.Domain.Common;
+﻿using Starter.Domain.Common.Contracts;
 
-public abstract class BaseAuditableEntity : BaseEntity
+namespace Starter.Domain.Common;
+
+public abstract class BaseAuditableEntity : BaseEntity, IAuditableEntity, ISoftDelete
 {
     public DateTimeOffset CreatedOn { get; set; } = DateTimeOffset.UtcNow;
 
@@ -9,5 +11,11 @@ public abstract class BaseAuditableEntity : BaseEntity
     public DateTimeOffset ModifiedOn { get; set; } = DateTimeOffset.UtcNow;
 
     public string? ModifiedBy { get; set; }
+
+    public DateTimeOffset DeletedOn { get; set; } = DateTimeOffset.UtcNow;
+
+    public string? DeletedBy { get; set; }
+
+    public bool IsDeleted { get; set; } = false;
 }
 

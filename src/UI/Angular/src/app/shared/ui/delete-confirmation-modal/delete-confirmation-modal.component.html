@@ -1,0 +1,75 @@
+<modal #isDeleteModal class="modal-center animate animate-fade-in no-footer">
+  <ng-template #modalHeader>
+    <div class="!font-medium">{{ Title }}</div>
+  </ng-template>
+  <ng-template #modalBody>
+    <div class="text-center">
+      <div
+        class="mx-auto w-fit rounded-full bg-danger p-4 text-white ring-4 ring-danger/30"
+      >
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5"
+        >
+          <path
+            opacity="0.5"
+            d="M9.17065 4C9.58249 2.83481 10.6937 2 11.9999 2C13.3062 2 14.4174 2.83481 14.8292 4"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+          ></path>
+          <path
+            d="M20.5001 6H3.5"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+          ></path>
+          <path
+            d="M18.8334 8.5L18.3735 15.3991C18.1965 18.054 18.108 19.3815 17.243 20.1907C16.378 21 15.0476 21 12.3868 21H11.6134C8.9526 21 7.6222 21 6.75719 20.1907C5.89218 19.3815 5.80368 18.054 5.62669 15.3991L5.16675 8.5"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+          ></path>
+          <path
+            opacity="0.5"
+            d="M9.5 11L10 16"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+          ></path>
+          <path
+            opacity="0.5"
+            d="M14.5 11L14 16"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+          ></path>
+        </svg>
+      </div>
+      <div class="mx-auto mt-5 text-base sm:w-3/4">
+        {{ Message }}
+      </div>
+
+      <div class="mt-8 flex items-center justify-center">
+        <button
+          type="button"
+          class="btn btn-outline-danger"
+          (click)="close()"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary ltr:ml-4 rtl:mr-4"
+          (click)="delete()"
+        >
+          Delete
+        </button>
+      </div>
+    </div>
+  </ng-template>
+</modal>

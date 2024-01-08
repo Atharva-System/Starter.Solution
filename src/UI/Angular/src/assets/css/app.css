@@ -1,0 +1,11 @@
+@import 'quill/dist/quill.snow.css';
+@import 'flatpickr/dist/flatpickr.min.css';
+@import 'tailwind.css';
+
+.d-block{
+    display: block;
+}
+
+.d-none{
+    display: none;
+}

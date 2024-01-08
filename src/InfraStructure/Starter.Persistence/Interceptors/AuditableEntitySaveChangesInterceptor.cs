@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Starter.Application.Contracts.Application;
 using Starter.Domain.Common;
+using Starter.Domain.Common.Contracts;
 
 namespace Starter.Persistence.Interceptors;
 
@@ -30,7 +31,7 @@ public class AuditableEntitySaveChangesInterceptor(
     {
         if (context == null) return;
 
-        DateTime now = _dateTime.Now.UtcDateTime;
+        DateTimeOffset now = _dateTime.Now;
 
         foreach (var entry in context.ChangeTracker.Entries<BaseAuditableEntity>())
         {
@@ -44,6 +45,17 @@ public class AuditableEntitySaveChangesInterceptor(
             {
                 entry.Entity.ModifiedBy = _currentUserService.UserId;
                 entry.Entity.ModifiedOn = now;
+            }
+
+            if (entry.State == EntityState.Deleted)
+            {
+                if (entry.Entity is ISoftDelete softDelete)
+                {
+                    softDelete.IsDeleted = true;
+                    softDelete.DeletedBy = _currentUserService.UserId;
+                    softDelete.DeletedOn = now;
+                    entry.State = EntityState.Modified;
+                }
             }
         }
     }

@@ -7,10 +7,14 @@
   </PropertyGroup>
   <!--Starter.API Package References-->
   <ItemGroup>
+    <PackageVersion Include="Blazored.LocalStorage" Version="4.4.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="8.0.0" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
+    <PackageVersion Include="Microsoft.Extensions.Caching.Abstractions" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.0" />
     <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
     <PackageVersion Include="Serilog" Version="3.1.1" />
     <PackageVersion Include="Serilog.AspNetCore" Version="8.0.0" />
@@ -18,10 +22,15 @@
     <PackageVersion Include="Serilog.Settings.Configuration" Version="8.0.0" />
     <PackageVersion Include="Serilog.Sinks.File" Version="5.0.0" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3" />
+    <PackageVersion Include="System.Net.Http.Json" Version="8.0.0" />
+    <PackageVersion Include="ToolBelt" Version="4.0.10611.1" />
+    <PackageVersion Include="Toolbelt.Blazor.HttpClientInterceptor" Version="10.2.0" />
   </ItemGroup>
   <!--Starter.API Package References-->
   <!--Starter.Application Package References-->
   <ItemGroup>
+    <PackageVersion Include="Ardalis.Specification" Version="8.0.0" />
     <PackageVersion Include="AutoMapper" Version="12.0.1" />
     <PackageVersion Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageVersion Include="FluentValidation" Version="11.8.1" />
@@ -36,6 +45,7 @@
   <!--Starter.Domain Package References-->
   <!--Starter.Identity Package References-->
   <ItemGroup>
+    <PackageVersion Include="Ardalis.Specification.EntityFrameworkCore" Version="8.0.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
@@ -48,7 +58,12 @@
   <!--Starter.Identity Package References-->
   <!--Starter.InfraStructure Package References-->
   <ItemGroup>
+    <PackageVersion Include="Hangfire" Version="1.8.6" />
+    <PackageVersion Include="IdentityStream.Hangfire.Console" Version="2.0.0" />
+    <PackageVersion Include="MailKit" Version="4.3.0" />
+    <PackageVersion Include="MimeKit" Version="4.3.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+    <PackageVersion Include="RazorEngineCore" Version="2023.11.2" />
   </ItemGroup>
   <!--Starter.InfraStructure Package References-->
   <!--Starter.Persistence Package References-->

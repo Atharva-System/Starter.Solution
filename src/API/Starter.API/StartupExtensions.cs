@@ -22,16 +22,19 @@ public static class StartupExtensions
         builder.Services.AddInfrastructureSharedServices(builder.Configuration);
         builder.Services.AddPersistenceServices(builder.Configuration);
         builder.Services.AddIdentityServices(builder.Configuration);
-
         builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
         builder.Services.AddHttpContextAccessor();
 
         builder.Services.AddControllers();
-
-        builder.Services.AddCors(options =>
+        builder.Services.AddAuthorization(options =>
         {
-            options.AddPolicy("Open", builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+            // Existing authorization policies...
+
+            options.AddPolicy("ChangePasswordPolicy", policy =>
+            {
+                policy.RequireClaim("uid"); // Assuming you store user ID in claims
+            });
         });
 
         //builder.Services.AddSwaggerGen();
@@ -43,14 +46,15 @@ public static class StartupExtensions
     public static WebApplication ConfigurePipeline(this WebApplication app)
     {
 
-        //if (app.Environment.IsDevelopment())
-        //{
-        app.UseSwagger();
-        app.UseSwaggerUI(c =>
+        if (app.Environment.IsDevelopment() || app.Environment.ToString() == "Docker")
         {
-            c.SwaggerEndpoint("/swagger/v1/swagger.json", "Starter API");
-        });
-        //}
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Starter API");
+            });
+        }
+
 
         // app.UseHttpsRedirection();
 
@@ -60,7 +64,7 @@ public static class StartupExtensions
 
         app.UseCustomExceptionHandler();
 
-        app.UseCors("Open");
+        app.UseInfrastructureService();
 
         app.UseAuthorization();
 
@@ -114,6 +118,7 @@ public static class StartupExtensions
             //c.OperationFilter<FileResultContentTypeOperationFilter>();
         });
     }
+
 
     public static async Task ResetDatabaseAsync(this WebApplication app)
     {

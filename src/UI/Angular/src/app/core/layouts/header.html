@@ -1,0 +1,467 @@
+﻿<div
+  class="shadow-sm"
+  [ngClass]="{ 'dark text-white-dark': store.semidark && store.menu === 'horizontal'}"
+>
+  <div
+    class="relative flex w-full items-center bg-white px-5 py-2.5 dark:bg-[#0e1726]"
+  >
+    <div
+      class="horizontal-logo flex items-center justify-between ltr:mr-2 rtl:ml-2 lg:hidden"
+    >
+      <a routerLink="/" class="main-logo flex shrink-0 items-center">
+        <img
+          class="inline w-8 ltr:-ml-1 rtl:-mr-1"
+          src="/assets/images/logo.svg"
+          alt=""
+        />
+        <span
+          class="hidden align-middle text-2xl font-semibold transition-all duration-300 ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light md:inline"
+        >
+          VRISTO
+        </span>
+      </a>
+      <a
+        href="javascript:;"
+        class="collapse-icon flex flex-none rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary ltr:ml-2 rtl:mr-2 dark:bg-dark/40 dark:text-[#d0d2d6] dark:hover:bg-dark/60 dark:hover:text-primary lg:hidden"
+        (click)="storeData.dispatch({type: 'toggleSidebar'})"
+      >
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M20 7L4 7"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+          />
+          <path
+            opacity="0.5"
+            d="M20 12L4 12"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+          />
+          <path
+            d="M20 17L4 17"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+          />
+        </svg>
+      </a>
+    </div>
+    <div
+      class="flex items-center space-x-1.5 ltr:ml-auto rtl:mr-auto rtl:space-x-reverse dark:text-[#d0d2d6] sm:flex-1 ltr:sm:ml-0 sm:rtl:mr-0 lg:space-x-2"
+    >
+      <div class="sm:ltr:mr-auto sm:rtl:ml-auto"></div>
+      <div>
+        @if (store.theme === 'light') {
+        <a
+          href="javascript:;"
+          class="flex items-center rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60"
+          (click)="storeData.dispatch({type: 'toggleTheme', payload:'dark'})"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="5"
+              stroke="currentColor"
+              stroke-width="1.5"
+            />
+            <path
+              d="M12 2V4"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+            />
+            <path
+              d="M12 20V22"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+            />
+            <path
+              d="M4 12L2 12"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+            />
+            <path
+              d="M22 12L20 12"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+            />
+            <path
+              opacity="0.5"
+              d="M19.7778 4.22266L17.5558 6.25424"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+            />
+            <path
+              opacity="0.5"
+              d="M4.22217 4.22266L6.44418 6.25424"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+            />
+            <path
+              opacity="0.5"
+              d="M6.44434 17.5557L4.22211 19.7779"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+            />
+            <path
+              opacity="0.5"
+              d="M19.7778 19.7773L17.5558 17.5551"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+            />
+          </svg>
+        </a>
+        } @if (store.theme === 'dark') {
+        <a
+          href="javascript:;"
+          class="flex items-center rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60"
+          (click)="storeData.dispatch({type: 'toggleTheme', payload:'system'})"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M21.0672 11.8568L20.4253 11.469L21.0672 11.8568ZM12.1432 2.93276L11.7553 2.29085V2.29085L12.1432 2.93276ZM21.25 12C21.25 17.1086 17.1086 21.25 12 21.25V22.75C17.9371 22.75 22.75 17.9371 22.75 12H21.25ZM12 21.25C6.89137 21.25 2.75 17.1086 2.75 12H1.25C1.25 17.9371 6.06294 22.75 12 22.75V21.25ZM2.75 12C2.75 6.89137 6.89137 2.75 12 2.75V1.25C6.06294 1.25 1.25 6.06294 1.25 12H2.75ZM15.5 14.25C12.3244 14.25 9.75 11.6756 9.75 8.5H8.25C8.25 12.5041 11.4959 15.75 15.5 15.75V14.25ZM20.4253 11.469C19.4172 13.1373 17.5882 14.25 15.5 14.25V15.75C18.1349 15.75 20.4407 14.3439 21.7092 12.2447L20.4253 11.469ZM9.75 8.5C9.75 6.41182 10.8627 4.5828 12.531 3.57467L11.7553 2.29085C9.65609 3.5593 8.25 5.86509 8.25 8.5H9.75ZM12 2.75C11.9115 2.75 11.8077 2.71008 11.7324 2.63168C11.6686 2.56527 11.6538 2.50244 11.6503 2.47703C11.6461 2.44587 11.6482 2.35557 11.7553 2.29085L12.531 3.57467C13.0342 3.27065 13.196 2.71398 13.1368 2.27627C13.0754 1.82126 12.7166 1.25 12 1.25V2.75ZM21.7092 12.2447C21.6444 12.3518 21.5541 12.3539 21.523 12.3497C21.4976 12.3462 21.4347 12.3314 21.3683 12.2676C21.2899 12.1923 21.25 12.0885 21.25 12H22.75C22.75 11.2834 22.1787 10.9246 21.7237 10.8632C21.286 10.804 20.7293 10.9658 20.4253 11.469L21.7092 12.2447Z"
+              fill="currentColor"
+            />
+          </svg>
+        </a>
+        } @if (store.theme === 'system') {
+        <a
+          href="javascript:;"
+          class="flex items-center rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60"
+          (click)="storeData.dispatch({type: 'toggleTheme', payload:'light'})"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 9C3 6.17157 3 4.75736 3.87868 3.87868C4.75736 3 6.17157 3 9 3H15C17.8284 3 19.2426 3 20.1213 3.87868C21 4.75736 21 6.17157 21 9V14C21 15.8856 21 16.8284 20.4142 17.4142C19.8284 18 18.8856 18 17 18H7C5.11438 18 4.17157 18 3.58579 17.4142C3 16.8284 3 15.8856 3 14V9Z"
+              stroke="currentColor"
+              stroke-width="1.5"
+            />
+            <path
+              opacity="0.5"
+              d="M22 21H2"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+            />
+            <path
+              opacity="0.5"
+              d="M15 15H9"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+            />
+          </svg>
+        </a>
+        }
+      </div>
+      <div class="dropdown shrink-0 d-none">
+        <div hlMenu>
+          <button
+            type="button"
+            hlMenuButton
+            class="block rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60"
+          >
+            <img
+              [src]="'/assets/images/flags/'+ store.locale.toUpperCase() + '.svg'"
+              alt="flag"
+              class="h-5 w-5 rounded-full object-cover"
+            />
+          </button>
+          <ul
+            *hlMenuItems
+            @toggleAnimation
+            class="top-11 grid w-[280px] grid-cols-2 gap-2 !px-2 font-semibold text-dark ltr:-right-14 rtl:-left-14 dark:text-white-dark dark:text-white-light/90 sm:ltr:-right-2 sm:rtl:-left-2"
+          >
+            @for (item of store.languageList; track item) {
+            <li>
+              <button
+                *hlMenuItem="let menuItem"
+                type="button"
+                class="w-full hover:text-primary"
+                [ngClass]="{ 'bg-primary/10 text-primary': translate.currentLang === item.code }"
+                (click)="changeLanguage(item)"
+              >
+                <img
+                  class="h-5 w-5 rounded-full object-cover"
+                  [src]="'/assets/images/flags/'+ item.code.toUpperCase() + '.svg'"
+                  alt=""
+                />
+                <span class="ltr:ml-3 rtl:mr-3">{{ item.name }}</span>
+              </button>
+            </li>
+            }
+          </ul>
+        </div>
+      </div>
+      <div class="dropdown shrink-0">
+        <div hlMenu class="!block">
+          <button type="button" hlMenuButton class="group relative block">
+            @if (profileFromSignal()?.imageUrl) {
+            <img
+              class="h-9 w-9 rounded-full object-cover saturate-50 group-hover:saturate-100"
+              src="/assets/images/default_profile.png"
+              alt=""
+            />}@else {
+            <div
+              class="grid h-9 w-9 place-content-center rounded-full bg-gray-300 text-sm font-semibold dark:bg-gray-700 ng-tns-c41-2 ng-star-inserted"
+            >
+              {{profileFromSignal()?.name?.charAt(0)+ '' +
+              profileFromSignal()?.name?.charAt((profileFromSignal()?.name?.indexOf('
+              ')??0) + 1) }}
+            </div>
+            }
+          </button>
+          <ul
+            *hlMenuItems
+            @toggleAnimation
+            class="top-11 w-[230px] !py-0 font-semibold text-dark ltr:right-0 rtl:left-0 dark:text-white-dark dark:text-white-light/90"
+          >
+            <li>
+              <div class="flex items-center px-4 py-4">
+                <div class="flex-none">
+                  @if (profileFromSignal()?.imageUrl) {
+                  <img
+                    class="h-10 w-10 rounded-md object-cover"
+                    src="/assets/images/default_profile.png"
+                    alt=""
+                  />
+                  }@else {
+                  <div
+                    class="grid h-10 w-10 place-content-center rounded-full bg-gray-300 text-sm font-semibold dark:bg-gray-700 ng-tns-c41-2 ng-star-inserted"
+                  >
+                    {{profileFromSignal()?.name?.charAt(0)+ '' +
+                    profileFromSignal()?.name?.charAt((profileFromSignal()?.name?.indexOf('
+                    ')??0) + 1) }}
+                  </div>
+                  }
+                </div>
+                <div class="truncate ltr:pl-4 rtl:pr-4">
+                  <h4 class="text-base" [title]="profileFromSignal()?.name">
+                    {{profileFromSignal()?.name}}
+                  </h4>
+                  <p
+                    [title]="profileFromSignal()?.email"
+                    class="text-black/60 dark:text-dark-light/60"
+                  >
+                    {{profileFromSignal()?.email}}
+                  </p>
+                </div>
+              </div>
+            </li>
+            <li>
+              <a
+                [routerLink]="profileRoute"
+                *hlMenuItem="let menuItem"
+                class="dark:hover:text-white"
+              >
+                <svg
+                  class="h-4.5 w-4.5 shrink-0 ltr:mr-2 rtl:ml-2"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle
+                    cx="12"
+                    cy="6"
+                    r="4"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  />
+                  <path
+                    opacity="0.5"
+                    d="M20 17.5C20 19.9853 20 22 12 22C4 22 4 19.9853 4 17.5C4 15.0147 7.58172 13 12 13C16.4183 13 20 15.0147 20 17.5Z"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  />
+                </svg>
+                Profile
+              </a>
+            </li>
+            <li>
+              <a
+                (click)="openChangePasswordModal()"
+                href="javascript:;"
+                *hlMenuItem="let menuItem"
+                class="dark:hover:text-white"
+              >
+                <svg
+                  class="h-4.5 w-4.5 shrink-0 ltr:mr-2 rtl:ml-2"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M15.6807 14.5869C19.1708 14.5869 22 11.7692 22 8.29344C22 4.81767 19.1708 2 15.6807 2C12.1907 2 9.3615 4.81767 9.3615 8.29344C9.3615 9.90338 10.0963 11.0743 10.0963 11.0743L2.45441 18.6849C2.1115 19.0264 1.63143 19.9143 2.45441 20.7339L3.33616 21.6121C3.67905 21.9048 4.54119 22.3146 5.2466 21.6121L6.27531 20.5876C7.30403 21.6121 8.4797 21.0267 8.92058 20.4412C9.65538 19.4167 8.77362 18.3922 8.77362 18.3922L9.06754 18.0995C10.4783 19.5045 11.7128 18.6849 12.1537 18.0995C12.8885 17.075 12.1537 16.0505 12.1537 16.0505C11.8598 15.465 11.272 15.465 12.0067 14.7333L12.8885 13.8551C13.5939 14.4405 15.0439 14.5869 15.6807 14.5869Z"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linejoin="round"
+                  ></path>
+                  <path
+                    opacity="0.5"
+                    d="M17.8853 8.29353C17.8853 9.50601 16.8984 10.4889 15.681 10.4889C14.4635 10.4889 13.4766 9.50601 13.4766 8.29353C13.4766 7.08105 14.4635 6.09814 15.681 6.09814C16.8984 6.09814 17.8853 7.08105 17.8853 8.29353Z"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  ></path>
+                </svg>
+                Change Password
+              </a>
+            </li>
+            <li class="border-t border-white-light dark:border-white-light/10">
+              <a
+                href="javascript:;"
+                *hlMenuItem="let menuItem"
+                class="!py-3 text-danger"
+                (click)="signOut()"
+              >
+                <svg
+                  class="h-4.5 w-4.5 shrink-0 rotate-90 ltr:mr-2 rtl:ml-2"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    opacity="0.5"
+                    d="M17 9.00195C19.175 9.01406 20.3529 9.11051 21.1213 9.8789C22 10.7576 22 12.1718 22 15.0002V16.0002C22 18.8286 22 20.2429 21.1213 21.1215C20.2426 22.0002 18.8284 22.0002 16 22.0002H8C5.17157 22.0002 3.75736 22.0002 2.87868 21.1215C2 20.2429 2 18.8286 2 16.0002L2 15.0002C2 12.1718 2 10.7576 2.87868 9.87889C3.64706 9.11051 4.82497 9.01406 7 9.00195"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M12 15L12 2M12 2L15 5.5M12 2L9 5.5"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                Sign Out
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- horizontal menu -->
+  <ul
+    class="horizontal-menu hidden border-t border-[#ebedf2] bg-white py-1.5 px-6 font-semibold text-black rtl:space-x-reverse dark:border-[#191e3a] dark:bg-[#0e1726] dark:text-white-dark lg:space-x-1.5 xl:space-x-8"
+  >
+    <li class="menu nav-item relative">
+      <a href="javascript:;" class="nav-link">
+        <div class="flex items-center">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            class="shrink-0"
+          >
+            <g opacity="0.5">
+              <path
+                d="M14 2.75C15.9068 2.75 17.2615 2.75159 18.2892 2.88976C19.2952 3.02503 19.8749 3.27869 20.2981 3.7019C20.7213 4.12511 20.975 4.70476 21.1102 5.71085C21.2484 6.73851 21.25 8.09318 21.25 10C21.25 10.4142 21.5858 10.75 22 10.75C22.4142 10.75 22.75 10.4142 22.75 10V9.94359C22.75 8.10583 22.75 6.65019 22.5969 5.51098C22.4392 4.33856 22.1071 3.38961 21.3588 2.64124C20.6104 1.89288 19.6614 1.56076 18.489 1.40314C17.3498 1.24997 15.8942 1.24998 14.0564 1.25H14C13.5858 1.25 13.25 1.58579 13.25 2C13.25 2.41421 13.5858 2.75 14 2.75Z"
+                fill="currentColor"
+              />
+              <path
+                d="M9.94358 1.25H10C10.4142 1.25 10.75 1.58579 10.75 2C10.75 2.41421 10.4142 2.75 10 2.75C8.09318 2.75 6.73851 2.75159 5.71085 2.88976C4.70476 3.02503 4.12511 3.27869 3.7019 3.7019C3.27869 4.12511 3.02503 4.70476 2.88976 5.71085C2.75159 6.73851 2.75 8.09318 2.75 10C2.75 10.4142 2.41421 10.75 2 10.75C1.58579 10.75 1.25 10.4142 1.25 10V9.94358C1.24998 8.10583 1.24997 6.65019 1.40314 5.51098C1.56076 4.33856 1.89288 3.38961 2.64124 2.64124C3.38961 1.89288 4.33856 1.56076 5.51098 1.40314C6.65019 1.24997 8.10583 1.24998 9.94358 1.25Z"
+                fill="currentColor"
+              />
+              <path
+                d="M22 13.25C22.4142 13.25 22.75 13.5858 22.75 14V14.0564C22.75 15.8942 22.75 17.3498 22.5969 18.489C22.4392 19.6614 22.1071 20.6104 21.3588 21.3588C20.6104 22.1071 19.6614 22.4392 18.489 22.5969C17.3498 22.75 15.8942 22.75 14.0564 22.75H14C13.5858 22.75 13.25 22.4142 13.25 22C13.25 21.5858 13.5858 21.25 14 21.25C15.9068 21.25 17.2615 21.2484 18.2892 21.1102C19.2952 20.975 19.8749 20.7213 20.2981 20.2981C20.7213 19.8749 20.975 19.2952 21.1102 18.2892C21.2484 17.2615 21.25 15.9068 21.25 14C21.25 13.5858 21.5858 13.25 22 13.25Z"
+                fill="currentColor"
+              />
+              <path
+                d="M2.75 14C2.75 13.5858 2.41421 13.25 2 13.25C1.58579 13.25 1.25 13.5858 1.25 14V14.0564C1.24998 15.8942 1.24997 17.3498 1.40314 18.489C1.56076 19.6614 1.89288 20.6104 2.64124 21.3588C3.38961 22.1071 4.33856 22.4392 5.51098 22.5969C6.65019 22.75 8.10583 22.75 9.94359 22.75H10C10.4142 22.75 10.75 22.4142 10.75 22C10.75 21.5858 10.4142 21.25 10 21.25C8.09318 21.25 6.73851 21.2484 5.71085 21.1102C4.70476 20.975 4.12511 20.7213 3.7019 20.2981C3.27869 19.8749 3.02503 19.2952 2.88976 18.2892C2.75159 17.2615 2.75 15.9068 2.75 14Z"
+                fill="currentColor"
+              />
+            </g>
+            <path
+              d="M5.52721 5.52721C5 6.05442 5 6.90294 5 8.6C5 9.73137 5 10.2971 5.35147 10.6485C5.70294 11 6.26863 11 7.4 11H8.6C9.73137 11 10.2971 11 10.6485 10.6485C11 10.2971 11 9.73137 11 8.6V7.4C11 6.26863 11 5.70294 10.6485 5.35147C10.2971 5 9.73137 5 8.6 5C6.90294 5 6.05442 5 5.52721 5.52721Z"
+              fill="currentColor"
+            />
+            <path
+              d="M5.52721 18.4728C5 17.9456 5 17.0971 5 15.4C5 14.2686 5 13.7029 5.35147 13.3515C5.70294 13 6.26863 13 7.4 13H8.6C9.73137 13 10.2971 13 10.6485 13.3515C11 13.7029 11 14.2686 11 15.4V16.6C11 17.7314 11 18.2971 10.6485 18.6485C10.2971 19 9.73138 19 8.60002 19C6.90298 19 6.05441 19 5.52721 18.4728Z"
+              fill="currentColor"
+            />
+            <path
+              d="M13 7.4C13 6.26863 13 5.70294 13.3515 5.35147C13.7029 5 14.2686 5 15.4 5C17.0971 5 17.9456 5 18.4728 5.52721C19 6.05442 19 6.90294 19 8.6C19 9.73137 19 10.2971 18.6485 10.6485C18.2971 11 17.7314 11 16.6 11H15.4C14.2686 11 13.7029 11 13.3515 10.6485C13 10.2971 13 9.73137 13 8.6V7.4Z"
+              fill="currentColor"
+            />
+            <path
+              d="M13.3515 18.6485C13 18.2971 13 17.7314 13 16.6V15.4C13 14.2686 13 13.7029 13.3515 13.3515C13.7029 13 14.2686 13 15.4 13H16.6C17.7314 13 18.2971 13 18.6485 13.3515C19 13.7029 19 14.2686 19 15.4C19 17.097 19 17.9456 18.4728 18.4728C17.9456 19 17.0971 19 15.4 19C14.2687 19 13.7029 19 13.3515 18.6485Z"
+              fill="currentColor"
+            />
+          </svg>
+          <span class="px-2">{{'apps' | translate}}</span>
+        </div>
+        <div class="right_arrow">
+          <svg
+            class="h-4 w-4 rotate-90"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M9 5L15 12L9 19"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+      </a>
+      <ul class="sub-menu">
+        @for (item of menuItems; track item) {
+        <li>
+          <a [routerLink]="item.link" routerLinkActive="active"
+            >{{ item.label| translate }}</a
+          >
+        </li>
+        }
+      </ul>
+    </li>
+  </ul>
+</div>

@@ -1,23 +1,28 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Starter.Application.Features.Todos.Create;
+﻿using Microsoft.AspNetCore.Mvc;
+using Starter.API.Controllers.Base;
+using Starter.Application.Features.Common;
+using Starter.Application.Features.Todos.Command;
+using Starter.Application.Features.Todos.Dto;
+using Starter.Application.Features.Todos.Query;
+using Starter.Identity.Authorizations;
+using Starter.Identity.Authorizations.Permissions;
+using Action = Starter.Identity.Authorizations.Action;
 
-namespace Starter.API.Controllers
+namespace Starter.API.Controllers;
+
+public class TodoController : BaseApiController
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    //[Authorize]
-    //[Authorize(Policy = Policies.CanPurge)]
-    [Authorize(Policy = "ResourceOperationCreate")]
-
-    public class TodoController : ControllerBase
+    [HttpPost("Create")]
+    [MustHavePermission(Action.Create, Resource.Todo)]
+    public async Task<ApiResponse<int>> CreateTodoItem(CreateTodoItemCommandReqeust command)
     {
+        return await Mediator.Send(command);
+    }
 
-        [HttpPost("CreateTODO")]
-        public async Task<int> CreateTodoItem(ISender sender, CreateTodoItemCommand command)
-        {
-            return await sender.Send(command);
-        }
+    [HttpGet("{id}")]
+    [MustHavePermission(Action.View, Resource.Todo)]
+    public async Task<ApiResponse<GetToDoItemDto>> GetTodoItem(Guid id)
+    {
+        return await Mediator.Send(new GetToDoItemRequest(id));
     }
 }

@@ -8,4 +8,5 @@ public class CurrentUserService(IHttpContextAccessor httpContextAccessor) : ICur
     private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 
     public string? UserId => _httpContextAccessor.HttpContext?.User?.FindFirstValue("uid");
+    private ClaimsPrincipal? _user;
 }

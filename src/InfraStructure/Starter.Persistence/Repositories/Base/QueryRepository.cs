@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using Starter.Application.Contracts.Persistence.Repositoris.Base;
 using Starter.Domain.Common;
 using Starter.Persistence.Database;
-using System.Linq.Expressions;
 
 namespace Starter.Persistence.Repositories.Base;
 
@@ -80,7 +80,7 @@ public class QueryRepository<T> : IQueryRepository<T> where T : BaseEntity, new(
             query = query.Where(predicate);
         }
 #pragma warning disable CS8603 // Possible null reference return.
-        return await query.SingleOrDefaultAsync();
+        return await query.FirstOrDefaultAsync();
 #pragma warning restore CS8603 // Possible null reference return.
     }
 
