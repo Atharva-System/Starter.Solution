@@ -8,5 +8,5 @@ public sealed record UpdateProjectCommand : IRequest<ApiResponse<string>>
     public string? Description { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
-    public TimeOnly EstimatedHours { get; set; }
+    public decimal EstimatedHours { get; set; }
 }

@@ -1,8 +1,8 @@
-﻿using Blazored.LocalStorage;
-using Microsoft.AspNetCore.Components.Authorization;
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text.Json;
+using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Starter.Blazor.Core.Auth;
 
@@ -22,6 +22,11 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
         string authToken = await _localStorageService.GetItemAsStringAsync("authToken");
 
         var identity = new ClaimsIdentity();
+        if (!_http.DefaultRequestHeaders.Contains("request-source"))
+        {
+            _http.DefaultRequestHeaders.Add("request-source", "blazor");
+        }
+
         _http.DefaultRequestHeaders.Authorization = null;
 
         if (!string.IsNullOrEmpty(authToken))

@@ -1,0 +1,65 @@
+<modal
+  #modalComponent
+  class="modal-center animate animate-fade-in"
+  (onCancel)="resetForm()"
+  [closeOnOutsideClick]="false"
+>
+  <ng-template #modalHeader> <div>Create Project</div> </ng-template>
+  <ng-template #modalBody>
+    <form class="space-y-5" [formGroup]="formCreateProject" novalidate (keydown.enter)="submitForm()">
+      <div>
+        <label for="projectName">Name</label>
+        <app-input
+          formControlName="projectName"
+          [control]="formCreateProject.controls['projectName']"
+          [isSubmit]="isSubmitFormCreateProject"
+          placeholder="Enter Project Name"
+        ></app-input>
+      </div>
+      <div>
+        <label for="description">Description</label>
+        <quill-editor
+          style="width: -webkit-fill-available; height: 150px"
+          [modules]="quillModules"
+          placeholder="Enter Description"
+          formControlName="description"
+          [(ngModel)]="quillValue"
+        ></quill-editor>
+      </div>
+      <div>
+        <label for="deadline">Deadline</label>
+        <app-date-range-picker
+          formControlName="deadline"
+          [Control]="formCreateProject.controls['deadline']"
+          [isSubmit]="isSubmitFormCreateProject"
+          [placeholder]="'Select Deadline'"
+        ></app-date-range-picker>
+      </div>
+      <div>
+        <label for="estimatedHours">Estimated Hours</label>
+        <app-input
+          formControlName="estimatedHours"
+          [control]="formCreateProject.controls['estimatedHours']"
+          [isSubmit]="isSubmitFormCreateProject"
+          placeholder="Enter Estimated Hours"
+        ></app-input>
+      </div>
+    </form>
+  </ng-template>
+  <ng-template #modalFooter>
+    <button
+      type="button"
+      (click)="resetForm(); modalComponent.close()"
+      class="btn btn-outline-danger"
+    >
+      Discard
+    </button>
+    <app-button
+      [text]="projectId ? 'Save' : 'Create'"
+      type="submit"
+      classes="btn-primary ltr:ml-4 rtl:mr-4"
+      class="d-block"
+      (click)="submitForm()"
+    ></app-button>
+  </ng-template>
+</modal>

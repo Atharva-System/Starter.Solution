@@ -1,0 +1,71 @@
+<div
+  class="flex min-h-screen items-center justify-center bg-[url('/assets/images/map.svg')] bg-cover bg-center dark:bg-[url('/assets/images/map-dark.svg')]"
+>
+  <div class="panel m-6 w-full max-w-lg sm:w-[480px]">
+    <h2 class="mb-3 text-2xl font-bold">Create An Account</h2>
+    <form
+      class="space-y-5"
+      [formGroup]="formAcceptInvitation"
+      (ngSubmit)="submitFormAcceptInvitation()"
+      novalidate
+    >
+      <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+        <div>
+          <label>First Name</label>
+          <input
+            class="form-input"
+            type="text"
+            [disabled]="true"
+            [value]="userInviteDto.firstName"
+          />
+        </div>
+        <div>
+          <label>Last Name</label>
+          <input
+            class="form-input"
+            type="text"
+            [disabled]="true"
+            [value]="userInviteDto.lastName"
+          />
+        </div>
+      </div>
+      <div>
+        <label>Email</label>
+        <input
+          class="form-input"
+          type="text"
+          [disabled]="true"
+          [value]="userInviteDto.email"
+        />
+      </div>
+      <div>
+        <label for="password">Password</label>
+        <app-input
+          formControlName="password"
+          type="password"
+          [control]="formAcceptInvitation.controls['password']"
+          [isSubmit]="isSubmitFormAcceptInvitation"
+          placeholder="Enter Password"
+        ></app-input>
+      </div>
+      <app-button
+        text="CREATE AN ACCOUNTANT"
+        type="submit"
+        classes="btn-primary w-full"
+        class="d-block"
+      ></app-button>
+    </form>
+    <div
+      style="margin-top: 1rem; margin-bottom: 1rem"
+      class="relative h-5 text-center before:absolute before:inset-0 before:m-auto before:h-[1px] before:w-full before:bg-[#ebedf2] dark:before:bg-[#253b5c]"
+    ></div>
+    <p class="text-center">
+      Already have an account ?
+      <app-anchor
+        text="Sign In"
+        [routerLink]="signinRoute"
+        classes="font-bold text-primary"
+      ></app-anchor>
+    </p>
+  </div>
+</div>

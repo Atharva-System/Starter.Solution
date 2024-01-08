@@ -2,23 +2,20 @@
 using System.Security.Authentication;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Security.Policy;
 using System.Text;
-using Azure.Core;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Starter.Application.Contracts.Identity;
 using Starter.Application.Contracts.Mailing;
+using Starter.Application.Contracts.Mailing.Models;
 using Starter.Application.Exceptions;
+using Starter.Application.Interfaces;
 using Starter.Application.Models.Authentication;
+using Starter.Domain.Events;
 using Starter.Identity.Models;
 
 namespace Starter.Identity.Services;
@@ -31,8 +28,8 @@ public class AuthService : IAuthService
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IUserClaimsPrincipalFactory<ApplicationUser> _userClaimsPrincipalFactory;
     private readonly JwtSettings _jwtSettings;
-    private readonly IUrlHelper _urlHelper;
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IEmailTemplateService _templateService;
+    private readonly IJobService _jobService;
 
     public AuthService(
         UserManager<ApplicationUser> userManager,
@@ -41,8 +38,8 @@ public class AuthService : IAuthService
         SignInManager<ApplicationUser> signInManager,
         IAuthorizationService authorizationService,
         IMailService mailService,
-        IHttpContextAccessor httpContextAccessor,
-        IUrlHelperFactory urlHelperFactory)
+        IEmailTemplateService templateService,
+        IJobService jobService)
     {
         _userManager = userManager;
         _jwtSettings = jwtSettings.Value;
@@ -50,13 +47,9 @@ public class AuthService : IAuthService
         _signInManager = signInManager;
         _authorizationService = authorizationService;
         _mailService = mailService;
-        _httpContextAccessor = httpContextAccessor;
-        _urlHelper = urlHelperFactory.GetUrlHelper(new ActionContext(
-            _httpContextAccessor.HttpContext,
-            _httpContextAccessor.HttpContext.GetRouteData(),
-            new ActionDescriptor()));
+        _templateService = templateService;
+        _jobService = jobService;
     }
-
 
     #region Public Methods
     public async Task<string?> GetUserNameAsync(string userId)
@@ -72,7 +65,7 @@ public class AuthService : IAuthService
 
         _ = user ?? throw new NotFoundException("User ", request.Email);
 
-        if(!(user.IsActive && user.IsInvitationAccepted) || user.IsSuperAdmin == false)
+        if (!(user.IsActive && user.IsInvitationAccepted))
         {
             throw new Exception($"Please accept the invitation");
         }
@@ -206,24 +199,17 @@ public class AuthService : IAuthService
         {
             throw new NotFoundException("User", userId);
         }
+
         if (newPassword != confirmPassword)
         {
-            return new ChangePasswordResponse
-            {
-                Success = false,
-                Message = "New password does not match the confirmed password."
-            };
+            throw new CustomException("New password does not match the confirmed password.");
         }
 
         var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
 
         if (!result.Succeeded)
         {
-            return new ChangePasswordResponse
-            {
-                Success = false,
-                Message = $"Failed to change password: {string.Join(",", result.Errors.Select(p => p.Description))}"
-            };
+            throw new CustomException($"Failed to change password: {string.Join(",", result.Errors.Select(p => p.Description))}");
         }
 
         return new ChangePasswordResponse
@@ -232,55 +218,37 @@ public class AuthService : IAuthService
             Message = "Password changed successfully"
         };
     }
-    public async Task ForgotPasswordAsync(ForgotPasswordRequest request)
+
+    public async Task ForgotPasswordAsync(ForgotPasswordRequest request, string origin)
     {
-        try
+        var user = await _userManager.FindByEmailAsync(request.Email);
+
+        if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
         {
-           
-            if (_urlHelper != null && _httpContextAccessor != null && _mailService != null && _userManager != null)
-            {
-                var user = await _userManager.FindByEmailAsync(request.Email);
-
-                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
-                {
-                    
-                    return;
-                }
-
-                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var resetLink = _urlHelper.Action(
-                    action: "resetPassword",
-                    controller: "Auth",
-                    values: new { token, email = request.Email },
-                    protocol: _httpContextAccessor.HttpContext?.Request.Scheme);
-
-                
-                var mailRequest = new MailRequest(
-                    to: new List<string> { request.Email },
-                    subject: "Reset Your Password",
-                    body: $"Click here to reset your password: {resetLink}"
-                );
-
-                await _mailService.SendAsync(mailRequest, CancellationToken.None);
-            }
-            else
-            {
-                throw new NullReferenceException("One or more dependencies are not initialized.");
-            }
+            throw new Exception("If you are registered, then you will get mail soon!");
         }
-        catch (Exception ex)
+
+        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        const string route = "reset-password";
+        string passwordResetUrl = QueryHelpers.AddQueryString(route, QueryStringKeys.Token, token);
+        passwordResetUrl = QueryHelpers.AddQueryString(passwordResetUrl, "email", user?.Email);
+
+        EmailContent eMailModel = new EmailContent(origin, passwordResetUrl)
         {
-            // Log the exception for debugging purposes
-            // Replace _logger with your logging mechanism (e.g., Serilog, System.Diagnostics)
-            //_logger.LogError(ex, "Exception occurred in ForgotPasswordAsync method");
+            Subject = "Reset Your Password!",
+            HeyUserName = user?.FirstName + " " + user?.LastName,
+            ButtonText = "Reset my password",
+        };
+        eMailModel.RowData.Add("Click the link below for change and password reset.");
+        eMailModel.RowData.Add("If you didn't request this, just ignore this message.");
 
-            // Rethrow the exception or handle it according to your application's requirements
-            throw;
-        }
+        var mailRequest = new MailRequest(
+        new List<string> { request.Email },
+        eMailModel.Subject,
+               _templateService.GenerateDefaultEmailTemplate(eMailModel));
+
+        _jobService.Enqueue(() => _mailService.SendAsync(mailRequest, CancellationToken.None));
     }
-
-
-
 
     public async Task ResetPasswordAsync(string email, string token, string newPassword)
     {
@@ -288,7 +256,6 @@ public class AuthService : IAuthService
 
         if (user == null)
         {
-            
             throw new InvalidOperationException($"User with email '{email}' not found.");
         }
 
@@ -298,7 +265,6 @@ public class AuthService : IAuthService
 
             if (result.Succeeded)
             {
-                
                 return;
             }
             else
@@ -308,17 +274,14 @@ public class AuthService : IAuthService
         }
         catch (InvalidOperationException ex)
         {
-           
             throw new InvalidOperationException("Invalid token for password reset.");
         }
-       
     }
 
+
     #endregion
-    
+
     #region Private Methods
-
-
     private async Task<JwtSecurityToken> GenerateToken(ApplicationUser user)
     {
         var userClaims = await _userManager.GetClaimsAsync(user);

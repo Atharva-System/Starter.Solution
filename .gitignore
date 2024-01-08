@@ -362,3 +362,4 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /src/API/Starter.API/appsettings.json
+/src/UI/Vue/.vite/deps

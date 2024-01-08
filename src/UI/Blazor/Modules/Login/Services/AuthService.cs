@@ -2,7 +2,6 @@
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Starter.Blazor.Core.Response;
 using Starter.Blazor.Modules.Login.Model;
 
 namespace Starter.Blazor.Modules.Login.Services;
@@ -12,14 +11,10 @@ public class AuthService : IAuthService
     private readonly HttpClient _http;
     private readonly AuthenticationStateProvider _authStateProvider;
     private const string AuthBaseURL = "api/auth/";
-    private readonly ILocalStorageService _localStorage;
-    private readonly NavigationManager _navigationManager;
-    public AuthService(HttpClient http, AuthenticationStateProvider authStateProvider, ILocalStorageService localStorage, NavigationManager navigationManager)
+    public AuthService(HttpClient http, AuthenticationStateProvider authStateProvider)
     {
         _http = http;
         _authStateProvider = authStateProvider;
-        _localStorage = localStorage;
-        _navigationManager = navigationManager;
     }
     public async Task<bool> IsUserAuthenticated()
     {

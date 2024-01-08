@@ -10,7 +10,7 @@ public sealed record CreateProjectCommandRequest : IRequest<ApiResponse<int>>
     public string? Description { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
-    public TimeOnly EstimatedHours { get; set; }
+    public decimal EstimatedHours { get; set; }
 }
 
 public class CreateProjectCommandHandler(ICommandUnitOfWork command) : IRequestHandler<CreateProjectCommandRequest, ApiResponse<int>>

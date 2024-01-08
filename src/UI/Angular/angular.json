@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "Starter.Angular": {
+    "Starter-Angular": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -64,10 +64,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "Starter.Angular:build:production"
+              "buildTarget": "Starter-Angular:build:production"
             },
             "development": {
-              "buildTarget": "Starter.Angular:build:development"
+              "buildTarget": "Starter-Angular:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -75,7 +75,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "Starter.Angular:build"
+            "buildTarget": "Starter-Angular:build"
           }
         },
         "test": {

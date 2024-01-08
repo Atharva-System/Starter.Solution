@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, ViewChild, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppService } from '../../shared/services/app.service';
 import {
@@ -13,6 +13,7 @@ import { HeaderComponent } from './header';
 import { SidebarComponent } from './sidebar';
 import { ThemeCustomizerComponent } from './theme-customizer';
 import { NgClass } from '@angular/common';
+import { ChangePasswordModalComponent } from '../../modules/user/components/change-password-modal/change-password-modal.component';
 
 @Component({
   selector: 'app-root',
@@ -25,9 +26,12 @@ import { NgClass } from '@angular/common';
     HeaderComponent,
     RouterOutlet,
     FooterComponent,
+    ChangePasswordModalComponent,
   ],
 })
 export class AppLayout {
+  @ViewChild('changePasswordModalComponent')
+  changePasswordModalComponent!: ChangePasswordModalComponent;
   store: any;
   showTopButton = false;
   storeData = inject(Store<any>);
@@ -88,5 +92,9 @@ export class AppLayout {
   goToTop() {
     document.body.scrollTop = 0;
     document.documentElement.scrollTop = 0;
+  }
+
+  openChangePasswordModal() {
+    this.changePasswordModalComponent.open();
   }
 }
