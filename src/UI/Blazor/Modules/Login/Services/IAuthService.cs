@@ -7,4 +7,5 @@ public interface IAuthService
 {
     Task<AuthResponseDto> Login(loginModel request);
     Task<bool> IsUserAuthenticated();
+    Task<string> RefreshToken();
 }
