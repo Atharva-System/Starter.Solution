@@ -29,6 +29,15 @@ services:
     ports:
       - "10003:80"
 
+  starter.vue:
+    image: ${DOCKER_REGISTRY-}starter.vue
+    container_name: starter.vue
+    build:
+      context: .
+      dockerfile: src/UI/Vue/Dockerfile
+    ports:
+      - "10004:80"
+
   starter.sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: starter.sqlserver

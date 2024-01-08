@@ -1,8 +1,8 @@
 const environment = {
   name: "production",
   ResourceServer: {
-    Endpoint: "http://localhost:5287/api",
+    Endpoint: "http://localhost:10001/api",
   },
-  CurrentUrl: "http://localhost:5173/",
+  CurrentUrl: "http://localhost:10004/",
 };
 export default environment;
