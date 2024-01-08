@@ -1,0 +1,105 @@
+﻿@page "/task-modal"
+@using Starter.Blazor.Modules.Task.Model
+@using Starter.Blazor.Modules.Task.Services
+@inject ITaskService TaskService
+
+<CascadingBlazoredModal>
+    <EditForm Model="@taskDetailsDto" OnValidSubmit="@(SaveTask)">
+        <DataAnnotationsValidator />
+        <div class="mb-5">
+            <label for="title">Title</label>
+            <InputText id="title" type="text" placeholder="Enter Task Title" class="form-input" @bind-Value="taskDetailsDto.TaskName" />
+        </div>
+        <div class="mb-5">
+            <label for="assignee">Assignee</label>
+            <InputSelect id="assignee" class="form-select" @bind-Value="taskDetailsDto.AssignedTo">
+                <option value="">Select Assignee</option>
+                <option value="John Smith">John Smith</option>
+                <option value="Kia Vega">Kia Vega</option>
+                <option value="Sandy Doe">Sandy Doe</option>
+                <option value="Jane Foster">Jane Foster</option>
+                <option value="Donna Frank">Donna Frank</option>
+            </InputSelect>
+        </div>
+        <div class="mb-5 flex justify-between gap-4">
+            <div class="flex-1">
+                <label for="priority">Priority</label>
+                <InputSelect id="priority" class="form-select" @bind-Value="taskDetailsDto.Priority">
+                    <option value="">Select Priority</option>
+                    <option value="1">Low</option>
+                    <option value="2">Medium</option>
+                    <option value="3">High</option>
+                </InputSelect>
+            </div>
+        </div>
+        <div class="mb-5">
+            <label for="startDate">Start Date</label>
+            <InputDate id="startDate" class="form-input" @bind-Value="taskDetailsDto.StartDate" />
+        </div>
+
+        <div class="mb-5">
+            <label for="endDate">End Date</label>
+            <InputDate id="endDate" class="form-input" @bind-Value="taskDetailsDto.EndDate" />
+        </div>
+        <div class="mb-5">
+            <label for="status">Status</label>
+            <InputNumber id="status" class="form-input" @bind-Value="taskDetailsDto.Status" />
+        </div>
+        <div class="mb-5">
+            <label for="projectId">Project</label>
+            <InputText id="projectId" type="text" placeholder="Enter Project ID" class="form-input" @bind-Value="projectIdString" />
+        </div>
+        <div class="mb-5">
+            <label>Description</label>
+            <InputText class="form-input" @bind-Value="taskDetailsDto.Description" Placeholder="Enter Description here" />
+        </div>
+        <div class="mt-8 flex items-center justify-end ltr:text-right rtl:text-left">
+            <button type="button" class="btn btn-outline-danger" @onclick="@(Cancel)">Cancel</button>
+            <button type="submit" class="btn btn-primary ltr:ml-4 rtl:mr-4">@buttonText</button>
+        </div>
+    </EditForm>
+</CascadingBlazoredModal>
+
+@code {
+    [CascadingParameter] public ITaskService ModalService { get; set; }
+
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
+    private TaskDetailsDto taskDetailsDto = new TaskDetailsDto();
+    private string buttonText = "Add";
+
+    private async void SaveTask()
+    {
+        try
+        {
+            var response = await TaskService.CreateTaskAsync(taskDetailsDto);
+        }
+        catch (Exception ex)
+        {
+            
+            throw;
+        }
+        await BlazoredModal.CloseAsync();
+    }
+
+    private async void Cancel()
+    {
+        await BlazoredModal.CloseAsync();
+    }
+
+    private string projectIdString
+    {
+        get => taskDetailsDto.ProjectId.ToString();
+        set
+        {
+            if (Guid.TryParse(value, out var result))
+            {
+                taskDetailsDto.ProjectId = result;
+            }
+            else
+            {
+                Console.WriteLine("Invalid Guid format");
+            }
+        }
+    }
+}

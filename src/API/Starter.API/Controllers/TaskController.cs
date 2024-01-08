@@ -1,17 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Starter.API.Controllers.Base;
+using Starter.Application.Contracts.Responses;
 using Starter.Application.Features.Common;
 using Starter.Application.Features.Tasks.Command;
 using Starter.Application.Features.Tasks.Command.UpdateTask;
 using Starter.Application.Features.Tasks.Dto;
 using Starter.Application.Features.Tasks.Query;
-using Starter.Identity.Authorizations;
-using Starter.Application.Contracts.Responses;
-using Starter.Identity.Authorizations.Permissions;
-using Starter.Application.Features.Tasks.Dto;
-using Action = Starter.Identity.Authorizations.Action;
-using Starter.Application.Models.Specification.Filters;
 using Starter.Application.Models.Task.Dto;
+using Starter.Identity.Authorizations;
+using Starter.Identity.Authorizations.Permissions;
+using Action = Starter.Identity.Authorizations.Action;
 
 namespace Starter.API.Controllers;
 
