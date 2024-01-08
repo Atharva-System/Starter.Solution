@@ -13,4 +13,4 @@ services:
   
   starter.blazor:
     environment:
-      - ASPNETCORE_ENVIRONMENT=Docker
+      - apiURL=http://localhost:10001

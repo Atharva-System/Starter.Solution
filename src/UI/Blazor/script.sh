@@ -1,0 +1,1 @@
+cat /usr/share/nginx/html/appsettings.json | jq --arg apiURL "$(printenv apiURL)" '.AppConfig.ApiUrl = $apiURL' > /usr/share/nginx/html/appsettings.json
