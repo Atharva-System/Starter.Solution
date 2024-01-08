@@ -2,6 +2,7 @@
 @using Starter.Blazor.Modules.Common
 @using Starter.Blazor.Modules.User.Models
 @using Starter.Blazor.Modules.User.Services
+@using Starter.Blazor.Shared.Response
 @inject IJSRuntime JSRuntime
 @inject IUserService UserService
 
@@ -25,7 +26,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var user in users)
+                    @foreach (var user in users.Data)
                     {
                         <tr class="group text-white-dark hover:text-black dark:hover:text-white-light/90">
                             <td class="min-w-[150px] text-black dark:text-white">
@@ -245,7 +246,7 @@
 </script>
 
 @code {
-    private List<UserlistDto> users = new List<UserlistDto>();
+    private PagedDataResponse<List<UserlistDto>> users = new PagedDataResponse<List<UserlistDto>>();
     private PaginationRequest param = new PaginationRequest { PageNumber = 0, PageSize = 10, OrderBy = new[] { "FullName" } };
     private InviteUserDto inviteUser = new InviteUserDto();
     private readonly string toastScriptConstant = @"
@@ -259,7 +260,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        users =  UserService.GetUserlistsAsync(param).Result.Data;
+        users = await  UserService.GetUserlistsAsync(param);
     }
 
     private async Task InviteUser()

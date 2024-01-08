@@ -9,10 +9,7 @@
     <EmbeddedResource Remove="Modules\Users\**" />
     <None Remove="Modules\Settings\**" />
     <None Remove="Modules\Users\**" />
-	<Content Remove="Shared\CustomGrid\GridBody.razor" />
-	<Content Remove="Shared\CustomGrid\GridHeader.razor" />
-	<Content Remove="Shared\CustomGrid\Pagination.razor" />
-	<Content Remove="Shared\CustomGrid\SampleDataLoad.razor" />
+	
   </ItemGroup>
 
   <ItemGroup>
