@@ -12,7 +12,7 @@ public class ProjectDto
 
     public DateTime EndDate { get; set; }
 
-    public TimeOnly EstimatedHours { get; set; }
+    public decimal EstimatedHours { get; set; }
 
     public DateTime CreatedOn { get; set; }
 }

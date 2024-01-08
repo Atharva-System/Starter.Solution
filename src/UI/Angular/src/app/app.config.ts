@@ -9,7 +9,6 @@ import { BrowserModule, Title } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { StoreModule } from '@ngrx/store';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { MenuModule } from 'headlessui-angular';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { AuthInterceptor } from './core/interceptor/auth.interceptor';
 import { ErrorInterceptor } from './core/interceptor/error.interceptor';
@@ -17,12 +16,12 @@ import { AppService } from './shared/services/app.service';
 import { indexReducer } from './shared/store/index.reducer';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { routes } from './app.routes';
+import { FlatpickrModule } from 'angularx-flatpickr';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     importProvidersFrom(
       BrowserModule,
-      MenuModule,
       HttpClientModule,
       TranslateModule.forRoot({
         loader: {
@@ -33,6 +32,7 @@ export const appConfig: ApplicationConfig = {
       }),
       StoreModule.forRoot({ index: indexReducer }),
       NgScrollbarModule,
+      FlatpickrModule.forRoot(),
     ),
     AppService,
     Title,
@@ -53,7 +53,6 @@ export const appConfig: ApplicationConfig = {
     },
   ],
 };
-
 
 export function httpTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http);

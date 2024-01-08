@@ -1,0 +1,42 @@
+.dark .custom-file-container .label-container .custom-file-container__image-clear {
+    color: #888ea8;
+}
+
+.dark .custom-file-container__custom-file__custom-file-control {
+    background-color: #1b2e4b;
+    border-color: #253b5c;
+    color: #888ea8;
+}
+
+.dark .custom-file-container__custom-file__custom-file-control__button {
+    background-color: #4361ee;
+    border-color: #253b5c;
+    color: #fff;
+}
+
+.dark .custom-file-container .custom-file-container__image-multi-preview__single-image-clear {
+    background-color: #3b3f5c;
+}
+
+.dark .custom-file-container .custom-file-container__image-multi-preview__single-image-clear__icon {
+    color: #d0d2d6;
+}
+
+.custom-file-container .custom-file-container__image-multi-preview__single-image-clear__icon {
+    margin-top: 0px;
+}
+
+.rtl .custom-file-container__custom-file__custom-file-control__button {
+    right:auto;
+    left:0;
+    border-left: none;
+}
+
+.rtl .custom-file-container .image-preview-item {
+    float: right;
+}
+
+.rtl .custom-file-container .custom-file-container__image-multi-preview__single-image-clear {
+    left: auto;
+    right: -6px;
+}
