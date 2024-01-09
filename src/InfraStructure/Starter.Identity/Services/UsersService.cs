@@ -108,7 +108,7 @@ public partial class UsersService(UserManager<ApplicationUser> userManager,
 
         if (existingEmail != null && existingEmail.Id != request.Id)
         {
-            throw new Exception($"Email '{request.Email}' already exists.");
+            throw new Exception($"Email {request.Email} already exists.");
         }
 
         user.FirstName = request.FirstName;
