@@ -146,9 +146,9 @@ public class UserService(HttpClient http, ILocalStorageService localStorageServi
         }
     }
 
-    public async Task<ApiResponse<string>> DeleteUser(UserlistDto user)
+    public async Task<ApiResponse<string>> DeleteUser(string id)
     {
-            var result = await _httpClient.DeleteAsync($"api/Users/{user.Id}");
+            var result = await _httpClient.DeleteAsync($"api/Users/{id}");
 
             var newResponse = await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
 

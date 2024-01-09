@@ -4,36 +4,80 @@
 @using Starter.Blazor.Modules.User.Models
 @using Starter.Blazor.Modules.User.Services
 @using Starter.Blazor.Shared.Response
-
+@inject IJSRuntime JSRuntime
 @inject IUserService UserService
 
-<ReusableGrid TItem="UserlistDto" GridData="@DisplayedData.Data" HeaderData="@headerInfo" ParentAction="@ParentMethod" />
+<ReusableGrid @ref="gridRef" TItem="UserlistDto" HeaderData="@headerInfo"  PageSizeChange="LoadData" PageNumberChange="LoadData" ColumnSortingChange="LoadData" DeleteRecord="DeleteRecord" />
 
 
 @code {
-    public Action ParentMethod { get; set; }
+    private readonly string toastScriptConstant = @"
+        const toast = window.Swal.mixin({
+            toast: true,
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            showCloseButton: true,
+        });";
+
+    private ReusableGrid<UserlistDto> gridRef;
+
     private PagedDataResponse<List<UserlistDto>> DisplayedData = new PagedDataResponse<List<UserlistDto>>();
 
     protected override void OnInitialized()
     {
         // Define the action to be executed in the child component
-        ParentMethod = async () =>
+        Task.WhenAll(LoadData(1, 5, null));
+    }
+    private async Task PageSizeChanged(int pageNumber, int pageSize, string[] OrderBy)
+    {
+        await LoadData(pageSize, pageNumber, OrderBy);
+    }
+
+    private async Task DeleteRecord(string id)
+    {
+
+        var result = await UserService.DeleteUser(id);
+
+        if (result.Success)
         {
-            var paginationRequest = new PaginationRequest
-                {
-                    PageSize = 10,
-                    PageNumber = 1
-                };
-            // Logic to execute when called from child component
-            DisplayedData = await UserService.GetUserlistsAsync(paginationRequest);
-        };
+            showToaster(result.Data, "top");
+            Task.WhenAll(LoadData(1, 5, null));
+        }
+        else
+        {
+            showToaster(result.Messages.FirstOrDefault(), "top");
+        }
+        
+    }
+
+    private async Task LoadData(int PageNumber, int PageSize, string[] OrderBy)
+    {
+        var paginationRequest = new PaginationRequest
+            {
+                PageSize = PageSize,
+                PageNumber = PageNumber,
+                OrderBy = OrderBy
+            };
+        // Simulate loading user list data
+        DisplayedData = await UserService.GetUserlistsAsync(paginationRequest);
+
+        if (gridRef != null)
+        {
+            await gridRef.Refresh(DisplayedData.Data, DisplayedData.TotalPages, DisplayedData.TotalCount, paginationRequest.PageSize, paginationRequest.PageNumber);
+        }
     }
     private List<Dictionary<string, string>> headerInfo = new List<Dictionary<string, string>>
     {
-        new Dictionary<string, string> {{"Name", "Full Name"}, {"Key","FullName"}, {"CssClass", ""}, {"ShowSorting", "true"}, {"SorderOrder","asc" }, {"ShowFilter", "true"}},
-        new Dictionary<string, string> { { "Name", "Email" }, { "Key", "Email" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" } },
-        new Dictionary<string, string> { { "Name", "Status" }, { "Key", "Status" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" } },
-        new Dictionary<string, string> { { "Name", "Role" }, { "Key", "Role" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" } }
+        new Dictionary<string, string> {{"Name", "Full Name"}, {"Key","FullName"}, {"CssClass", ""}, {"ShowSorting", "true"}, {"SorderOrder","asc" }, {"ShowFilter", "false"},{"SpanTd","" } },
+        new Dictionary<string, string> { { "Name", "Email" }, { "Key", "Email" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" } },
+        new Dictionary<string, string> { { "Name", "Status" }, { "Key", "Status" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" } },
+        new Dictionary<string, string> { { "Name", "Role" }, { "Key", "Role" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" }},
+        new Dictionary<string, string> { { "Name", "Action" }, { "Key", "Delete" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" },{ "IsActionButton","true"} }
     };
-
+    private void showToaster(string msg, string position)
+    {
+        string toastScript = $"{toastScriptConstant} toast.fire({{ title: '{msg}' }});";
+        JSRuntime.InvokeVoidAsync("eval", toastScript);
+    }
 }

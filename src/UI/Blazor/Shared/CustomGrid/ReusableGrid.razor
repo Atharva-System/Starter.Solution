@@ -1,9 +1,38 @@
 ﻿@using Starter.Blazor.Modules.Common
 @using Starter.Blazor.Modules.User.Services
+@inject IJSRuntime JSRuntime
 @typeparam TItem
-@inject IUserService UserService
+<script>
+    async function showDeleteAlert(id) {
+        new window.Swal({
+            icon: 'warning',
+            title: 'Are you sure you want to delete this record?',
+            text: "You won't be able to revert this!",
+            showCancelButton: true,
+            confirmButtonText: 'Delete',
+            padding: '2em',
+        }).then((result) => {
+            if (result.value) {
+                window.DeleteRecordFunction(id);
+            }
+        });
+    }
+
+    window.registerDeleteRecordFunction = function (dotNetObject) {
+        window.DeleteRecordFunction = function (message) {
+            dotNetObject.invokeMethodAsync('DeleteRecordById', message)
+                .then(result => {
+                    console.log('Result from Blazor:', result);
+                })
+                .catch(error => {
+                    console.error('Error calling Blazor function:', error);
+                });
+        };
+    };
+</script>
+
 <div class="panel mt-6">
-    <h5 class="text-lg font-semibold dark:text-white-light">Advanced</h5>
+    
     <div class="dataTable-wrapper dataTable-loading no-footer sortable fixed-columns">
         <div class="dataTable-top"></div>
         <div class="dataTable-container">
@@ -12,9 +41,8 @@
                     <tr>
                         @foreach (var item in HeaderData)
                         {
-                            <th data-sortable="" style="width: 10.3537%;" class="@item["SorderOrder"]" @onclick="() =>  ColumnSorting(item)">
+                            <th data-sortable="" style="width: 10.3537%;" class="@item["SorderOrder"]" @onclick="() =>  OnColumnSorting(item)">
                                 <a href="#" class="@((item.ContainsKey("ShowSorting") && Convert.ToBoolean(item["ShowSorting"])) ? "dataTable-sorter" : "")">@item["Name"]</a>
-                                <!-- buttons with dropdowns -->
                                 @if (item.ContainsKey("ShowFilter") && Convert.ToBoolean(item["ShowFilter"]))
                                 {
                                     <form>
@@ -44,61 +72,178 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in (List<TItem>)GridData)
+                    @foreach (var item in GridData)
                     {
                         <tr>
                             @foreach (var headerKey in HeaderData)
                             {
-                                <td>@GetGridDataPropertyValue(headerKey["Key"])</td>
+                                if ((headerKey.ContainsKey("SpanTd") && !string.IsNullOrWhiteSpace(headerKey["SpanTd"])))
+                                {
+                                    @* <td>
+                        <span class="badge  @GetGridDataPropertyValue(headerKey["Span"], item) shadow-md dark:group-hover:bg-transparent">
+                        @GetGridDataPropertyValue(headerKey["Key"], item)
+                        </span>
+                        </td> *@
+
+                                }
+                                else if ((headerKey.ContainsKey("IsActionButton") && !string.IsNullOrWhiteSpace(headerKey["IsActionButton"])))
+                                {
+                                    <td>
+
+                                        <div class="flex items-center">
+                                            @foreach (var btn in headerKey["Key"].Split(','))
+                                            {
+                                                if (btn == "Delete")
+                                                {
+                                                    <button type="button" class="btn btm-sm btn-danger" @onclick='() => ShowDeleteAlert(GetGridDataPropertyValue( "Id",item ))'>Delete</button>
+                                                }
+                                                else if (btn == "Edit")
+                                                {
+                                                }
+
+                                            }
+                                        </div>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>@GetGridDataPropertyValue(headerKey["Key"], item)</td>
+                                }
                             }
                         </tr>
                     }
                 </tbody>
             </table>
         </div>
+        <div>
+            <div class="dataTable-bottom">
+                <div class="dataTable-info">Showing @Convert.ToString(((PageNumber - 1) * PageSize + 1)) to @Convert.ToString(Math.Min(((PageNumber - 1) * PageSize + 1) + PageSize - 1, TotalRecord)) of @Convert.ToString(TotalRecord) entries</div>
+                <div class="dataTable-dropdown">
+                    <label>
+                        <select class="dataTable-selector" @onchange="OnPageSizeChange">
+
+                            <option value="5" selected="">5</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </label>
+                </div>
+                <nav class="dataTable-pagination">
+                    <ul class="dataTable-pagination-list">
+                        <li class="pager">
+                            <a href="#" data-page="1" @onclick="() => OnPageNumberChange(1)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 rtl:rotate-180"> <path d="M13 19L7 12L13 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path opacity="0.5" d="M16.9998 19L10.9998 12L16.9998 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> </svg></a>
+
+                        </li>
+                        @if (TotalPages > 0)
+                        {
+                            @for (int i = 1; i <= TotalPages; i++)
+                            {
+                                int pageNumber = i;
+                                <li class="@((i == PageNumber) ? "active" : "")" @onclick="() => OnPageNumberChange(pageNumber)"><a href="#" data-page="@i">@i</a></li>
+                            }
+                        }
+                        <li class="pager">
+                            <a href="#" data-page="@TotalPages" @onclick="() => OnPageNumberChange(TotalPages)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 rtl:rotate-180"> <path d="M11 19L17 12L11 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path opacity="0.5" d="M6.99976 19L12.9998 12L6.99976 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> </svg></a>
+
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
     </div>
 </div>
 @code {
+    private async Task ShowDeleteAlert(string id)
+    {
+        await JSRuntime.InvokeVoidAsync("showDeleteAlert", id);
+    }
+    [JSInvokable]
+    public async Task DeleteRecordById(string id)
+    {
+        await DeleteRecord.InvokeAsync(id);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("registerDeleteRecordFunction", DotNetObjectReference.Create(this));
+        }
+    }
+
+    public delegate Task GridChangeHandler(int id, int pageSize, string[] orderBy);
     [Parameter]
-    public List<TItem> GridData { get; set; }
+    public GridChangeHandler PageSizeChange { get; set; }
     [Parameter]
-    public List<Dictionary<string, string>> HeaderData { get; set; }
+    public GridChangeHandler PageNumberChange { get; set; }
+
     [Parameter]
-    public string? PageName { get; set; }
+    public GridChangeHandler ColumnSortingChange { get; set; }
+
+    [Parameter]
+    public EventCallback<string> DeleteRecord { get; set; }
+
+
+    [Parameter]
+    public List<Dictionary<string, string>> HeaderData { get; set; } = new List<Dictionary<string, string>>();
+
+
     [Parameter]
     public int PageNumber { get; set; } = 1;
 
     [Parameter]
-    public int PageSize { get; set; } = 10;
+    public string[] SortColumn { get; set; } = new string[1];
+
+    [Parameter]
+    public int PageSize { get; set; } = 0;
 
     public int TotalPages { get; set; } = 0;
 
     public int TotalRecord { get; set; } = 0;
 
-    [Parameter]
-    public Action ParentAction { get; set; }
+    public List<TItem> GridData { get; set; } = new List<TItem>();
 
-    protected override void OnInitialized()
+    public async Task Refresh(List<TItem> newData, int totalPages, int totalRecord, int pageSize, int pageNumber)
     {
-        // Call the parent action when the child component is initialized
-        ParentAction?.Invoke();
+        GridData = newData;
+        TotalPages = totalPages;
+        TotalRecord = totalRecord;
+        PageSize = pageSize;
+        PageNumber = pageNumber;
+        await InvokeAsync(StateHasChanged);
     }
 
-    private string GetGridDataPropertyValue(string propertyName)
+    private string GetGridDataPropertyValue(string propertyName, TItem t)
     {
-        if (GridData != null)
+        if (t != null)
         {
             var property = typeof(TItem).GetProperty(propertyName);
             if (property != null)
             {
-                var value = property.GetValue(GridData);
+                var value = property.GetValue(t);
                 return value?.ToString() ?? "";
             }
         }
         return "";
     }
 
-    private void ColumnSorting(Dictionary<string, string> item)
+    private async Task OnPageSizeChange(ChangeEventArgs e)
+    {
+        if (int.TryParse(e?.Value?.ToString(), out int selectedPageSize))
+        {
+            await PageSizeChange.Invoke(1, selectedPageSize, null);
+        }
+    }
+    private async Task OnPageNumberChange(int pageNumber)
+    {
+
+        await PageNumberChange.Invoke(pageNumber, this.PageSize, null);
+    }
+
+    private async Task OnColumnSorting(Dictionary<string, string> item)
     {
         if (Convert.ToBoolean(item["ShowSorting"]) == true)
         {
@@ -110,7 +255,13 @@
             {
                 item["SorderOrder"] = "asc";
             }
+
+            if (SortColumn == null)
+            {
+                SortColumn = new string[0];
+            }
+            SortColumn[0] = item["Key"] + " " + item["SorderOrder"];
+            await ColumnSortingChange.Invoke(this.PageNumber, this.PageSize, SortColumn);
         }
     }
-   
 }
