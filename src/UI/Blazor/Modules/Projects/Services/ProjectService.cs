@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Json;
+﻿using System.Net.Http;
+using System.Net.Http.Json;
 using Starter.Blazor.Core.Response;
 using Starter.Blazor.Modules.Common;
 using Starter.Blazor.Modules.Projects.Models;
@@ -10,13 +11,13 @@ public class ProjectService(HttpClient http) : IProjectService
 {
     private readonly HttpClient _http = http;
 
-    public async Task<ApiResponse<int>> AddProjectAsync(AddEditProject projectDto)
+    public async Task<ApiResponse<string>> AddProjectAsync(AddEditProject projectDto)
     {
         try
         {
             var result = await _http.PostAsJsonAsync("api/Project/Create", projectDto);
 
-            var newResponse = await result.Content.ReadFromJsonAsync<ApiResponse<int>>();
+            var newResponse = await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
 
             if (newResponse != null && newResponse.Success)
             {
@@ -24,7 +25,7 @@ public class ProjectService(HttpClient http) : IProjectService
             }
             else
             {
-                return new ApiResponse<int>
+                return new ApiResponse<string>
                 {
                     Success = false,
                     Message = newResponse.Message,
@@ -34,7 +35,7 @@ public class ProjectService(HttpClient http) : IProjectService
         catch (Exception ex)
         {
             Console.WriteLine($"Error: {ex.Message}");
-            return new ApiResponse<int>
+            return new ApiResponse<string>
             {
                 Success = false,
             };
@@ -54,7 +55,7 @@ public class ProjectService(HttpClient http) : IProjectService
         return await _http.GetFromJsonAsync<ApiResponse<ProjectDetailsDto>>($"api/Project/{id}");
     }
 
-    public async Task<List<ProjectDto>> GetProjectlistsAsync(PaginationRequest param)
+    public async Task<PagedDataResponse<List<ProjectDto>>> GetProjectlistsAsync(PaginationRequest param)
     {
         try
         {
@@ -62,17 +63,37 @@ public class ProjectService(HttpClient http) : IProjectService
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content.ReadFromJsonAsync<PagedDataResponse<List<ProjectDto>>>();
-            return result?.Data ?? [];
+            return result;
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error: {ex.Message}");
-            return [];
+            return null;
         }
     }
     public async Task<ApiResponse<string>> DeleteProject(ProjectDto project)
     {
         var result = await _http.DeleteAsync($"api/Project/{project.Id}");
+
+        var newResponse = await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
+
+        if (newResponse != null && newResponse.Success)
+        {
+            return newResponse;
+        }
+        else
+        {
+            return new ApiResponse<string>
+            {
+                Success = false,
+                Messages = newResponse.Messages,
+            };
+        }
+    }
+
+    public async Task<ApiResponse<string>> DeleteProject(string id)
+    {
+        var result = await _http.DeleteAsync($"api/Project/{id}");
 
         var newResponse = await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
 
