@@ -1,17 +1,22 @@
-﻿@page "/userlist"
+﻿@page "/userlist_old"
 @using Starter.Blazor.Core
 @using Starter.Blazor.Modules.Common
 @using Starter.Blazor.Modules.User.Models
 @using Starter.Blazor.Modules.User.Services
+@using Starter.Blazor.Shared.CustomGrid
+@using Starter.Blazor.Shared.Response
 @inject IJSRuntime JSRuntime
 @inject IUserService UserService
+@using System.Text.Json
+@inject NavigationManager Navigation
+
 
 <div x-data="modal">
     <div class="panel h-full w-full">
         <div class="mb-5 flex items-center justify-between">
             <h5 class="text-lg font-semibold dark:text-white-light">Users List</h5>
 
-            <button type="button" class="btn btn-primary" @click="toggle">Invite User</button>
+            <button type="button" class="btn btn-primary" @onclick="ToggleModal">Invite User</button>
 
         </div>
         <div class="table-responsive">
@@ -45,8 +50,17 @@
                                 </span>
                             </td>
                             <td>
+
+                                @* <td>
+                            <button type="button" class="btn btn-outline-primary" @onclick="() => EditUser(user)">Edit</button>
+                            <!-- ... (other buttons and modal) ... -->
+                            </td> *@
+
+                                <div x-data="{}">
+                                    <button class="btn btn-outline-primary" x-on:click="() => toggle()" @onclick="() => EditUser(user)">Edit</button>
+                                </div>
                                 @* <button type="button" class="btn btn-outline-danger" @onclick="() => DeleteUser(user)">Delete</button> *@
-                                <div  x-data="deletemodal">
+                                <div x-data="deletemodal">
                                     <!-- button -->
                                     <div>
                                         <button type="button" class="btn btn-outline-danger" @click="toggle">Delete</button>
@@ -54,7 +68,7 @@
 
                                     <!--delete modal -->
                                     <div class="fixed inset-0 bg-[black]/60 z-[999] hidden overflow-y-auto" :class="dopen && '!block'">
-                                        <div class="flex items-center justify-center min-h-screen px-4" >
+                                        <div class="flex items-center justify-center min-h-screen px-4">
                                             <div x-show="dopen" x-transition x-transition.duration.300 class="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-lg my-8">
                                                 <div class="flex bg-[#fbfbfb] dark:bg-[#121c2c] items-center justify-between px-5 py-3">
                                                     <h5 class="font-bold text-lg">Delete User</h5>
@@ -126,11 +140,11 @@
 
     <!-- button -->
     <!-- modal -->
-    <div class="fixed inset-0 bg-[black]/60 z-[999] hidden overflow-y-auto" :class="open && '!block'">
+    <div id="userPopup" class="fixed inset-0 bg-[black]/60 z-[999] hidden overflow-y-auto" style="display: none;">
         <div class="flex items-center justify-center min-h-screen px-4">
-            <div x-show="open" x-transition x-transition.duration.300 class="panel border-0 py-1 px-4 rounded-lg overflow-hidden w-full max-w-sm my-8">
+            <div x-transition x-transition.duration.300 class="panel border-0 py-1 px-4 rounded-lg overflow-hidden w-full max-w-sm my-8">
                 <div class="flex items-center justify-between p-5 font-semibold text-lg dark:text-white">
-                    Invite User
+                    @modalTitle
                     <button type="button" @click="toggle" class="text-white-dark hover:text-dark">
                         <svg xmlns="http://www.w3.org/2000/svg"
                              width="24px"
@@ -148,7 +162,7 @@
                     </button>
                 </div>
                 <div class="p-5">
-                    <EditForm Model="@inviteUser" OnValidSubmit="InviteUser">
+                    <EditForm Model="@selectedUser" OnValidSubmit="InviteUser">
                         <DataAnnotationsValidator />
                         <div class="relative mb-4">
                             <span class="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
@@ -168,7 +182,7 @@
                                              stroke-width="1.5" />
                                 </svg>
                             </span>
-                            <input type="text" placeholder="First Name" class="form-input ltr:pl-10 rtl:pr-10" @bind-value="inviteUser.FirstName" />
+                            <input type="text" placeholder="First Name" class="form-input ltr:pl-10 rtl:pr-10" @bind-value="selectedUser.FirstName" />
                             <p class="mt-1 text-danger"><ValidationMessage For="@(() => inviteUser.FirstName)" /></p>
                         </div>
 
@@ -191,7 +205,7 @@
                                              stroke-width="1.5" />
                                 </svg>
                             </span>
-                            <input type="text" placeholder="Last Name" class="form-input ltr:pl-10 rtl:pr-10" @bind="inviteUser.LastName" />
+                            <InputText type="text" placeholder="Last Name" class="form-input ltr:pl-10 rtl:pr-10" @bind-Value="selectedUser.LastName" />
                         </div>
                         <div class="relative mb-4">
                             <span class="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
@@ -211,10 +225,19 @@
                                           stroke-width="1.5" />
                                 </svg>
                             </span>
-                            <input type="text" placeholder="Email" class="form-input ltr:pl-10 rtl:pr-10" @bind="inviteUser.Email" />
+                            <input type="text" placeholder="Email" class="form-input ltr:pl-10 rtl:pr-10" @bind="selectedUser.Email" />
                             <ValidationMessage For="@(() => inviteUser.Email)" />
                         </div>
-                        <button type="submit" class="btn btn-primary w-full">Invite</button>
+                        <button type="submit" class="btn btn-primary w-full">
+                            @if (isEditing)
+                            {
+                                <span>Update</span>
+                            }
+                            else
+                            {
+                                <span>Invite</span>
+                            }
+                        </button>
                     </EditForm>
                 </div>
             </div>
@@ -230,25 +253,31 @@
             toggle() {
                 this.open = !this.open;
             },
-            
+
         };
     }
 
     function deletemodal() {
         return {
-            dopen: false, 
+            dopen: false,
             toggle() {
                 this.dopen = !this.dopen;
             },
-            
+
         };
     }
 </script>
 
+
 @code {
+
+    private string modalTitle = "Invite User";
+    private bool isEditing = false;
     private List<UserlistDto> users = new List<UserlistDto>();
     private PaginationRequest param = new PaginationRequest { PageNumber = 0, PageSize = 10, OrderBy = new[] { "FullName" } };
     private InviteUserDto inviteUser = new InviteUserDto();
+    private UserlistDto selectedUser = new UserlistDto();
+    private async Task<dynamic> modal() => await JSRuntime.InvokeAsync<dynamic>("modal");
     private readonly string toastScriptConstant = @"
         const toast = window.Swal.mixin({
             toast: true,
@@ -257,14 +286,122 @@
             timer: 3000,
             showCloseButton: true,
         });";
+    private InviteUserDto inviteUser = new InviteUserDto();
 
-    [Inject]
-    public HttpInterceptorService Interceptor { get; set; }
+    private ReusableGrid<UserlistDto> gridRef;
 
-    protected override async Task OnInitializedAsync()
+    private PagedDataResponse<List<UserlistDto>> DisplayedData = new PagedDataResponse<List<UserlistDto>>();
+
+    private bool IsModalOpen = false;
+
+    protected override void OnInitialized()
     {
-        Interceptor.RegisterEvent();
-        users = await UserService.GetUserlistsAsync(param);
+        Task.WhenAll(LoadData(1, 5, null));
+    }
+    private async Task PageSizeChanged(int pageNumber, int pageSize, string[] OrderBy)
+    {
+        await LoadData(pageSize, pageNumber, OrderBy);
+    }
+    private async Task EditUser(UserlistDto user)
+    {
+        try
+        {
+            isEditing = true;
+            modalTitle = "Edit User";
+            selectedUser = new UserlistDto
+                {
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                };
+
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+
+
+
+
+    private async Task UpdateUser(UserlistDto user)
+    {
+        var result = await UserService.UpdateUserAsync(user);
+
+        if (result.Success)
+        {
+            showToaster(result.Data, "top");
+            modal().Result.toggle();
+            users = await UserService.GetUserlistsAsync(param);
+            StateHasChanged();
+        }
+        else
+        {
+            showToaster(result.Messages.FirstOrDefault(), "top");
+        }
+    }
+    private async Task InviteUser()
+    {
+        if (!isEditing)
+        {
+            inviteUser = new InviteUserDto();
+            inviteUser.Email = selectedUser.Email;
+            inviteUser.FirstName = selectedUser.FirstName;
+            inviteUser.LastName = selectedUser.LastName;
+            var result = await UserService.InviteUserAsync(inviteUser);
+            if (result.Success)
+            {
+                showToaster(result.Data, "top");
+
+                inviteUser.FirstName = string.Empty;
+                inviteUser.LastName = string.Empty;
+                inviteUser.Email = string.Empty;
+
+                users = await UserService.GetUserlistsAsync(param);
+                StateHasChanged();
+            }
+            else
+            {
+                showToaster(result.Messages.FirstOrDefault(), "top");
+            }
+        }
+        else
+        {
+            UpdateUser(selectedUser);
+        }
+    }
+
+    private async Task LoadData(int PageNumber, int PageSize, string[] OrderBy)
+    {
+        var paginationRequest = new PaginationRequest
+            {
+                PageSize = PageSize,
+                PageNumber = PageNumber,
+                OrderBy = OrderBy
+            };
+
+        DisplayedData = await UserService.GetUserlistsAsync(paginationRequest);
+
+        if (gridRef != null)
+        {
+            await gridRef.Refresh(DisplayedData.Data, DisplayedData.TotalPages, DisplayedData.TotalCount, paginationRequest.PageSize, paginationRequest.PageNumber);
+        }
+    }
+    private List<Dictionary<string, string>> headerInfo = new List<Dictionary<string, string>>
+    {
+        new Dictionary<string, string> {{"Name", "Full Name"}, {"Key","FullName"}, {"CssClass", ""}, {"ShowSorting", "true"}, {"SorderOrder","asc" }, {"ShowFilter", "false"},{"SpanTd","" } },
+        new Dictionary<string, string> { { "Name", "Email" }, { "Key", "Email" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" } },
+        new Dictionary<string, string> { { "Name", "Status" }, { "Key", "Status" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" } },
+        new Dictionary<string, string> { { "Name", "Role" }, { "Key", "Role" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" }},
+        new Dictionary<string, string> { { "Name", "Action" }, { "Key", "Delete" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" },{ "IsActionButton","true"} }
+    };
+    private void showToaster(string msg, string position)
+    {
+        string toastScript = $"{toastScriptConstant} toast.fire({{ title: '{msg}' }});";
+        JSRuntime.InvokeVoidAsync("eval", toastScript);
     }
 
     private async Task InviteUser()
@@ -277,39 +414,21 @@
             inviteUser.FirstName = string.Empty;
             inviteUser.LastName = string.Empty;
             inviteUser.Email = string.Empty;
-
-            users = await UserService.GetUserlistsAsync(param);
-            StateHasChanged();
+            await  ToggleModal();
+            await LoadData(1, 5, null);
         }
         else
         {
             showToaster(result.Messages.FirstOrDefault(), "top");
         }
     }
-
-    private async Task DeleteUser(UserlistDto user)
+    private async Task ToggleModal()
     {
-        var result = await UserService.DeleteUser(user);
-
-        if (result.Success)
-        {
-            showToaster(result.Data, "top");
-            users = await UserService.GetUserlistsAsync(param);
-            StateHasChanged();
-        }
-        else
-        {
-            showToaster(result.Messages.FirstOrDefault(), "top");
-        }
-    }
+        IsModalOpen = !IsModalOpen;
 
     private void showToaster(string msg, string position)
     {
         string toastScript = $"{toastScriptConstant} toast.fire({{ title: '{msg}' }});";
         JSRuntime.InvokeVoidAsync("eval", toastScript);
-    }
-    public void Dispose()
-    {
-        Interceptor.DisposeEvent();
     }
 }

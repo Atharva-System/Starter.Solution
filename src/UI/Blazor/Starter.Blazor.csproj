@@ -9,6 +9,7 @@
     <EmbeddedResource Remove="Modules\Users\**" />
     <None Remove="Modules\Settings\**" />
     <None Remove="Modules\Users\**" />
+	
   </ItemGroup>
 
   <ItemGroup>
