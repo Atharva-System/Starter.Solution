@@ -70,4 +70,24 @@ public class ProjectService(HttpClient http) : IProjectService
             return [];
         }
     }
+    public async Task<ApiResponse<string>> DeleteProject(ProjectDto project)
+    {
+        var result = await _http.DeleteAsync($"api/Project/{project.Id}");
+
+        var newResponse = await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
+
+        if (newResponse != null && newResponse.Success)
+        {
+            return newResponse;
+        }
+        else
+        {
+            return new ApiResponse<string>
+            {
+                Success = false,
+                Messages = newResponse.Messages,
+            };
+        }
+    }
 }
+

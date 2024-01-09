@@ -78,7 +78,7 @@
                         <DataAnnotationsValidator />
                         <div>
                             <label for="projectName">Project Name</label>
-                            <input id="projectName" type="text" class="form-input" placeholder="Enter Project Name" @bind="addProject.ProjectName"/>
+                            <input id="projectName" type="text" class="form-input" placeholder="Enter Project Name" @bind="addProject.ProjectName" />
                             <ValidationMessage For="@(() => addProject.ProjectName)" />
                         </div>
                         <div>
@@ -101,8 +101,8 @@
                                 <input id="startDate"
                                        type="date"
                                        name="inv-date"
-                                       class="form-input" 
-                                       @bind-value="addProject.StartDate"/>
+                                       class="form-input"
+                                       @bind-value="addProject.StartDate" />
                                 <ValidationMessage For="@(() => addProject.StartDate)" />
                             </div>
                             <div>
@@ -110,8 +110,8 @@
                                 <input id="startDate"
                                        type="date"
                                        name="inv-date"
-                                       class="form-input" 
-                                       @bind-value="addProject.EndDate"/>
+                                       class="form-input"
+                                       @bind-value="addProject.EndDate" />
                                 <ValidationMessage For="@(() => addProject.EndDate)" />
                             </div>
                         </div>
@@ -145,7 +145,7 @@
 
     private async Task AddProject()
     {
-        if(addProject.Id == null)
+        if (addProject.Id == null)
         {
             var result = await ProjectService.AddProjectAsync(addProject);
             if (result.Success)
@@ -162,7 +162,7 @@
                 showToaster(result.Message, "top");
             }
         }
-        else if(addProject.Id != null)
+        else if (addProject.Id != null)
         {
             var result = await ProjectService.EditProject(addProject.Id.ToString(), addProject);
             if (result.Success)

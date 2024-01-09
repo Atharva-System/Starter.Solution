@@ -1,0 +1,60 @@
+﻿<!-- Components/Pagination.razor -->
+<div>
+    <div class="dataTable-bottom">
+        <div class="dataTable-info">Showing @Convert.ToString(CurrentPage) to @Convert.ToString((ItemPerPage * CurrentPage) > TotalRecord ? TotalRecord : (ItemPerPage * CurrentPage)) of @Convert.ToString(TotalRecord) entries</div>
+        <div class="dataTable-dropdown">
+            <label>
+                <select class="dataTable-selector" @onchange="OnPageSizeChange">
+
+                    <option value="10" selected="">10</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+            </label>
+        </div>
+        <nav class="dataTable-pagination">
+            <ul class="dataTable-pagination-list">
+                <li class="pager">
+                    <a href="#" data-page="1"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 rtl:rotate-180"> <path d="M13 19L7 12L13 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path opacity="0.5" d="M16.9998 19L10.9998 12L16.9998 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> </svg></a>
+                    @* @onclick="GoToFirstPage" *@
+                </li>
+                @if (TotalPages > 0)
+                {
+                    @for (int i = 1; i <= TotalPages; i++)
+                    {
+                        int pageNumber = i;
+                        <li class="@((i == CurrentPage) ? "active" : "")"><a href="#" data-page="@i">@i</a></li>
+                        @* = "() => GoToPage(pageNumber)" *@
+
+                    }
+                }
+                <li class="pager">
+                    <a href="#" data-page="@TotalPages"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 rtl:rotate-180"> <path d="M11 19L17 12L11 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path opacity="0.5" d="M6.99976 19L12.9998 12L6.99976 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> </svg></a>
+                    @* @onclick="GoToLastPage" *@
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+@code {
+    [Parameter] public int ItemPerPage { get; set; }
+    [Parameter] public int TotalRecord { get; set; }
+    [Parameter] public int CurrentPage { get; set; }
+    [Parameter] public int TotalPages { get; set; }
+    public delegate Task PageSizeChangeHandler(int id, int pageSize);   
+
+    [Parameter]
+    public PageSizeChangeHandler PageSizeChange { get; set; }
+
+    private async Task OnPageSizeChange(ChangeEventArgs e)
+    {
+        object value = e.Value;
+        if (int.TryParse(value.ToString(), out int selectedPageSize))
+        {
+            await PageSizeChange?.Invoke(1, selectedPageSize);
+        }
+    }
+}
