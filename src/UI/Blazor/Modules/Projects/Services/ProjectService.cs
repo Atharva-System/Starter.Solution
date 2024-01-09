@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Json;
+using Starter.Blazor.Core.Response;
 using Starter.Blazor.Modules.Common;
 using Starter.Blazor.Modules.Projects.Models;
 using Starter.Blazor.Shared.Response;
@@ -24,4 +25,24 @@ public class ProjectService(HttpClient http) : IProjectService
             return [];
         }
     }
+    public async Task<ApiResponse<string>> DeleteProject(ProjectDto project)
+    {
+        var result = await _http.DeleteAsync($"api/Project/{project.Id}");
+
+        var newResponse = await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
+
+        if (newResponse != null && newResponse.Success)
+        {
+            return newResponse;
+        }
+        else
+        {
+            return new ApiResponse<string>
+            {
+                Success = false,
+                Messages = newResponse.Messages,
+            };
+        }
+    }
 }
+
