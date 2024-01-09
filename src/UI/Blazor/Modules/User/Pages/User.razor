@@ -1,0 +1,236 @@
+@page "/userlist"
+@using Starter.Blazor.Modules.Common
+@using Starter.Blazor.Modules.User.Models
+@using Starter.Blazor.Modules.User.Services
+@using Starter.Blazor.Shared.CustomGrid
+@using Starter.Blazor.Shared.Response
+@inject IJSRuntime JSRuntime
+@inject IUserService UserService
+
+<div x-data="modal">
+    <div class="panel h-full w-full">
+        <div class="mb-5 flex items-center justify-between">
+            <h5 class="text-lg font-semibold dark:text-white-light">Users List</h5>
+
+            <button type="button" class="btn btn-primary" @onclick="ToggleModal">Invite User</button>
+
+        </div>
+        <div class="table-responsive">
+            <ReusableGrid @ref="gridRef" TItem="UserlistDto" HeaderData="@headerInfo"  PageSizeChange="LoadData" PageNumberChange="LoadData" ColumnSortingChange="LoadData" DeleteRecord="DeleteRecord" />
+        </div>
+    </div>
+
+    <!-- button -->
+    <!-- modal -->
+    <div id="userPopup" class="fixed inset-0 bg-[black]/60 z-[999] hidden overflow-y-auto" style="display: none;">
+        <div class="flex items-center justify-center min-h-screen px-4">
+            <div x-transition x-transition.duration.300 class="panel border-0 py-1 px-4 rounded-lg overflow-hidden w-full max-w-sm my-8">
+                <div class="flex items-center justify-between p-5 font-semibold text-lg dark:text-white">
+                    Invite User
+                    <button type="button" @onclick="ToggleModal" class="text-white-dark hover:text-dark">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="24px"
+                             height="24px"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.5"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             class="h-6 w-6">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                <div class="p-5" >
+                    <EditForm Model="@inviteUser" OnValidSubmit="InviteUser">
+                        <DataAnnotationsValidator />
+                        <div class="relative mb-4">
+                            <span class="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
+                                <svg width="24"
+                                     height="24"
+                                     viewBox="0 0 24 24"
+                                     fill="none"
+                                     xmlns="http://www.w3.org/2000/svg"
+                                     class="h-5 w-5">
+                                    <circle cx="12" cy="6" r="4" stroke="currentColor" stroke-width="1.5" />
+                                    <ellipse opacity="0.5"
+                                             cx="12"
+                                             cy="17"
+                                             rx="7"
+                                             ry="4"
+                                             stroke="currentColor"
+                                             stroke-width="1.5" />
+                                </svg>
+                            </span>
+                            <input type="text" placeholder="First Name" class="form-input ltr:pl-10 rtl:pr-10" @bind-value="inviteUser.FirstName" />
+                            <p class="mt-1 text-danger"><ValidationMessage For="@(() => inviteUser.FirstName)" /></p>
+                        </div>
+
+
+                        <div class="relative mb-4">
+                            <span class="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
+                                <svg width="24"
+                                     height="24"
+                                     viewBox="0 0 24 24"
+                                     fill="none"
+                                     xmlns="http://www.w3.org/2000/svg"
+                                     class="h-5 w-5">
+                                    <circle cx="12" cy="6" r="4" stroke="currentColor" stroke-width="1.5" />
+                                    <ellipse opacity="0.5"
+                                             cx="12"
+                                             cy="17"
+                                             rx="7"
+                                             ry="4"
+                                             stroke="currentColor"
+                                             stroke-width="1.5" />
+                                </svg>
+                            </span>
+                            <input type="text" placeholder="Last Name" class="form-input ltr:pl-10 rtl:pr-10" @bind="inviteUser.LastName" />
+                        </div>
+                        <div class="relative mb-4">
+                            <span class="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
+                                <svg width="24"
+                                     height="24"
+                                     viewBox="0 0 24 24"
+                                     fill="none"
+                                     xmlns="http://www.w3.org/2000/svg"
+                                     class="h-5 w-5">
+                                    <path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 12.7215 17.8726 13.4133 17.6392 14.054C17.5551 14.285 17.4075 14.4861 17.2268 14.6527L17.1463 14.727C16.591 15.2392 15.7573 15.3049 15.1288 14.8858C14.6735 14.5823 14.4 14.0713 14.4 13.5241V12M14.4 12C14.4 13.3255 13.3255 14.4 12 14.4C10.6745 14.4 9.6 13.3255 9.6 12C9.6 10.6745 10.6745 9.6 12 9.6C13.3255 9.6 14.4 10.6745 14.4 12Z"
+                                          stroke="currentColor"
+                                          stroke-width="1.5"
+                                          stroke-linecap="round" />
+                                    <path opacity="0.5"
+                                          d="M2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12Z"
+                                          stroke="currentColor"
+                                          stroke-width="1.5" />
+                                </svg>
+                            </span>
+                            <input type="text" placeholder="Email" class="form-input ltr:pl-10 rtl:pr-10" @bind="inviteUser.Email" />
+                            <ValidationMessage For="@(() => inviteUser.Email)" />
+                        </div>
+                        <button type="submit" class="btn btn-primary w-full">Invite</button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+   
+    window.showModal = function () {
+        document.getElementById('userPopup').style.display = 'block';
+    };
+
+    window.hideModal = function () {
+        document.getElementById('userPopup').style.display = 'none';
+    };
+
+</script>
+
+@code {
+    private readonly string toastScriptConstant = @"
+        const toast = window.Swal.mixin({
+            toast: true,
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            showCloseButton: true,
+        });";
+    private InviteUserDto inviteUser = new InviteUserDto();
+
+    private ReusableGrid<UserlistDto> gridRef;
+
+    private PagedDataResponse<List<UserlistDto>> DisplayedData = new PagedDataResponse<List<UserlistDto>>();
+
+    private bool IsModalOpen = false;
+
+    protected override void OnInitialized()
+    {
+        Task.WhenAll(LoadData(1, 5, null));
+    }
+    private async Task PageSizeChanged(int pageNumber, int pageSize, string[] OrderBy)
+    {
+        await LoadData(pageSize, pageNumber, OrderBy);
+    }
+
+    private async Task DeleteRecord(string id)
+    {
+        var result = await UserService.DeleteUser(id);
+
+        if (result.Success)
+        {
+            showToaster(result.Data, "top");
+            await LoadData(1, 5, null);
+        }
+        else
+        {
+            showToaster(result.Messages.FirstOrDefault(), "top");
+        }
+    }
+
+    private async Task LoadData(int PageNumber, int PageSize, string[] OrderBy)
+    {
+        var paginationRequest = new PaginationRequest
+            {
+                PageSize = PageSize,
+                PageNumber = PageNumber,
+                OrderBy = OrderBy
+            };
+
+        DisplayedData = await UserService.GetUserlistsAsync(paginationRequest);
+
+        if (gridRef != null)
+        {
+            await gridRef.Refresh(DisplayedData.Data, DisplayedData.TotalPages, DisplayedData.TotalCount, paginationRequest.PageSize, paginationRequest.PageNumber);
+        }
+    }
+    private List<Dictionary<string, string>> headerInfo = new List<Dictionary<string, string>>
+    {
+        new Dictionary<string, string> {{"Name", "Full Name"}, {"Key","FullName"}, {"CssClass", ""}, {"ShowSorting", "true"}, {"SorderOrder","asc" }, {"ShowFilter", "false"},{"SpanTd","" } },
+        new Dictionary<string, string> { { "Name", "Email" }, { "Key", "Email" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" } },
+        new Dictionary<string, string> { { "Name", "Status" }, { "Key", "Status" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" } },
+        new Dictionary<string, string> { { "Name", "Role" }, { "Key", "Role" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" }},
+        new Dictionary<string, string> { { "Name", "Action" }, { "Key", "Delete" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" },{ "IsActionButton","true"} }
+    };
+    private void showToaster(string msg, string position)
+    {
+        string toastScript = $"{toastScriptConstant} toast.fire({{ title: '{msg}' }});";
+        JSRuntime.InvokeVoidAsync("eval", toastScript);
+    }
+
+    private async Task InviteUser()
+    {
+        var result = await UserService.InviteUserAsync(inviteUser);
+        if (result.Success)
+        {
+            showToaster(result.Data, "top");
+
+            inviteUser.FirstName = string.Empty;
+            inviteUser.LastName = string.Empty;
+            inviteUser.Email = string.Empty;
+            await  ToggleModal();
+            await LoadData(1, 5, null);
+        }
+        else
+        {
+            showToaster(result.Messages.FirstOrDefault(), "top");
+        }
+    }
+    private async Task ToggleModal()
+    {
+        IsModalOpen = !IsModalOpen;
+
+        if (IsModalOpen)
+        {
+            await JSRuntime.InvokeVoidAsync("showModal");
+        }
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("hideModal");
+        }
+    }
+}
