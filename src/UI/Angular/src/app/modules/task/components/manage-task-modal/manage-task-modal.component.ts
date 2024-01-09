@@ -187,7 +187,7 @@ export class ManageTaskModalComponent implements OnChanges {
     this.discard.emit();
   }
 
-  submitForm() {
+  submitForm(doClose: boolean = true) {
     this.isSubmitFormCreateTask = true;
     if (this.formCreateTask.valid) {
       const formValues = this.formCreateTask.value;
@@ -230,7 +230,7 @@ export class ManageTaskModalComponent implements OnChanges {
             this.isSubmitFormCreateTask = false;
             this.alertService.showMessage('Task Created successfully.');
             this.formCreateTask.reset();
-            this.modalComponent.close();
+            if (doClose) this.modalComponent.close();
             this.saved.emit();
           },
           (error) => {},

@@ -12,8 +12,8 @@ public class UsersPersistenceService(AppIdentityDbContext db) : IUsersPersistenc
     public async Task<ApiResponse<List<TaskAssigneeDto>>> GetAssigneeForTaskAsync()
     {
         var users = await (from u in _db.Users.AsNoTracking()
-                           join ur in _db.UserRoles on u.Id equals ur.UserId
-                           join r in _db.Roles on ur.RoleId equals r.Id
+                           join ur in _db.UserRoles.AsNoTracking() on u.Id equals ur.UserId
+                           join r in _db.Roles.AsNoTracking() on ur.RoleId equals r.Id
                            where r.NormalizedName == "USER"
                            select new TaskAssigneeDto
                            {

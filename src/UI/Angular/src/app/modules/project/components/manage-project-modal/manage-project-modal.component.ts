@@ -129,7 +129,7 @@ export class ManageProjectModalComponent implements OnChanges {
     this.discard.emit();
   }
 
-  submitForm() {
+  submitForm(doClose: boolean = true) {
     this.isSubmitFormCreateProject = true;
     if (this.formCreateProject.valid) {
       const formValues = this.formCreateProject.value;
@@ -165,7 +165,7 @@ export class ManageProjectModalComponent implements OnChanges {
             this.isSubmitFormCreateProject = false;
             this.alertService.showMessage('Project Created successfully.');
             this.formCreateProject.reset();
-            this.modalComponent.close();
+            if (doClose) this.modalComponent.close();
             this.saved.emit();
           },
           (error) => {},
