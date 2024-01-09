@@ -2,61 +2,33 @@
 @using Starter.Blazor.Modules.Common
 @using Starter.Blazor.Modules.Projects.Models
 @using Starter.Blazor.Modules.Projects.Services
+@using Starter.Blazor.Shared.CustomGrid
+@using Starter.Blazor.Shared.Response
 @inject IJSRuntime JSRuntime
 @inject IProjectService ProjectService
 
 
 <div x-data="modal">
-    <!-- list -->
+    
     <div class="panel h-full w-full">
         <div class="mb-5 flex items-center justify-between">
             <h5 class="text-lg font-semibold dark:text-white-light">Projects</h5>
-            <button type="button" class="btn btn-primary" @click="toggle">Add Project</button>
+            <button type="button" class="btn btn-primary" @onclick="ToggleModal">Add Project</button>
         </div>
 
         <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th class="ltr:rounded-l-md rtl:rounded-r-md">Name</th>
-                        <th>Description</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Hours</th>
-                        <th class="ltr:rounded-r-md rtl:rounded-l-md">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var project in projects)
-                    {
-                        <tr class="group text-white-dark hover:text-black dark:hover:text-white-light/90">
-                            <td class="min-w-[150px] text-black dark:text-white">
-                                @project.ProjectName
-                            </td>
-                            <td class="text-dark">@project.Description</td>
-                            <td class="text-dark">@project.StartDateDisplay</td>
-                            <td class="text-dark">@project.EndDateDisplay</td>
-                            <td class="text-dark">@project.EstimatedHours</td>
-                            <td>
-                                <div x-data="{}">
-                                    <button x-on:click="() => toggle()" @onclick="() => EditProject(project)">Edit</button>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+            <ReusableGrid @ref="gridRef" TItem="ProjectDto" HeaderData="@headerInfo" PageSizeChange="LoadData" PageNumberChange="LoadData" ColumnSortingChange="LoadData" DeleteRecord="DeleteRecord" />
         </div>
     </div>
 
 
     <!-- modal -->
-    <div class="fixed inset-0 bg-[black]/60 z-[999] hidden overflow-y-auto" :class="open && '!block'">
+    <div id="projectPopup" class="fixed inset-0 bg-[black]/60 z-[999] hidden overflow-y-auto" style="display: none;">
         <div class="flex items-center justify-center min-h-screen px-4">
-            <div x-show="open" x-transition x-transition.duration.300 class="panel border-0 py-1 px-4 rounded-lg overflow-hidden w-full max-w-sm my-8">
+            <div x-transition x-transition.duration.300 class="panel border-0 py-1 px-4 rounded-lg overflow-hidden w-full max-w-sm my-8">
                 <div class="flex items-center justify-between p-5 font-semibold text-lg dark:text-white">
                     Add Project
-                    <button type="button" @click="toggle" class="text-white-dark hover:text-dark">
+                    <button type="button" @onclick="ToggleModal" class="text-white-dark hover:text-dark">
                         <svg xmlns="http://www.w3.org/2000/svg"
                              width="24px"
                              height="24px"
@@ -123,10 +95,36 @@
     </div>
 </div>
 
+<script>
+
+    window.showModal = function () {
+        document.getElementById('projectPopup').style.display = 'block';
+    };
+
+    window.hideModal = function () {
+        document.getElementById('projectPopup').style.display = 'none';
+    };
+
+</script>
 
 @code {
+    private bool IsModalOpen = false;
+
+    private ReusableGrid<ProjectDto> gridRef;
+    private PagedDataResponse<List<ProjectDto>> DisplayedData = new PagedDataResponse<List<ProjectDto>>();
+
+
+    private List<Dictionary<string, string>> headerInfo = new List<Dictionary<string, string>>
+    {
+        new Dictionary<string, string> { {"Name", "Name"}, {"Key","ProjectName"}, {"CssClass", ""}, {"ShowSorting", "true"}, {"SorderOrder","asc" }, {"ShowFilter", "false"},{"SpanTd","" } },
+        new Dictionary<string, string> { { "Name", "Description" }, { "Key", "Description" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" } },
+        new Dictionary<string, string> { { "Name", "Start Date" }, { "Key", "StartDateDisplay" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" } },
+        new Dictionary<string, string> { { "Name", "End Date" }, { "Key", "EndDateDisplay" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" }},
+        new Dictionary<string, string> { { "Name", "Hours" }, { "Key", "EstimatedHours" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" }},
+        new Dictionary<string, string> { { "Name", "Action" }, { "Key", "Delete" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" },{ "IsActionButton","true"} }
+    };
+
     private List<ProjectDto> projects = new List<ProjectDto>();
-    private PaginationRequest param = new PaginationRequest { PageNumber = 0, PageSize = 10, OrderBy = new[] { "projectName" } };
     private AddEditProject addProject = new AddEditProject();
     private ProjectDetailsDto projectDetailsdto = new ProjectDetailsDto();
     private readonly string toastScriptConstant = @"
@@ -138,9 +136,13 @@
             showCloseButton: true,
         });";
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        projects = await ProjectService.GetProjectlistsAsync(param);
+        Task.WhenAll(LoadData(1, 5, null));
+    }
+    private async Task PageSizeChanged(int pageNumber, int pageSize, string[] OrderBy)
+    {
+        await LoadData(pageSize, pageNumber, OrderBy);
     }
 
     private async Task AddProject()
@@ -151,11 +153,10 @@
             if (result.Success)
             {
                 showToaster(result.Message, "top");
-
                 addProject = new AddEditProject();
 
-                projects = await ProjectService.GetProjectlistsAsync(param);
-                StateHasChanged();
+                await ToggleModal();
+                await LoadData(1, 5, null);
             }
             else
             {
@@ -168,11 +169,10 @@
             if (result.Success)
             {
                 showToaster(result.Message, "top");
-
                 addProject = new AddEditProject();
 
-                projects = await ProjectService.GetProjectlistsAsync(param);
-                StateHasChanged();
+                await ToggleModal();
+                await LoadData(1, 5, null);
             }
             else
             {
@@ -200,5 +200,51 @@
     {
         string toastScript = $"{toastScriptConstant} toast.fire({{ title: '{msg}' }});";
         JSRuntime.InvokeVoidAsync("eval", toastScript);
+    }
+
+    private async Task ToggleModal()
+    {
+        IsModalOpen = !IsModalOpen;
+
+        if (IsModalOpen)
+        {
+            await JSRuntime.InvokeVoidAsync("showModal");
+        }
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("hideModal");
+        }
+    }
+
+    private async Task LoadData(int PageNumber, int PageSize, string[] OrderBy)
+    {
+        var paginationRequest = new PaginationRequest
+        {
+            PageSize = PageSize,
+            PageNumber = PageNumber,
+            OrderBy = OrderBy
+        };
+
+        DisplayedData = await ProjectService.GetProjectlistsAsync(paginationRequest);
+
+        if (gridRef != null)
+        {
+            await gridRef.Refresh(DisplayedData.Data, DisplayedData.TotalPages, DisplayedData.TotalCount, paginationRequest.PageSize, paginationRequest.PageNumber);
+        }
+    }
+
+    private async Task DeleteRecord(string id)
+    {
+        var result = await ProjectService.DeleteProject(id);
+
+        if (result.Success)
+        {
+            showToaster(result.Message, "top");
+            await LoadData(1, 5, null);
+        }
+        else
+        {
+            showToaster(result.Messages.FirstOrDefault(), "top");
+        }
     }
 }

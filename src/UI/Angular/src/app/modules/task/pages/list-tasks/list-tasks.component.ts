@@ -15,6 +15,10 @@ import {
 } from '../../../../shared/ui/dropdown/dropdown.component';
 import { ManageTaskModalComponent } from '../../components/manage-task-modal/manage-task-modal.component';
 import { TaskService } from '../../services/task.service';
+import {
+  ISelectItems,
+  SelectComponent,
+} from '../../../../shared/ui/select/select.component';
 
 @Component({
   selector: 'app-list-tasks',
@@ -30,6 +34,7 @@ import { TaskService } from '../../services/task.service';
     MenuModule,
     DropdownComponent,
     DateRangePickerComponent,
+    SelectComponent,
   ],
   templateUrl: './list-tasks.component.html',
   styleUrl: './list-tasks.component.css',
@@ -53,6 +58,8 @@ export class ListTasksComponent {
   editTaskId = '';
   selectedFilterDropdownField = 'taskName';
   searchBoxType = 'text';
+  priorityOptions: ISelectItems[] = [];
+  statusOptions: ISelectItems[] = [];
   params: PaginationFilter;
 
   loading: boolean = true;
@@ -84,8 +91,8 @@ export class ListTasksComponent {
     },
     { text: 'Start Date', value: 'startDate' },
     { text: 'End Date', value: 'endDate' },
-    { text: 'Status', value: 'statusDisplay' },
-    { text: 'Priority', value: 'priorityDisplay' },
+    { text: 'Status', value: 'status' },
+    { text: 'Priority', value: 'priority' },
   ];
 
   rows: Array<any> = [];
@@ -94,6 +101,30 @@ export class ListTasksComponent {
   constructor() {
     this.params = { ...this.filterService.defaultFilter };
     this.getTasks();
+    this.bindStatus();
+    this.bindPriority();
+  }
+
+  bindStatus() {
+    this.taskService.getTaskStatusList().subscribe((data) => {
+      this.statusOptions = data.data.map(
+        ({ id, displayName }: { id: any; displayName: string }) => ({
+          value: `${id}`,
+          label: displayName,
+        }),
+      );
+    });
+  }
+
+  bindPriority() {
+    this.taskService.getTaskPriorityList().subscribe((data) => {
+      this.priorityOptions = data.data.map(
+        ({ id, displayName }: { id: any; displayName: string }) => ({
+          value: `${id}`,
+          label: displayName,
+        }),
+      );
+    });
   }
 
   selectFilterDropdown(field: string) {
@@ -221,12 +252,7 @@ export class ListTasksComponent {
   }
 
   getCondition(column: string): any {
-    const containsColumns = [
-      'taskName',
-      'projectName',
-      'priorityDisplay',
-      'statusDisplay',
-    ];
+    const containsColumns = ['taskName', 'projectName'];
 
     if (containsColumns.includes(column)) {
       return 'contain';
@@ -260,5 +286,10 @@ export class ListTasksComponent {
 
   dateRangeclear() {
     this.clearSearchBox();
+  }
+
+  searchByDropDown(id: string) {
+    this.search = id;
+    this.onSearch();
   }
 }

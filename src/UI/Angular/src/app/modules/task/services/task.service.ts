@@ -37,4 +37,12 @@ export class TaskService {
   getTaskPriorityList() {
     return this.apiHandlerService.get(APIs.getTaskPriorityListApi);
   }
+
+  getAssignees() {
+    return this.apiHandlerService.get(APIs.getAssigneeListApi);
+  }
+
+  getProjects() {
+    return this.apiHandlerService.get(APIs.getProjectListApi);
+  }
 }

@@ -95,7 +95,7 @@ export class ListProjectsComponent {
     } else if (field == 'startDate' || field == 'endDate') {
       this.searchBoxType = 'date';
     } else {
-      this.searchBoxType = 'string';
+      this.searchBoxType = 'text';
     }
     this.selectedFilterDropdownField = field;
     if (
