@@ -1,4 +1,5 @@
 ﻿@page "/userlist"
+@using Starter.Blazor.Core
 @using Starter.Blazor.Modules.Common
 @using Starter.Blazor.Modules.User.Models
 @using Starter.Blazor.Modules.User.Services
@@ -257,8 +258,12 @@
             showCloseButton: true,
         });";
 
+    [Inject]
+    public HttpInterceptorService Interceptor { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
+        Interceptor.RegisterEvent();
         users = await UserService.GetUserlistsAsync(param);
     }
 
@@ -302,5 +307,9 @@
     {
         string toastScript = $"{toastScriptConstant} toast.fire({{ title: '{msg}' }});";
         JSRuntime.InvokeVoidAsync("eval", toastScript);
+    }
+    public void Dispose()
+    {
+        Interceptor.DisposeEvent();
     }
 }
