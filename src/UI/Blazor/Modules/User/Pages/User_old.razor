@@ -1,4 +1,4 @@
-﻿@page "/userlist"
+﻿@page "/User_old"
 @using Starter.Blazor.Modules.Common
 @using Starter.Blazor.Modules.User.Models
 @using Starter.Blazor.Modules.User.Services
@@ -225,16 +225,17 @@
                             <input type="text" placeholder="Email" class="form-input ltr:pl-10 rtl:pr-10" @bind="selectedUser.Email" />
                             <ValidationMessage For="@(() => inviteUser.Email)" />
                         </div>
-                        <button type="submit" class="btn btn-primary w-full">
-                            @if (isEditing)
-                            {
-                                <span>Update</span>
-                            }
-                            else
-                            {
-                                <span>Invite</span>
-                            }
-                        </button>
+                       <button type="submit" class="btn btn-primary w-full" disabled="@(!isEditing)">
+    @if (isEditing)
+    {
+        <span>Update</span>
+    }
+    else
+    {
+        <span>Invite</span>
+    }
+</button>
+
                     </EditForm>
                 </div>
             </div>
@@ -288,47 +289,51 @@
     {
         users = await UserService.GetUserlistsAsync(param);
     }
-    private async Task EditUser(UserlistDto user)
+   private async Task EditUser(UserlistDto user)
+{
+    try
     {
-        try
+        isEditing = true;
+        modalTitle = "Edit User";
+        selectedUser = new UserlistDto
         {
-            isEditing = true;
-            modalTitle = "Edit User";
-            selectedUser = new UserlistDto
-                {
-                    Id = user.Id,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Email = user.Email,
-                };
-
-
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error: {ex.Message}");
-        }
+            Id = user.Id,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email,
+        };
     }
-
-
-
-
-    private async Task UpdateUser(UserlistDto user)
+    catch (Exception ex)
     {
-        var result = await UserService.UpdateUserAsync(user);
-
-        if (result.Success)
-        {
-            showToaster(result.Data, "top");
-            modal().Result.toggle();
-            users = await UserService.GetUserlistsAsync(param);
-            StateHasChanged();
-        }
-        else
-        {
-            showToaster(result.Messages.FirstOrDefault(), "top");
-        }
+        Console.WriteLine($"Error: {ex.Message}");
     }
+}
+
+
+
+
+
+   private async Task UpdateUser(UserlistDto user)
+{
+    var result = await UserService.UpdateUserAsync(user);
+
+    if (result.Success)
+    {
+        showToaster(result.Data, "top");
+        modal().Result.toggle();
+        users = await UserService.GetUserlistsAsync(param);
+
+        // Reset the editing state
+        isEditing = false;
+
+        StateHasChanged();
+    }
+    else
+    {
+        showToaster(result.Messages.FirstOrDefault(), "top");
+    }
+}
+
     private async Task InviteUser()
     {
         if (!isEditing)
