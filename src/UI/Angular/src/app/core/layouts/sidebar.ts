@@ -17,8 +17,8 @@ import { MenuService } from '../services/menu.service';
     RouterLink,
     NgScrollbarModule,
     RouterLinkActive,
-    TranslateModule,
-  ],
+    TranslateModule
+],
 })
 export class SidebarComponent implements OnInit {
   menuItems: Array<{ label: string; link: string }> = [];

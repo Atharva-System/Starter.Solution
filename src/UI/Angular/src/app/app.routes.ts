@@ -11,6 +11,7 @@ import { AcceptInvitationComponent } from './modules/auth/pages/accept-invitatio
 import { ResetPasswordComponent } from './modules/auth/pages/reset-password/reset-password.component';
 import { ProfileComponent } from './modules/user/pages/profile/profile.component';
 import { ListProjectsComponent } from './modules/project/pages/list-projects/list-projects.component';
+import { ListTasksComponent } from './modules/task/pages/list-tasks/list-tasks.component';
 
 export const routes: Routes = [
   {
@@ -31,10 +32,16 @@ export const routes: Routes = [
         path: appPaths.profile,
         component: ProfileComponent,
         title: pageTitle.profile,
-      }, {
+      },
+      {
         path: appPaths.projects,
         component: ListProjectsComponent,
         title: pageTitle.projects,
+      },
+      {
+        path: appPaths.tasks,
+        component: ListTasksComponent,
+        title: pageTitle.tasks,
       },
     ],
     canActivate: [AuthGuard],

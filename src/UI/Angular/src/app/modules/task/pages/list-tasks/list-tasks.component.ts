@@ -2,22 +2,22 @@ import { NgClass, NgStyle } from '@angular/common';
 import { Component, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DataTableModule, colDef } from '@bhplugin/ng-datatable';
+import { MenuModule } from 'headlessui-angular';
 import { PaginationFilter } from '../../../../core/models/pagination-filter.interface';
 import { FilterService } from '../../../../core/services/filter.service';
 import { AlertService } from '../../../../shared/services/alert.service';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
+import { DateRangePickerComponent } from '../../../../shared/ui/date-range-picker/date-range-picker.component';
 import { DeleteConfirmationModalComponent } from '../../../../shared/ui/delete-confirmation-modal/delete-confirmation-modal.component';
-import { ManageProjectModalComponent } from '../../components/manage-project-modal/manage-project-modal.component';
-import { ProjectService } from '../../services/project.service';
-import { MenuModule } from 'headlessui-angular';
 import {
   DropdownComponent,
   IDropdownItems,
 } from '../../../../shared/ui/dropdown/dropdown.component';
-import { DateRangePickerComponent } from '../../../../shared/ui/date-range-picker/date-range-picker.component';
+import { ManageTaskModalComponent } from '../../components/manage-task-modal/manage-task-modal.component';
+import { TaskService } from '../../services/task.service';
 
 @Component({
-  selector: 'app-list-projects',
+  selector: 'app-list-tasks',
   standalone: true,
   imports: [
     NgClass,
@@ -25,42 +25,44 @@ import { DateRangePickerComponent } from '../../../../shared/ui/date-range-picke
     DataTableModule,
     FormsModule,
     ButtonComponent,
-    ManageProjectModalComponent,
+    ManageTaskModalComponent,
     DeleteConfirmationModalComponent,
     MenuModule,
     DropdownComponent,
     DateRangePickerComponent,
   ],
-  templateUrl: './list-projects.component.html',
-  styleUrl: './list-projects.component.css',
+  templateUrl: './list-tasks.component.html',
+  styleUrl: './list-tasks.component.css',
 })
-export class ListProjectsComponent {
-  @ViewChild('manageProjectModalComponent')
-  manageProjectModalComponent!: ManageProjectModalComponent;
-  @ViewChild('deleteProjectModal')
-  deleteProjectModal!: DeleteConfirmationModalComponent;
+export class ListTasksComponent {
+  @ViewChild('manageTaskModalComponent')
+  manageTaskModalComponent!: ManageTaskModalComponent;
+  @ViewChild('deleteTaskModal')
+  deleteTaskModal!: DeleteConfirmationModalComponent;
   search = '';
   searchDates: { from: any; to: any } = {
     from: '',
     to: '',
   };
 
-  projectService = inject(ProjectService);
+  taskService = inject(TaskService);
   filterService = inject(FilterService);
   alertService = inject(AlertService);
   timer: any;
-  deleteProjectId = '';
-  editProjectId = '';
-  selectedFilterDropdownField = 'projectName';
+  deleteTaskId = '';
+  editTaskId = '';
+  selectedFilterDropdownField = 'taskName';
   searchBoxType = 'text';
   params: PaginationFilter;
 
   loading: boolean = true;
   cols: Array<colDef> = [
-    { field: 'projectName', title: 'Project Name' },
+    { field: 'taskName', title: 'Task' },
+    { field: 'projectName', title: 'Project' },
     { field: 'startDateDisplay', title: 'Start Date' },
     { field: 'endDateDisplay', title: 'End Date' },
-    { field: 'estimatedHours', title: 'Estimated Hours' },
+    { field: 'statusDisplay', title: 'Status' },
+    { field: 'priorityDisplay', title: 'Priority' },
     {
       field: 'action',
       title: 'Action',
@@ -72,13 +74,18 @@ export class ListProjectsComponent {
 
   filterDropdownDs: IDropdownItems[] = [
     {
-      text: 'Project Name',
-      value: 'projectName',
+      text: 'Task',
+      value: 'taskName',
       selected: true,
+    },
+    {
+      text: 'Project',
+      value: 'projectName',
     },
     { text: 'Start Date', value: 'startDate' },
     { text: 'End Date', value: 'endDate' },
-    { text: 'Estimated Hours', value: 'estimatedHours' },
+    { text: 'Status', value: 'statusDisplay' },
+    { text: 'Priority', value: 'priorityDisplay' },
   ];
 
   rows: Array<any> = [];
@@ -86,13 +93,11 @@ export class ListProjectsComponent {
 
   constructor() {
     this.params = { ...this.filterService.defaultFilter };
-    this.getProject();
+    this.getTasks();
   }
 
   selectFilterDropdown(field: string) {
-    if (field == 'estimatedHours') {
-      this.searchBoxType = 'number';
-    } else if (field == 'startDate' || field == 'endDate') {
+    if (field == 'startDate' || field == 'endDate') {
       this.searchBoxType = 'date';
     } else {
       this.searchBoxType = 'string';
@@ -107,9 +112,9 @@ export class ListProjectsComponent {
     }
   }
 
-  async getProject() {
+  async getTasks() {
     this.loading = true;
-    this.projectService.getProjects(this.params).subscribe((data) => {
+    this.taskService.getTasks(this.params).subscribe((data) => {
       this.rows = data?.data;
       this.total_rows = data?.totalCount;
       this.loading = false;
@@ -122,15 +127,21 @@ export class ListProjectsComponent {
     this.params.OrderBy = [
       this.getSortColumnName(data.sort_column) + ' ' + data.sort_direction,
     ];
-    this.getProject();
+    this.getTasks();
   }
 
   getBadgeColor(status: string): string {
     switch (status) {
-      case 'Active':
+      case 'High':
         return 'badge-outline-success';
-      case 'Inactive':
+      case 'Low':
         return 'badge-outline-danger';
+      case 'To Do':
+        return 'bg-secondary';
+      case 'Completed':
+        return 'bg-success';
+      case 'In Progress':
+        return 'bg-primary';
       default:
         return 'badge-outline-info';
     }
@@ -138,6 +149,10 @@ export class ListProjectsComponent {
 
   getSortColumnName(column: string): string {
     switch (column) {
+      case 'statusDisplay':
+        return 'status';
+      case 'priorityDisplay':
+        return 'priority';
       case 'startDateDisplay':
         return 'startDate';
       case 'endDateDisplay':
@@ -147,37 +162,35 @@ export class ListProjectsComponent {
     }
   }
 
-  openCreateProjectModal() {
-    this.manageProjectModalComponent.open();
+  openCreateTaskModal() {
+    this.manageTaskModalComponent.open();
   }
 
-  deleteProject(id: string) {
-    this.deleteProjectModal.open();
-    this.deleteProjectId = id;
+  deleteTask(id: string) {
+    this.deleteTaskModal.open();
+    this.deleteTaskId = id;
   }
 
-  editProject(id: string) {
-    this.editProjectId = id;
-    this.openCreateProjectModal();
+  editTask(id: string) {
+    this.editTaskId = id;
+    this.openCreateTaskModal();
   }
 
   onDelete() {
-    this.projectService
-      .deleteProject(this.deleteProjectId)
-      .subscribe((data) => {
-        this.alertService.showMessage(data.message);
-        this.getProject();
-        this.deleteProjectModal.close();
-      });
+    this.taskService.deleteTask(this.deleteTaskId).subscribe((data) => {
+      this.alertService.showMessage(data.message);
+      this.getTasks();
+      this.deleteTaskModal.close();
+    });
   }
 
   onSave() {
-    this.getProject();
+    this.getTasks();
     this.onCancel();
   }
 
   onCancel() {
-    this.deleteProjectId = this.editProjectId = '';
+    this.deleteTaskId = this.editTaskId = '';
   }
 
   clearSearchBox() {
@@ -187,7 +200,7 @@ export class ListProjectsComponent {
       to: '',
     };
     this.params.AdvancedFilter = null;
-    this.getProject();
+    this.getTasks();
   }
 
   private searchTimeout: any;
@@ -199,29 +212,26 @@ export class ListProjectsComponent {
       this.params = this.filterService.generateSingleFilter(
         this.getCondition(this.selectedFilterDropdownField),
         this.selectedFilterDropdownField,
-        this.parsValue(this.selectedFilterDropdownField, this.search),
+        this.search,
         this.params,
       );
-      this.getProject();
+      this.getTasks();
       this.searchTimeout = null;
     }, 1000);
   }
 
-  parsValue(column: string, value: any): any {
-    switch (column) {
-      case 'estimatedHours':
-        return parseFloat(value);
-      default:
-        return value;
-    }
-  }
-
   getCondition(column: string): any {
-    switch (column) {
-      case 'projectName':
-        return 'contain';
-      default:
-        return 'equal';
+    const containsColumns = [
+      'taskName',
+      'projectName',
+      'priorityDisplay',
+      'statusDisplay',
+    ];
+
+    if (containsColumns.includes(column)) {
+      return 'contain';
+    } else {
+      return 'equal';
     }
   }
 
@@ -243,7 +253,7 @@ export class ListProjectsComponent {
         { start: fromDate, to: toDate },
         this.params,
       );
-      this.getProject();
+      this.getTasks();
       this.searchDateTimeout = null;
     }, 1000);
   }
