@@ -30,8 +30,6 @@ builder.Services.AddHttpClientInterceptor();
 
 
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<CustomAuthenticationStateProvider>();
-builder.Services.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<CustomAuthenticationStateProvider>());
 builder.Services.AddScoped<ForgotPasswordService>();
 builder.Services.AddScoped<ResetPasswordService>();
 builder.Services.AddScoped<IUserService, UserService>();
