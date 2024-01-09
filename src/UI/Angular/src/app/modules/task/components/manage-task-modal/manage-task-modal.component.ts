@@ -32,8 +32,6 @@ import {
   ISelectItems,
   SelectComponent,
 } from '../../../../shared/ui/select/select.component';
-import { UserService } from '../../../user/services/user.service';
-import { ProjectService } from '../../../project/services/project.service';
 import { PaginationFilter } from '../../../../core/models/pagination-filter.interface';
 import { TextEditorComponent } from '../../../../shared/ui/text-editor/text-editor.component';
 
@@ -72,8 +70,6 @@ export class ManageTaskModalComponent implements OnChanges {
   alertService = inject(AlertService);
   authService = inject(AuthService);
   taskService = inject(TaskService);
-  userService = inject(UserService);
-  projectService = inject(ProjectService);
   params!: PaginationFilter;
 
   constructor() {
@@ -93,7 +89,7 @@ export class ManageTaskModalComponent implements OnChanges {
   }
 
   bindProjects() {
-    this.projectService.getProjects(this.params).subscribe((data) => {
+    this.taskService.getProjects().subscribe((data) => {
       this.projectsOptions = data.data.map(
         ({ id, projectName }: { id: any; projectName: string }) => ({
           value: `${id}`,
@@ -104,11 +100,11 @@ export class ManageTaskModalComponent implements OnChanges {
   }
 
   bindAssignToUsers() {
-    this.userService.getUsers(this.params).subscribe((data) => {
+    this.taskService.getAssignees().subscribe((data) => {
       this.assignToUsersOptions = data.data.map(
-        ({ id, fullName }: { id: any; fullName: string }) => ({
+        ({ id, name }: { id: any; name: string }) => ({
           value: `${id}`,
-          label: fullName,
+          label: name,
         }),
       );
     });

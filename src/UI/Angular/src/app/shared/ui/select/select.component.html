@@ -1,9 +1,11 @@
-<div [ngClass]="isSubmit ? (control.errors ? 'has-error' : '') : ''">
+<div [ngClass]="isSubmit ? (control && control.errors ? 'has-error' : '') : ''">
   <select
     class="form-select"
+    [style]="styleAttr"
     [disabled]="disable"
     [(ngModel)]="value"
     (change)="onSelectOption($event)"
+    [ngClass]="classes"
   >
     <option value="">
       {{ defaultOptions }}
@@ -14,7 +16,7 @@
       </option>
     }
   </select>
-  @if (isSubmit && control.errors?.["required"]) {
+  @if (isSubmit && control && control.errors?.["required"]) {
     <p class="mt-1 text-danger">This can not be empty</p>
   }
 </div>
