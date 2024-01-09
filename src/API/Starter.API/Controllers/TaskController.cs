@@ -62,16 +62,11 @@ public class TaskController : BaseApiController
         return await Mediator.Send(request);
     }
 
-    [HttpGet("Project")]
+    [HttpGet("projects")]
     [MustHavePermission(Action.View, Resource.Project)]
     public async Task<ActionResult<List<ProjectDropdownDto>>> GetProjectListAsync()
     {
         var userId = User.FindFirstValue("uid");
-        if (string.IsNullOrEmpty(userId))
-        {
-            return Unauthorized();
-        }
-
         var request = new GetProjectListQuery { userId = userId };
         return await Mediator.Send(request);
     }

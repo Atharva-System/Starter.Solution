@@ -8,5 +8,7 @@ namespace Starter.Blazor.Modules.Task.Services;
 public interface ITaskService : IModalService
 {
     Task<string> CreateTaskAsync(TaskDetailsDto dto);
+    List<ProjectListDto> Projects { get; }
     Task<List<TaskListDto>> GetTasklistsAsync(PaginationRequest param);
+    Task<List<ProjectListDto>> GetProjectlistsAsync();
 }

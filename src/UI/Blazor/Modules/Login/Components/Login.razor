@@ -133,7 +133,7 @@
             Interceptor.RegisterEvent();
             await LocalStorage.SetItemAsync("authToken", response.Token);
             await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            navigationManager.NavigateTo("/");
+            navigationManager.NavigateTo("/dashboard");
         }
         else
         {

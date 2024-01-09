@@ -1,4 +1,4 @@
-﻿@page "/task-modal"
+﻿@using Starter.Blazor.Core
 @using Starter.Blazor.Modules.Task.Model
 @using Starter.Blazor.Modules.Task.Services
 @inject ITaskService TaskService
@@ -39,7 +39,7 @@
         </div>
         <div class="mb-5">
             <label for="status">Status</label>
-            <InputSelect id="status" class="form-input" @bind-Value="taskDetailsDto.Status">
+            <InputSelect id="status" class="form-select" @bind-Value="taskDetailsDto.Status">
                 <option value="">Select Status</option>
                 <option value="1">In Progress</option>
                 <option value="2">Partial Done</option>
@@ -51,8 +51,12 @@
         </div>
         <div class="mb-5">
             <label for="projectId">Project</label>
-            <InputSelect id="projectId" type="text" placeholder="Enter Project ID" class="form-input" @bind-Value="projectIdString">
-                <option value="C24E05D4-B41E-4771-353C-08DC102AAA10">Test Project</option>
+            <InputSelect id="projectId" placeholder="Enter Project" class="form-select" @bind-Value="projectIdString">
+                <option value="0">Select Project</option>
+                @foreach (var project in TaskService.Projects)
+                {
+                    <option value="@project.Id">@project.ProjectName</option>
+                }
             </InputSelect>
         </div>
         <div class="mb-5">
@@ -70,17 +74,24 @@
 
     [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
 
+    [Inject]
+    public HttpInterceptorService Interceptor { get; set; }
+
     private TaskDetailsDto taskDetailsDto = new TaskDetailsDto
-    {
-        StartDate = DateTime.Now.Date,
-        EndDate = DateTime.Now.Date
-    };
+        {
+            StartDate = DateTime.Now.Date,
+            EndDate = DateTime.Now.Date
+        };
+
+    // //Dropdwon
+    // private List<ProjectListDto> projectList = new List<ProjectListDto>();
 
     private string mode;
     private string buttonText;
 
-    protected override void OnInitialized()
+    protected override async void OnInitialized()
     {
+        Interceptor.RegisterEvent();
         if (taskDetailsDto == null) //|| taskDetailsDto.Id == Guid.Empty
         {
             mode = "create";
@@ -92,6 +103,10 @@
             mode = "edit";
             buttonText = "Update";
         }
+
+        // // Get Project
+        // projectList = await TaskService.GetProjectlistsAsync();
+
     }
 
     private async void SaveTask()

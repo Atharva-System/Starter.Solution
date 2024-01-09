@@ -12,6 +12,7 @@ public class TaskServices(HttpClient http) : ModalService, ITaskService
     private readonly HttpClient _httpClient = http;
 
     public event Func<Task<string>> OnClose;
+    public List<ProjectListDto> Projects { get; set; } = new List<ProjectListDto>();
 
     public async Task<string> CreateTaskAsync(TaskDetailsDto dto)
     {
@@ -36,6 +37,24 @@ public class TaskServices(HttpClient http) : ModalService, ITaskService
         {
             Console.WriteLine($"Error: {ex.Message}");
             return "";
+        }
+    }
+
+    public async Task<List<ProjectListDto>> GetProjectlistsAsync()
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync("api/Task/projects");
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadFromJsonAsync<List<ProjectListDto>>();
+            this.Projects = result;
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+            return [];
         }
     }
 
