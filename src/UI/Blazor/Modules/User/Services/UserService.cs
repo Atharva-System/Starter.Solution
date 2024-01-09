@@ -35,7 +35,62 @@ public class UserService(HttpClient http, ILocalStorageService localStorageServi
             return null;
         }
     }
+    public async Task<UserlistDto> GetUserDetailsByIdAsync(string userId)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"api/Users/{userId}");
 
+            if (response.IsSuccessStatusCode)
+            {
+                var userDetails = await response.Content.ReadFromJsonAsync<ApiResponse<UserlistDto>>();
+
+
+                if (userDetails != null && userDetails.Data != null)
+                {
+                    return userDetails.Data;
+                }
+                else
+                {
+                    // Handle the case where userDetails or userDetails.Data is null
+                    Console.WriteLine("User details not available.");
+                    return null; // or throw an exception, return a default value, etc.
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle or log the exception
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+
+        return null; // Return null or handle error case appropriately
+    }
+
+
+
+
+
+
+    public async Task<ApiResponse<string>> UpdateUserAsync(UserlistDto userDto)
+    {
+        try
+        {
+            var result = await _httpClient.PutAsJsonAsync($"api/Users/{userDto.Id}", userDto);
+
+            var newResponse = await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
+
+            return newResponse;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+            return new ApiResponse<string>
+            {
+                Success = false,
+            };
+        }
+    }
     public async Task<ApiResponse<AcceptInviteDto>> GetAcceptInviteDetails(string userId)
     {
         return await _httpClient.GetFromJsonAsync<ApiResponse<AcceptInviteDto>>($"api/Users/get-invite-details/{userId}");
