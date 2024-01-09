@@ -39,6 +39,8 @@ public static class StartupExtensions
 
         //builder.Services.AddSwaggerGen();
 
+        builder.Services.AddCorsService(builder.Configuration);
+
         return builder.Build();
 
     }
@@ -64,11 +66,11 @@ public static class StartupExtensions
 
         app.UseCustomExceptionHandler();
 
-        app.UseInfrastructureService();
-
         app.UseAuthorization();
 
         app.MapControllers();
+
+        app.UseCorsService();
 
         return app;
 
