@@ -35,7 +35,7 @@ public class UserService(HttpClient http, ILocalStorageService localStorageServi
             return null;
         }
     }
-    public async Task<UserlistDto> GetUserDetailsByIdAsync(string userId)
+    public async Task<ApiResponse<UserlistDto>> GetUserDetailsByIdAsync(string userId)
     {
         try
         {
@@ -46,16 +46,7 @@ public class UserService(HttpClient http, ILocalStorageService localStorageServi
                 var userDetails = await response.Content.ReadFromJsonAsync<ApiResponse<UserlistDto>>();
 
 
-                if (userDetails != null && userDetails.Data != null)
-                {
-                    return userDetails.Data;
-                }
-                else
-                {
-                    // Handle the case where userDetails or userDetails.Data is null
-                    Console.WriteLine("User details not available.");
-                    return null; // or throw an exception, return a default value, etc.
-                }
+                return userDetails;
             }
         }
         catch (Exception ex)
@@ -66,11 +57,6 @@ public class UserService(HttpClient http, ILocalStorageService localStorageServi
 
         return null; // Return null or handle error case appropriately
     }
-
-
-
-
-
 
     public async Task<ApiResponse<string>> UpdateUserAsync(UserlistDto userDto)
     {

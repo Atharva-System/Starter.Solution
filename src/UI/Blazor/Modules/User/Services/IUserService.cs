@@ -14,6 +14,6 @@ public interface IUserService
     Task<string> UpdateUserProfileAsync(string UserId, UpdateProfileDto userDto);
     Task<UpdateProfileDto> GetProfileDetailAsync();
     Task<ApiResponse<string>> DeleteUser(string id);
-    Task<UserlistDto> GetUserDetailsByIdAsync(string userId);
+    Task<ApiResponse<UserlistDto>> GetUserDetailsByIdAsync(string userId);
     Task<ApiResponse<string>> UpdateUserAsync(UserlistDto userDto);
 }
