@@ -125,13 +125,18 @@
     [Inject]
     public HttpInterceptorService Interceptor { get; set; }
 
+    // protected override void OnInitialized()
+    // {
+    //     Interceptor.RegisterEvent();
+    // }
+
     private async Task HandleLogin()
     {
         var response = await AuthService.Login(LoginDto);
         if (response != null)
         {
-            Interceptor.RegisterEvent();
             await LocalStorage.SetItemAsync("authToken", response.Token);
+            await LocalStorage.SetItemAsync("refreshToken", response.RefreshToken);
             await AuthenticationStateProvider.GetAuthenticationStateAsync();
             navigationManager.NavigateTo("/dashboard");
         }
@@ -140,8 +145,8 @@
         }
     }
 
-    public void Dispose()
-    {
-        Interceptor.DisposeEvent();
-    }
+    // public void Dispose()
+    // {
+    //     Interceptor.DisposeEvent();
+    // }
 }

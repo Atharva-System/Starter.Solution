@@ -75,11 +75,10 @@ export class ListProjectsComponent {
       text: 'Project Name',
       value: 'projectName',
       selected: true,
-      type: 'string',
     },
-    { text: 'Start Date', value: 'startDate', type: 'date' },
-    { text: 'End Date', value: 'endDate', type: 'date' },
-    { text: 'Estimated Hours', value: 'estimatedHours', type: 'decimal' },
+    { text: 'Start Date', value: 'startDate' },
+    { text: 'End Date', value: 'endDate' },
+    { text: 'Estimated Hours', value: 'estimatedHours' },
   ];
 
   rows: Array<any> = [];

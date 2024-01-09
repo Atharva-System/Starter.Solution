@@ -4,23 +4,32 @@ modal .modal {
     display: -ms-flexbox;
     display: flex;
     -webkit-box-flex: 1;
-        -ms-flex: 1;
-            flex: 1;
+    -ms-flex: 1;
+    flex: 1;
     -webkit-box-align: center;
-        -ms-flex-align: center;
-            align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
     -webkit-box-pack: center;
-        -ms-flex-pack: center;
-            justify-content: center; }
+    -ms-flex-pack: center;
+    justify-content: center;
+}
 
-    .modal {
+.modal {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     min-height: 100%;
     background-color: rgba(0, 0, 0, 0.15);
-    z-index: 42; }
+    z-index: 42;
+}
 
-    .modal.in {
-    opacity: 1; }
+.modal.in {
+    opacity: 1;
+}
+
+.has-error>.ng-invalid>.ql-toolbar.ql-snow,
+.has-error>.ng-invalid>.ql-container.ql-snow {
+    border-color: rgb(231, 81, 90) !important;
+    background-color: rgb(231 81 90 / 0.08) !important;
+}

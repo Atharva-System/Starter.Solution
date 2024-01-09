@@ -9,6 +9,11 @@
     <EmbeddedResource Remove="Modules\Users\**" />
     <None Remove="Modules\Settings\**" />
     <None Remove="Modules\Users\**" />
+	
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Modules\User\Pages\User_old.razor" />
   </ItemGroup>
 
   <ItemGroup>

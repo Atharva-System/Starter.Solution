@@ -1,34 +1,27 @@
-﻿using MediatR;
+﻿using Ardalis.Specification;
 using Starter.Application.Contracts.Responses;
-using Starter.Application.Features.Common;
 using Starter.Application.Features.Tasks.Dto;
-using Starter.Application.Features.Tasks.Query;
-using Starter.Application.Models.Task;
+using Starter.Application.Models.Specification;
+using Starter.Application.Models.Specification.Filters;
 using Starter.Application.UnitOfWork;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Starter.Application.Features.Tasks.Query
+namespace Starter.Application.Features.Tasks.Query;
+
+public class GetTasksRequestSpec : EntitiesByPaginationFilterSpec<TaskListDto>
 {
-    public class GetTasksQueryHandler : IRequestHandler<GetTasksQuery, IPagedDataResponse<TaskListDto>>
+    public GetTasksRequestSpec(GetTasksQuery request)
+        : base(request.PaginationFilter) =>
+        Query.OrderByDescending(c => c.StartDate, !request.PaginationFilter.HasOrderBy());
+}
+
+public class GetTasksQueryHandler(IQueryUnitOfWork query) : IRequestHandler<GetTasksQuery, IPagedDataResponse<TaskListDto>>
+{
+    private readonly IQueryUnitOfWork _query = query;
+
+    public async Task<IPagedDataResponse<TaskListDto>> Handle(GetTasksQuery request, CancellationToken cancellationToken)
     {
-        private readonly IQueryUnitOfWork _query;
+        var spec = new GetTasksRequestSpec(request);
 
-        public GetTasksQueryHandler(IQueryUnitOfWork query)
-        {
-            _query = query;
-        }
-
-        public async Task<IPagedDataResponse<TaskListDto>> Handle(GetTasksQuery request, CancellationToken cancellationToken)
-        {
-            var spec = new GetTasksRequestSpec(request.Filter);
-
-            var response = await _query._taskQueryRepository.SearchAsync(spec, request.Filter.PageNumber, request.Filter.PageSize, cancellationToken);
-
-            return response;
-        }
-
-       
+        return await _query._taskQueryRepository.SearchAsync(spec, request.PaginationFilter.PageNumber, request.PaginationFilter.PageSize, cancellationToken);
     }
 }

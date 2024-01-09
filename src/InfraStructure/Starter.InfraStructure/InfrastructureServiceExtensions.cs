@@ -17,11 +17,10 @@ public static class InfrastructureServiceExtensions
     {
         services
        .AddServices()
-       .AddMailing(configuration)
-       .AddCorsPolicy(configuration)
+       .AddMailing(configuration)       
        .AddBackgroundJobs(configuration)
-       .AddCaching(configuration);
-        services.AddScoped<IDateTimeService, DateTimeService>();
+       .AddCaching(configuration)
+       .AddScoped<IDateTimeService, DateTimeService>();
     }
 
     internal static IServiceCollection AddServices(this IServiceCollection services) =>
@@ -62,7 +61,13 @@ public static class InfrastructureServiceExtensions
         _ => throw new ArgumentException("Invalid lifeTime", nameof(lifetime))
     };
 
-    public static IApplicationBuilder UseInfrastructureService(this IApplicationBuilder builder)
+    public static void AddCorsService(this IServiceCollection services, IConfiguration configuration)
+    {
+        services
+            .AddCorsPolicy(configuration);
+    }
+
+    public static IApplicationBuilder UseCorsService(this IApplicationBuilder builder)
     {
         return builder
             .UseCorsPolicy();

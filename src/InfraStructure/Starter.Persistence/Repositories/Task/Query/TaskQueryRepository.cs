@@ -2,8 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using Starter.Application.Contracts.Persistence.Repositoris.Task;
 using Starter.Application.Contracts.Responses;
+using Starter.Application.Extensions;
 using Starter.Application.Features.Common;
 using Starter.Application.Features.Tasks.Dto;
+using Starter.Domain.Enums;
 using Starter.Persistence.Database;
 using Starter.Persistence.Repositories.Base;
 using Starter.Persistence.Services;
@@ -12,9 +14,9 @@ using Starter.Persistence.Services;
 namespace Starter.Persistence.Repositories.Tasks.Query;
 
 public class TaskQueryRepository : QueryRepository<Starter.Domain.Entities.Tasks>, ITaskQueryRepository
-    {
-        public TaskQueryRepository(AppDbContext context) : base(context)
-        { }
+{
+    public TaskQueryRepository(AppDbContext context) : base(context)
+    { }
 
     public async Task<List<ProjectDropdownDto>> GetProjectListAsync(string UserId)
     {
@@ -48,11 +50,11 @@ public class TaskQueryRepository : QueryRepository<Starter.Domain.Entities.Tasks
                                ModifiedBy = t.ModifiedBy
                            };
 
-            var tasks = await taskList.ApplySpecification(spec);
-            
-            var count = await taskList.ApplySpecificationCount(spec);
+        var tasks = taskList.ApplySpecification(spec);
 
-            return new PagedApiResponse<TaskListDto>(count, pageNumber, pageSize) { Data = tasks };
-        }
+        var count = taskList.ApplySpecificationToListCount(spec);
+
+        return new PagedApiResponse<TaskListDto>(count, pageNumber, pageSize) { Data = tasks };
     }
+}
 

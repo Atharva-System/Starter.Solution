@@ -35,13 +35,54 @@ public class UserService(HttpClient http, ILocalStorageService localStorageServi
             return null;
         }
     }
+    public async Task<ApiResponse<UserlistDto>> GetUserDetailsByIdAsync(string userId)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"api/Users/{userId}");
 
+            if (response.IsSuccessStatusCode)
+            {
+                var userDetails = await response.Content.ReadFromJsonAsync<ApiResponse<UserlistDto>>();
+
+
+                return userDetails;
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle or log the exception
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+
+        return null; // Return null or handle error case appropriately
+    }
+
+    public async Task<ApiResponse<string>> UpdateUserAsync(UserlistDto userDto)
+    {
+        try
+        {
+            var result = await _httpClient.PutAsJsonAsync($"api/Users/{userDto.Id}", userDto);
+
+            var newResponse = await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
+
+            return newResponse;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+            return new ApiResponse<string>
+            {
+                Success = false,
+            };
+        }
+    }
     public async Task<ApiResponse<AcceptInviteDto>> GetAcceptInviteDetails(string userId)
     {
         return await _httpClient.GetFromJsonAsync<ApiResponse<AcceptInviteDto>>($"api/Users/get-invite-details/{userId}");
     }
 
-    public async Task<List<UserlistDto>> GetUserlistsAsync(PaginationRequest param)
+    public async Task<PagedDataResponse<List<UserlistDto>>> GetUserlistsAsync(PaginationRequest param)
     {
         try {
             var response = await _httpClient.PostAsJsonAsync("api/Users/search", param);
@@ -50,12 +91,12 @@ public class UserService(HttpClient http, ILocalStorageService localStorageServi
 
             var result = await response.Content.ReadFromJsonAsync<PagedDataResponse<List<UserlistDto>>>();
 
-            return result?.Data ?? [];
+            return result;
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error: {ex.Message}");
-            return [];
+            return null;
         }
     }
 
@@ -146,9 +187,9 @@ public class UserService(HttpClient http, ILocalStorageService localStorageServi
         }
     }
 
-    public async Task<ApiResponse<string>> DeleteUser(UserlistDto user)
+    public async Task<ApiResponse<string>> DeleteUser(string id)
     {
-            var result = await _httpClient.DeleteAsync($"api/Users/{user.Id}");
+            var result = await _httpClient.DeleteAsync($"api/Users/{id}");
 
             var newResponse = await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
 

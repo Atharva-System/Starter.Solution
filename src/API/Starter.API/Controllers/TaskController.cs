@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Starter.API.Controllers.Base;
 using Starter.Application.Contracts.Responses;
+using Starter.Application.Extensions;
 using Starter.Application.Features.Common;
 using Starter.Application.Features.Tasks.Command;
 using Starter.Application.Features.Tasks.Command.UpdateTask;
 using Starter.Application.Features.Tasks.Dto;
 using Starter.Application.Features.Tasks.Query;
+using Starter.Application.Models.Specification.Filters;
 using Starter.Application.Features.Tasks.Query.GetTasks;
 using Starter.Application.Models.Task.Dto;
 using Starter.Identity.Authorizations;
@@ -56,10 +58,33 @@ public class TaskController : BaseApiController
 
     [HttpPost("Search")]
     [MustHavePermission(Action.View, Resource.Task)]
-    public async Task<IPagedDataResponse<TaskListDto>> GetListAsync(TaskFilter filter)
+    public async Task<IPagedDataResponse<TaskListDto>> GetListAsync(PaginationFilter request)
     {
-        var request = new GetTasksQuery { Filter = filter };
-        return await Mediator.Send(request);
+        return await Mediator.Send(new GetTasksQuery() { PaginationFilter = request });
+    }
+
+    [HttpGet("status-list")]
+    [MustHavePermission(Action.View, Resource.Task)]
+    public ApiResponse<List<EnumTypeViewDto>> GetStatusAsync()
+    {
+        return new ApiResponse<List<EnumTypeViewDto>>
+        {
+            Success = true,
+            StatusCode = HttpStatusCodes.OK,
+            Data = CommonFunction.GetTaskStatusList(),
+        };
+    }
+
+    [HttpGet("priority-list")]
+    [MustHavePermission(Action.View, Resource.Task)]
+    public ApiResponse<List<EnumTypeViewDto>> GetPrioritiesAsync()
+    {
+        return new ApiResponse<List<EnumTypeViewDto>>
+        {
+            Success = true,
+            StatusCode = HttpStatusCodes.OK,
+            Data = CommonFunction.GetTaskPriorityList(),
+        };
     }
 
     [HttpGet("projects")]

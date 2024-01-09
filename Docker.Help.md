@@ -14,4 +14,9 @@
 	- docker --help
 	- List Containers : docker ps
 	- List docker images : docker image ls
+
+ ## Run Individual (at root path of repo)
+    - Blazor APP
+        - build image : docker build -t starter.blazor -f src/UI/Blazor/Dockerfile ./
+        - run contaimer : docker run -e apiURL=http://localhost:10001  --name starter.blazor starter.blazor
   

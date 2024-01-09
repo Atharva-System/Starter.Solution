@@ -25,10 +25,10 @@ import { AuthService } from '../../../auth/services/auth.service';
 import { ProjectService } from '../../services/project.service';
 import { IUpdateProject } from '../../models/update-project.interface';
 import { ICreateProject } from '../../models/create-project.interface';
-import { QuillModule } from 'ngx-quill';
 import { DateRangePickerComponent } from '../../../../shared/ui/date-range-picker/date-range-picker.component';
 import { CommonService } from '../../../../core/services/common.service';
-import { Regex } from '../../../../shared/constants/constants';
+import { FieldValidation, Regex } from '../../../../shared/constants/constants';
+import { TextEditorComponent } from '../../../../shared/ui/text-editor/text-editor.component';
 
 @Component({
   selector: 'app-manage-project-modal',
@@ -39,7 +39,7 @@ import { Regex } from '../../../../shared/constants/constants';
     InputComponent,
     ButtonComponent,
     ModalComponent,
-    QuillModule,
+    TextEditorComponent,
     DateRangePickerComponent,
   ],
   templateUrl: './manage-project-modal.component.html',
@@ -53,15 +53,6 @@ export class ManageProjectModalComponent implements OnChanges {
   signinRoute = '/' + authPaths.signin;
   formCreateProject!: FormGroup;
   isSubmitFormCreateProject = false;
-  quillValue = '';
-  quillModules = {
-    toolbar: [
-      [{ header: [1, 2, false] }],
-      ['bold', 'italic', 'underline', 'link'],
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      ['clean'],
-    ],
-  };
 
   commonService = inject(CommonService);
   router = inject(Router);
@@ -107,14 +98,26 @@ export class ManageProjectModalComponent implements OnChanges {
 
   initForm() {
     this.formCreateProject = this.fb.group({
-      projectName: ['', Validators.compose([Validators.required])],
-      description: [''],
+      projectName: [
+        '',
+        Validators.compose([
+          Validators.required,
+          Validators.maxLength(FieldValidation.projectNameMaxLength),
+        ]),
+      ],
+      description: [
+        '',
+        Validators.compose([
+          Validators.maxLength(FieldValidation.descriptionMaxLength),
+        ]),
+      ],
       deadline: ['', Validators.compose([Validators.required])],
       estimatedHours: [
         '',
         Validators.compose([
           Validators.required,
           Validators.pattern(Regex.decimalValidationPattern),
+          Validators.maxLength(FieldValidation.estimatedHoursMaxLength),
         ]),
       ],
     });
