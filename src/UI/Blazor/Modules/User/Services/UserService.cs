@@ -96,7 +96,7 @@ public class UserService(HttpClient http, ILocalStorageService localStorageServi
         return await _httpClient.GetFromJsonAsync<ApiResponse<AcceptInviteDto>>($"api/Users/get-invite-details/{userId}");
     }
 
-    public async Task<List<UserlistDto>> GetUserlistsAsync(PaginationRequest param)
+    public async Task<PagedDataResponse<List<UserlistDto>>> GetUserlistsAsync(PaginationRequest param)
     {
         try {
             var response = await _httpClient.PostAsJsonAsync("api/Users/search", param);
@@ -105,12 +105,12 @@ public class UserService(HttpClient http, ILocalStorageService localStorageServi
 
             var result = await response.Content.ReadFromJsonAsync<PagedDataResponse<List<UserlistDto>>>();
 
-            return result?.Data ?? [];
+            return result;
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error: {ex.Message}");
-            return [];
+            return null;
         }
     }
 
@@ -201,9 +201,9 @@ public class UserService(HttpClient http, ILocalStorageService localStorageServi
         }
     }
 
-    public async Task<ApiResponse<string>> DeleteUser(UserlistDto user)
+    public async Task<ApiResponse<string>> DeleteUser(string id)
     {
-            var result = await _httpClient.DeleteAsync($"api/Users/{user.Id}");
+            var result = await _httpClient.DeleteAsync($"api/Users/{id}");
 
             var newResponse = await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
 

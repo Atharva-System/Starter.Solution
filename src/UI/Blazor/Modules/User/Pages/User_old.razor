@@ -3,6 +3,8 @@
 @using Starter.Blazor.Modules.Common
 @using Starter.Blazor.Modules.User.Models
 @using Starter.Blazor.Modules.User.Services
+@using Starter.Blazor.Shared.CustomGrid
+@using Starter.Blazor.Shared.Response
 @inject IJSRuntime JSRuntime
 @inject IUserService UserService
 @using System.Text.Json
@@ -14,7 +16,7 @@
         <div class="mb-5 flex items-center justify-between">
             <h5 class="text-lg font-semibold dark:text-white-light">Users List</h5>
 
-            <button type="button" class="btn btn-primary" @click="toggle">Invite User</button>
+            <button type="button" class="btn btn-primary" @onclick="ToggleModal">Invite User</button>
 
         </div>
         <div class="table-responsive">
@@ -138,9 +140,9 @@
 
     <!-- button -->
     <!-- modal -->
-    <div class="fixed inset-0 bg-[black]/60 z-[999] hidden overflow-y-auto" :class="open && '!block'">
+    <div id="userPopup" class="fixed inset-0 bg-[black]/60 z-[999] hidden overflow-y-auto" style="display: none;">
         <div class="flex items-center justify-center min-h-screen px-4">
-            <div x-show="open" x-transition x-transition.duration.300 class="panel border-0 py-1 px-4 rounded-lg overflow-hidden w-full max-w-sm my-8">
+            <div x-transition x-transition.duration.300 class="panel border-0 py-1 px-4 rounded-lg overflow-hidden w-full max-w-sm my-8">
                 <div class="flex items-center justify-between p-5 font-semibold text-lg dark:text-white">
                     @modalTitle
                     <button type="button" @click="toggle" class="text-white-dark hover:text-dark">
@@ -284,14 +286,21 @@
             timer: 3000,
             showCloseButton: true,
         });";
+    private InviteUserDto inviteUser = new InviteUserDto();
 
-    [Inject]
-    public HttpInterceptorService Interceptor { get; set; }
+    private ReusableGrid<UserlistDto> gridRef;
 
-    protected override async Task OnInitializedAsync()
+    private PagedDataResponse<List<UserlistDto>> DisplayedData = new PagedDataResponse<List<UserlistDto>>();
+
+    private bool IsModalOpen = false;
+
+    protected override void OnInitialized()
     {
-        Interceptor.RegisterEvent();
-        users = await UserService.GetUserlistsAsync(param);
+        Task.WhenAll(LoadData(1, 5, null));
+    }
+    private async Task PageSizeChanged(int pageNumber, int pageSize, string[] OrderBy)
+    {
+        await LoadData(pageSize, pageNumber, OrderBy);
     }
     private async Task EditUser(UserlistDto user)
     {
@@ -365,21 +374,57 @@
         }
     }
 
-    private async Task DeleteUser(UserlistDto user)
+    private async Task LoadData(int PageNumber, int PageSize, string[] OrderBy)
     {
-        var result = await UserService.DeleteUser(user);
+        var paginationRequest = new PaginationRequest
+            {
+                PageSize = PageSize,
+                PageNumber = PageNumber,
+                OrderBy = OrderBy
+            };
 
+        DisplayedData = await UserService.GetUserlistsAsync(paginationRequest);
+
+        if (gridRef != null)
+        {
+            await gridRef.Refresh(DisplayedData.Data, DisplayedData.TotalPages, DisplayedData.TotalCount, paginationRequest.PageSize, paginationRequest.PageNumber);
+        }
+    }
+    private List<Dictionary<string, string>> headerInfo = new List<Dictionary<string, string>>
+    {
+        new Dictionary<string, string> {{"Name", "Full Name"}, {"Key","FullName"}, {"CssClass", ""}, {"ShowSorting", "true"}, {"SorderOrder","asc" }, {"ShowFilter", "false"},{"SpanTd","" } },
+        new Dictionary<string, string> { { "Name", "Email" }, { "Key", "Email" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" } },
+        new Dictionary<string, string> { { "Name", "Status" }, { "Key", "Status" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" } },
+        new Dictionary<string, string> { { "Name", "Role" }, { "Key", "Role" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" }},
+        new Dictionary<string, string> { { "Name", "Action" }, { "Key", "Delete" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" },{ "IsActionButton","true"} }
+    };
+    private void showToaster(string msg, string position)
+    {
+        string toastScript = $"{toastScriptConstant} toast.fire({{ title: '{msg}' }});";
+        JSRuntime.InvokeVoidAsync("eval", toastScript);
+    }
+
+    private async Task InviteUser()
+    {
+        var result = await UserService.InviteUserAsync(inviteUser);
         if (result.Success)
         {
             showToaster(result.Data, "top");
-            users = await UserService.GetUserlistsAsync(param);
-            StateHasChanged();
+
+            inviteUser.FirstName = string.Empty;
+            inviteUser.LastName = string.Empty;
+            inviteUser.Email = string.Empty;
+            await  ToggleModal();
+            await LoadData(1, 5, null);
         }
         else
         {
             showToaster(result.Messages.FirstOrDefault(), "top");
         }
     }
+    private async Task ToggleModal()
+    {
+        IsModalOpen = !IsModalOpen;
 
     private void showToaster(string msg, string position)
     {
