@@ -386,8 +386,4 @@
         string toastScript = $"{toastScriptConstant} toast.fire({{ title: '{msg}' }});";
         JSRuntime.InvokeVoidAsync("eval", toastScript);
     }
-    public void Dispose()
-    {
-        Interceptor.DisposeEvent();
-    }
 }
