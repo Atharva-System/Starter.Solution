@@ -50,7 +50,7 @@ public class TaskQueryRepository : QueryRepository<Starter.Domain.Entities.Tasks
                                ModifiedBy = t.ModifiedBy
                            };
 
-        var tasks = taskList.ApplySpecification(spec);
+        var tasks = await taskList.ApplySpecification(spec);
 
         var count = taskList.ApplySpecificationToListCount(spec);
 
