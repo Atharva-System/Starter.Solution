@@ -13,10 +13,6 @@ public class CreateTaskCommandValidator : AbstractValidator<CreateTaskCommandReq
             .MustAsync(async (task, name, ct) => await _query.QueryRepository<Domain.Entities.Tasks>().GetAsync(c => c.TaskName!.ToLower() == name!.ToLower()) is null)
             .WithMessage((_, name) => $"Task {name} already exists!");
 
-        RuleFor(p => p.Description)
-            .NotEmpty()
-            .WithMessage((_, name) => "Description is required");
-
         RuleFor(p => p.StartDate)
            .NotEmpty()
            .WithMessage((_, name) => "Start Date is required");

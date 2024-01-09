@@ -7,6 +7,7 @@ export const pageTitle = {
   resetPassword: 'Reset Password',
   profile: 'Profile',
   projects: 'Projects',
+  tasks: 'Tasks',
 };
 
 export const authPaths = {
@@ -20,5 +21,6 @@ export const authPaths = {
 export const appPaths = {
   users: 'users',
   projects: 'projects',
+  tasks: 'tasks',
   profile: 'profile',
 };

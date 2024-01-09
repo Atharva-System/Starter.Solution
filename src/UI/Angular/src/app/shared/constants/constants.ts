@@ -24,7 +24,11 @@ export class FieldValidation {
   static firstNameMaxLength = 20;
   static lastNameMaxLength = this.firstNameMaxLength;
   static emailMaxLength = 50;
+  static projectNameMaxLength = 100;
+  static taskNameMaxLength = 100;
   static passwordMinLength = 6;
+  static descriptionMaxLength = 500;
+  static estimatedHoursMaxLength = 10;
 }
 
 export const queryStringParams = {

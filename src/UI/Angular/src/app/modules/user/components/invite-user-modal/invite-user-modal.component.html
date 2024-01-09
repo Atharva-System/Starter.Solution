@@ -4,9 +4,16 @@
   (onCancel)="resetForm()"
   [closeOnOutsideClick]="false"
 >
-  <ng-template #modalHeader> <div>Invite User</div> </ng-template>
+  <ng-template #modalHeader>
+    <div>{{ userId ? "Edit User" : "Invite User" }}</div>
+  </ng-template>
   <ng-template #modalBody>
-    <form class="space-y-5" [formGroup]="formInviteUser" novalidate (keydown.enter)="submitForm()">
+    <form
+      class="space-y-5"
+      [formGroup]="formInviteUser"
+      novalidate
+      (keydown.enter)="submitForm()"
+    >
       <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
         <div>
           <label for="firstName">First Name</label>
