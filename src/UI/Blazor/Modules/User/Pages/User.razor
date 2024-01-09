@@ -16,7 +16,7 @@
 
         </div>
         <div class="table-responsive">
-            <ReusableGrid @ref="gridRef" TItem="UserlistDto" HeaderData="@headerInfo"  PageSizeChange="LoadData" PageNumberChange="LoadData" ColumnSortingChange="LoadData" DeleteRecord="DeleteRecord" />
+            <ReusableGrid @ref="gridRef" TItem="UserlistDto" HeaderData="@headerInfo"  PageSizeChange="LoadData" PageNumberChange="LoadData" ColumnSortingChange="LoadData" DeleteRecord="DeleteRecord" EditRecord="EditRecord" />
         </div>
     </div>
 
@@ -110,7 +110,16 @@
                             <input type="text" placeholder="Email" class="form-input ltr:pl-10 rtl:pr-10" @bind="inviteUser.Email" />
                             <ValidationMessage For="@(() => inviteUser.Email)" />
                         </div>
-                        <button type="submit" class="btn btn-primary w-full">Invite</button>
+                        <button type="submit" class="btn btn-primary w-full">
+                            @if (isEditing)
+                            {
+                                <span>Update</span>
+                            }
+                            else
+                            {
+                                <span>Invite</span>
+                            }
+                        </button>
                     </EditForm>
                 </div>
             </div>
@@ -132,6 +141,7 @@
 </script>
 
 @code {
+    private bool isEditing = false;
     private readonly string toastScriptConstant = @"
         const toast = window.Swal.mixin({
             toast: true,
@@ -172,6 +182,51 @@
         }
     }
 
+    private async Task EditRecord(string id)
+    {
+        var result = await UserService.GetUserDetailsByIdAsync(id);
+
+        if (result.Success)
+        {
+            isEditing = true;
+            inviteUser.FirstName = result.Data.FirstName;
+            inviteUser.LastName = result.Data.LastName;
+            inviteUser.Email = result.Data.Email;
+            inviteUser.Id = result.Data.Id;
+            await ToggleModal();
+        }
+        else
+        {
+            showToaster(result.Messages.FirstOrDefault(), "top");
+        }
+    }
+
+    private async Task UpdateUser()
+    {
+        UserlistDto userlistDto = new UserlistDto();
+        userlistDto.FirstName = inviteUser.FirstName;
+        userlistDto.LastName = inviteUser.LastName;
+        userlistDto.Email = inviteUser.Email;
+        userlistDto.Id = inviteUser.Id;
+        var result = await UserService.UpdateUserAsync(userlistDto);
+
+        if (result.Success)
+        {
+            showToaster(result.Data, "top");
+            inviteUser.FirstName = string.Empty;
+            inviteUser.LastName = string.Empty;
+            inviteUser.Email = string.Empty;
+            inviteUser.Id = string.Empty;
+            isEditing = false;
+            await ToggleModal();
+            await LoadData(1, 5, null);
+        }
+        else
+        {
+            showToaster(result.Messages.FirstOrDefault(), "top");
+        }
+    }
+
     private async Task LoadData(int PageNumber, int PageSize, string[] OrderBy)
     {
         var paginationRequest = new PaginationRequest
@@ -194,7 +249,7 @@
         new Dictionary<string, string> { { "Name", "Email" }, { "Key", "Email" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" } },
         new Dictionary<string, string> { { "Name", "Status" }, { "Key", "Status" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" } },
         new Dictionary<string, string> { { "Name", "Role" }, { "Key", "Role" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" }},
-        new Dictionary<string, string> { { "Name", "Action" }, { "Key", "Delete" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" },{ "IsActionButton","true"} }
+        new Dictionary<string, string> { { "Name", "Action" }, { "Key", "Edit,Delete" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" },{ "IsActionButton","true"} }
     };
     private void showToaster(string msg, string position)
     {
@@ -204,20 +259,29 @@
 
     private async Task InviteUser()
     {
-        var result = await UserService.InviteUserAsync(inviteUser);
-        if (result.Success)
+        if (!isEditing)
         {
-            showToaster(result.Data, "top");
+            var result = await UserService.InviteUserAsync(inviteUser);
+            if (result.Success)
+            {
+                showToaster(result.Data, "top");
 
-            inviteUser.FirstName = string.Empty;
-            inviteUser.LastName = string.Empty;
-            inviteUser.Email = string.Empty;
-            await  ToggleModal();
-            await LoadData(1, 5, null);
+                inviteUser.FirstName = string.Empty;
+                inviteUser.LastName = string.Empty;
+                inviteUser.Email = string.Empty;
+                inviteUser.Id = string.Empty;
+                isEditing = false;
+                await ToggleModal();
+                await LoadData(1, 5, null);
+            }
+            else
+            {
+                showToaster(result.Messages.FirstOrDefault(), "top");
+            }
         }
         else
         {
-            showToaster(result.Messages.FirstOrDefault(), "top");
+            UpdateUser();
         }
     }
     private async Task ToggleModal()

@@ -18,9 +18,22 @@
         });
     }
 
-    window.registerDeleteRecordFunction = function (dotNetObject) {
+    async function TriggerEditRecordFunction(id) {
+        window.EditRecordFunction(id);
+    }
+
+    window.registerFunction = function (dotNetObject) {
         window.DeleteRecordFunction = function (message) {
             dotNetObject.invokeMethodAsync('DeleteRecordById', message)
+                .then(result => {
+                    console.log('Result from Blazor:', result);
+                })
+                .catch(error => {
+                    console.error('Error calling Blazor function:', error);
+                });
+        };
+        window.EditRecordFunction = function (id) {
+            dotNetObject.invokeMethodAsync('EditRecordById', id)
                 .then(result => {
                     console.log('Result from Blazor:', result);
                 })
@@ -32,7 +45,7 @@
 </script>
 
 <div class="panel mt-6">
-    
+
     <div class="dataTable-wrapper dataTable-loading no-footer sortable fixed-columns">
         <div class="dataTable-top"></div>
         <div class="dataTable-container">
@@ -93,12 +106,13 @@
                                         <div class="flex items-center">
                                             @foreach (var btn in headerKey["Key"].Split(','))
                                             {
+                                                if (btn == "Edit")
+                                                {
+                                                    <button type="button" class="btn btm-sm btn-primary" style="margin:5px !important" @onclick='() => ShowEditRecord(GetGridDataPropertyValue( "Id",item ))'>Edit</button>
+                                                }
                                                 if (btn == "Delete")
                                                 {
-                                                    <button type="button" class="btn btm-sm btn-danger" @onclick='() => ShowDeleteAlert(GetGridDataPropertyValue( "Id",item ))'>Delete</button>
-                                                }
-                                                else if (btn == "Edit")
-                                                {
+                                                    <button type="button" class="btn btm-sm btn-danger" style="margin:5px !important" @onclick='() => ShowDeleteAlert(GetGridDataPropertyValue( "Id",item ))'>Delete</button>
                                                 }
 
                                             }
@@ -160,17 +174,27 @@
     {
         await JSRuntime.InvokeVoidAsync("showDeleteAlert", id);
     }
+    private async Task ShowEditRecord(string id)
+    {
+        await JSRuntime.InvokeVoidAsync("TriggerEditRecordFunction", id);
+    }
     [JSInvokable]
     public async Task DeleteRecordById(string id)
     {
         await DeleteRecord.InvokeAsync(id);
     }
 
+    [JSInvokable]
+    public async Task EditRecordById(string id)
+    {
+        await EditRecord.InvokeAsync(id);
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            await JSRuntime.InvokeVoidAsync("registerDeleteRecordFunction", DotNetObjectReference.Create(this));
+            await JSRuntime.InvokeVoidAsync("registerFunction", DotNetObjectReference.Create(this));
         }
     }
 
@@ -185,6 +209,9 @@
 
     [Parameter]
     public EventCallback<string> DeleteRecord { get; set; }
+
+    [Parameter]
+    public EventCallback<string> EditRecord { get; set; }
 
 
     [Parameter]
