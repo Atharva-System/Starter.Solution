@@ -286,7 +286,6 @@
             timer: 3000,
             showCloseButton: true,
         });";
-    private InviteUserDto inviteUser = new InviteUserDto();
 
     private ReusableGrid<UserlistDto> gridRef;
 
@@ -397,31 +396,8 @@
         new Dictionary<string, string> { { "Name", "Status" }, { "Key", "Status" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" } },
         new Dictionary<string, string> { { "Name", "Role" }, { "Key", "Role" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" }},
         new Dictionary<string, string> { { "Name", "Action" }, { "Key", "Delete" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" },{ "IsActionButton","true"} }
-    };
-    private void showToaster(string msg, string position)
-    {
-        string toastScript = $"{toastScriptConstant} toast.fire({{ title: '{msg}' }});";
-        JSRuntime.InvokeVoidAsync("eval", toastScript);
-    }
-
-    private async Task InviteUser()
-    {
-        var result = await UserService.InviteUserAsync(inviteUser);
-        if (result.Success)
-        {
-            showToaster(result.Data, "top");
-
-            inviteUser.FirstName = string.Empty;
-            inviteUser.LastName = string.Empty;
-            inviteUser.Email = string.Empty;
-            await  ToggleModal();
-            await LoadData(1, 5, null);
-        }
-        else
-        {
-            showToaster(result.Messages.FirstOrDefault(), "top");
-        }
-    }
+    };\
+    
     private async Task ToggleModal()
     {
         IsModalOpen = !IsModalOpen;
