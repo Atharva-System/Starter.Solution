@@ -10,4 +10,6 @@ public class InviteUserDto
     [Required(ErrorMessage = "Email is required")]
     [EmailAddress(ErrorMessage = "Invalid email address")]
     public string Email { get; set; }
+
+    public string Id { get; set; }
 }
