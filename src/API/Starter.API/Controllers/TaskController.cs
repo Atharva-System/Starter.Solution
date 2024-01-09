@@ -83,4 +83,18 @@ public class TaskController : BaseApiController
             Data = CommonFunction.GetTaskPriorityList(),
         };
     }
+
+    [HttpGet("assignee-list")]
+    [MustHavePermission(Action.View, Resource.Task)]
+    public async Task<ApiResponse<List<TaskAssigneeDto>>> GetAssigneeListAsync()
+    {
+        return await Mediator.Send(new GetTaskAssigneesQueryRequest());
+    }
+
+    [HttpGet("projects")]
+    [MustHavePermission(Action.View, Resource.Task)]
+    public async Task<ApiResponse<List<ProjectDropdownDto>>> GetProjectListAsync()
+    {
+        return await Mediator.Send(new GetProjectListQuery());
+    }
 }

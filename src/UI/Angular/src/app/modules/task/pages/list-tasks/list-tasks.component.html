@@ -17,14 +17,17 @@
         <div>Search By:</div>
         <div>
           <app-dropdown
-            text="Task Name"
+            text="Task"
             [cols]="filterDropdownDs"
             (selectedValue)="selectFilterDropdown($event)"
           ></app-dropdown>
         </div>
       </div>
       <div class="relative ng-tns-c40-36">
-        @if (searchBoxType == "date") {
+        @if (
+          selectedFilterDropdownField == "endDate" ||
+          selectedFilterDropdownField == "startDate"
+        ) {
           <app-date-range-picker
             [placeholder]="'Search'"
             (onSelect)="dateRangeSelect($event)"
@@ -32,6 +35,22 @@
             [classes]="'ltr:pr-8 rtl:pl-8'"
             [rangeValue]="searchDates"
           ></app-date-range-picker>
+        } @else if (selectedFilterDropdownField == "status") {
+          <app-select
+            id="status"
+            [options]="statusOptions"
+            defaultOptions="Select Status"
+            styleAttr="min-width:215px"
+            (selectedValue)="searchByDropDown($event)"
+          ></app-select>
+        } @else if (selectedFilterDropdownField == "priority") {
+          <app-select
+            id="priority"
+            [options]="priorityOptions"
+            defaultOptions="Select Priority"
+            styleAttr="min-width:215px"
+            (selectedValue)="searchByDropDown($event)"
+          ></app-select>
         } @else {
           <input
             [type]="searchBoxType"
