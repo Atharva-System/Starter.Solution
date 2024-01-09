@@ -86,13 +86,4 @@ public class TaskController : BaseApiController
             Data = CommonFunction.GetTaskPriorityList(),
         };
     }
-
-    [HttpGet("projects")]
-    [MustHavePermission(Action.View, Resource.Project)]
-    public async Task<ActionResult<List<ProjectDropdownDto>>> GetProjectListAsync()
-    {
-        var userId = User.FindFirstValue("uid");
-        var request = new GetProjectListQuery { userId = userId };
-        return await Mediator.Send(request);
-    }
 }
