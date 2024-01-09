@@ -1,4 +1,4 @@
-﻿import { Component, EventEmitter, Output, inject } from '@angular/core';
+﻿import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
   Router,
@@ -15,8 +15,9 @@ import { FormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
 import { AuthenticationService } from '../services/authentication.service';
 import { appPaths } from '../../shared/constants/routes';
-import { UserService } from '../../module/user/services/user.service';
-import { IUserProfileSignal } from '../../module/user/models/user-profile.interface';
+import { UserService } from '../../modules/user/services/user.service';
+import { IUserProfileSignal } from '../../modules/user/models/user-profile.interface';
+import { MenuService } from '../services/menu.service';
 
 @Component({
   selector: 'header',
@@ -42,13 +43,12 @@ import { IUserProfileSignal } from '../../module/user/models/user-profile.interf
     TranslateModule,
   ],
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
   @Output() openChangePasswordPopup = new EventEmitter();
-  routes = {
-    users: '/' + appPaths.users,
-    profile: '/' + appPaths.profile,
-  };
-  
+  menuItems: Array<{ label: string; link: string }> = [];
+  profileRoute = '/' + appPaths.profile;
+
+  menuService = inject(MenuService);
   appSetting = inject(AppService);
   router = inject(Router);
   translate = inject(TranslateService);
@@ -141,11 +141,16 @@ export class HeaderComponent {
 
   ngOnInit() {
     this.setActiveDropdown();
+    this.setMenuItems();
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.setActiveDropdown();
       }
     });
+  }
+
+  setMenuItems() {
+    this.menuItems = this.menuService.getMenus();
   }
 
   setActiveDropdown() {

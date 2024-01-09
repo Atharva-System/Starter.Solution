@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { DataTableModule, colDef } from '@bhplugin/ng-datatable';
 import { UserService } from '../../services/user.service';
 import { PaginationFilter } from '../../../../core/models/pagination-filter.interface';
-import { CommonFilterService } from '../../../../core/services/common-filter.service';
+import { FilterService } from '../../../../core/services/filter.service';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 import { InviteUserModalComponent } from '../../components/invite-user-modal/invite-user-modal.component';
 import { DeleteConfirmationModalComponent } from '../../../../shared/ui/delete-confirmation-modal/delete-confirmation-modal.component';
@@ -31,7 +31,7 @@ export class ListUsersComponent {
   deleteUserModal!: DeleteConfirmationModalComponent;
 
   userService = inject(UserService);
-  commonFilterService = inject(CommonFilterService);
+  filterService = inject(FilterService);
   alertService = inject(AlertService);
   timer: any;
   deleteUserId = '';
@@ -58,7 +58,7 @@ export class ListUsersComponent {
   total_rows: number = 0;
 
   constructor() {
-    this.params = { ...this.commonFilterService.defaultFilter };
+    this.params = { ...this.filterService.defaultFilter };
     this.getUsers();
   }
 
@@ -75,7 +75,7 @@ export class ListUsersComponent {
     this.params.PageNumber = data.current_page;
     this.params.PageSize = data.pagesize;
     this.params.OrderBy = [data.sort_column + ' ' + data.sort_direction];
-    this.params = this.commonFilterService.generateFilter(
+    this.params = this.filterService.generateFilter(
       data.column_filters,
       this.params,
     );

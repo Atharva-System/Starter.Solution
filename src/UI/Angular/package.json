@@ -1,6 +1,6 @@
 {
   "name": "starter.angular",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -22,8 +22,11 @@
     "@ngrx/store": "^17.0.1",
     "@ngx-translate/core": "^15.0.0",
     "@ngx-translate/http-loader": "^8.0.0",
+    "angularx-flatpickr": "^7.3.0",
+    "flatpickr": "^4.6.13",
     "headlessui-angular": "^0.0.7",
     "jwt-decode": "^4.0.0",
+    "ngx-quill": "^24.0.4",
     "ngx-scrollbar": "^13.0.3",
     "rxjs": "~7.8.1",
     "sweetalert2": "^11.10.1",

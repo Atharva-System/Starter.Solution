@@ -2,6 +2,7 @@ export class Regex {
   static passwordValidationPattern =
     '^(?=.*[A-Z])(?=.*[a-z])(?=.*[^a-zA-Z0-9]).{8,}$';
   static noSpaceValidationPattern = '^\\S*$';
+  static decimalValidationPattern = '^\\d+(\\.\\d{1,2})?$';
 }
 
 export class StorageKey {

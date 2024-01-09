@@ -46,8 +46,8 @@ namespace Starter.Persistence.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<TimeOnly>("EstimatedHours")
-                        .HasColumnType("time");
+                    b.Property<decimal>("EstimatedHours")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");

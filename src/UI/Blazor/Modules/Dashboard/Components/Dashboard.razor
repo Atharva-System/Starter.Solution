@@ -1,5 +1,6 @@
 ﻿@page "/dashboard"
 @using Microsoft.AspNetCore.Authorization
+@using Starter.Blazor.Core
 @using Starter.Blazor.Modules.Login.Services
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager navigationManager
@@ -303,13 +304,20 @@
 @code {
 
     bool isAuthenticated = false;
+    [Inject]
+    public HttpInterceptorService Interceptor { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        isAuthenticated = await AuthService.IsUserAuthenticated();
-        if (!isAuthenticated)
-        {
-            navigationManager.NavigateTo("/");
-        }
+        // Interceptor.RegisterEvent();
+        // isAuthenticated = await AuthService.IsUserAuthenticated();
+        // if (!isAuthenticated)
+        // {
+        //     navigationManager.NavigateTo("/");
+        // }
     }
+    // public void Dispose()
+    // {
+    //     Interceptor.DisposeEvent();
+    // }
 }

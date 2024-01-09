@@ -1,11 +1,11 @@
-﻿import { Component, inject } from '@angular/core';
+﻿import { Component, OnInit, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { NgClass } from '@angular/common';
 import { slideDownUp } from '../../shared/services/animations.service';
-import { appPaths } from '../../shared/constants/routes';
+import { MenuService } from '../services/menu.service';
 
 @Component({
   selector: 'sidebar',
@@ -20,10 +20,9 @@ import { appPaths } from '../../shared/constants/routes';
     TranslateModule,
   ],
 })
-export class SidebarComponent {
-  routes = {
-    users: appPaths.users,
-  };
+export class SidebarComponent implements OnInit {
+  menuItems: Array<{ label: string; link: string }> = [];
+
   active = false;
   store: any;
   activeDropdown: string[] = [];
@@ -32,10 +31,12 @@ export class SidebarComponent {
   translate = inject(TranslateService);
   storeData = inject(Store<any>);
   router = inject(Router);
+  menuService = inject(MenuService);
 
   constructor() {
     this.initStore();
   }
+
   async initStore() {
     this.storeData
       .select((d) => d.index)
@@ -46,6 +47,11 @@ export class SidebarComponent {
 
   ngOnInit() {
     this.setActiveDropdown();
+    this.setMenuItems();
+  }
+
+  setMenuItems() {
+    this.menuItems = this.menuService.getMenus();
   }
 
   setActiveDropdown() {

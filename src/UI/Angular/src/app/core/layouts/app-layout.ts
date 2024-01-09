@@ -13,7 +13,7 @@ import { HeaderComponent } from './header';
 import { SidebarComponent } from './sidebar';
 import { ThemeCustomizerComponent } from './theme-customizer';
 import { NgClass } from '@angular/common';
-import { ChangePasswordModalComponent } from '../../module/user/components/change-password-modal/change-password-modal.component';
+import { ChangePasswordModalComponent } from '../../modules/user/components/change-password-modal/change-password-modal.component';
 
 @Component({
   selector: 'app-root',

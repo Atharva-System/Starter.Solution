@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { CommonFilterService } from './common-filter.service';
+import { ProjectService } from './project.service';
 
-describe('CommonFilterService', () => {
-  let service: CommonFilterService;
+describe('ProjectService', () => {
+  let service: ProjectService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(CommonFilterService);
+    service = TestBed.inject(ProjectService);
   });
 
   it('should be created', () => {
