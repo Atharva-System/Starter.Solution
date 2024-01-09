@@ -21,6 +21,13 @@ public class HttpInterceptorService
         _refreshTokenService = refreshTokenService;
     }
 
+    public void RegisterEvent()
+    {
+        _interceptor.AfterSend += InterceptResponse;
+        _interceptor.BeforeSendAsync += InterceptBeforeHttpAsync;
+    }
+    //public void RegisterEvent() => _interceptor.BeforeSendAsync += InterceptBeforeHttpAsync;
+
     public async Task InterceptBeforeHttpAsync(object sender, HttpClientInterceptorEventArgs e)
     {
         var absPath = e.Request.RequestUri.AbsolutePath;
@@ -36,17 +43,6 @@ public class HttpInterceptorService
                 e.Request.Headers.Authorization = new AuthenticationHeaderValue("bearer", token.Replace("\"", ""));
             }
         }
-    }
-    public void RegisterEvent()
-    {
-        _interceptor.AfterSend += InterceptResponse;
-        _interceptor.BeforeSendAsync += InterceptBeforeHttpAsync;
-    }
-
-    public void DisposeEvent()
-    {
-        _interceptor.AfterSend -= InterceptResponse;
-        _interceptor.BeforeSendAsync -= InterceptBeforeHttpAsync;
     }
 
     private void InterceptResponse(object sender, HttpClientInterceptorEventArgs e)
@@ -76,4 +72,12 @@ public class HttpInterceptorService
             throw new HttpResponseException(message);
         }
     }
+
+    public void DisposeEvent()
+    {
+        _interceptor.AfterSend -= InterceptResponse;
+        _interceptor.BeforeSendAsync -= InterceptBeforeHttpAsync;
+    }
+
+    //public void DisposeEvent() => _interceptor.BeforeSendAsync -= InterceptBeforeHttpAsync;
 }
