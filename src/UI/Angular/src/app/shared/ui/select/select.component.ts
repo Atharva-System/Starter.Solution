@@ -34,10 +34,12 @@ export interface ISelectItems {
 export class SelectComponent implements ControlValueAccessor {
   @Input() id = 'select';
   @Input() isSubmit = false;
-  @Input() control: any;
+  @Input() control!: any;
   @Input() disable = false;
   @Input() options: ISelectItems[] = [];
   @Input() defaultOptions: string = 'select';
+  @Input() classes: string = '';
+  @Input() styleAttr: string = '';
   @Output() selectedValue: EventEmitter<string> = new EventEmitter<string>();
   value: string = '';
 
