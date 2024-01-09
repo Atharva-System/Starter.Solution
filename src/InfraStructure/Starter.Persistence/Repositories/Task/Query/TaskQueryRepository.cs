@@ -18,6 +18,24 @@ public class TaskQueryRepository : QueryRepository<Starter.Domain.Entities.Tasks
     public TaskQueryRepository(AppDbContext context) : base(context)
     { }
 
+    public async Task<ApiResponse<List<ProjectDropdownDto>>> GetProjectListAsync()
+    {
+        var projects = await (from u in context.Projects.AsNoTracking()
+                              select new ProjectDropdownDto
+                              {
+                                  Id = u.Id,
+                                  ProjectName = u.ProjectName,
+                              }).ToListAsync();
+
+        var response = new ApiResponse<List<ProjectDropdownDto>>
+        {
+            Success = projects.Any(),
+            StatusCode = projects?.Any() == true ? HttpStatusCodes.OK : HttpStatusCodes.BadRequest,
+            Data = projects,
+        };
+        return response;
+    }
+
     public async Task<IPagedDataResponse<TaskListDto>> SearchAsync(ISpecification<TaskListDto> spec, int pageNumber, int pageSize, CancellationToken cancellationToken)
     {
         var taskList = await (from t in context.Tasks.AsNoTracking()
