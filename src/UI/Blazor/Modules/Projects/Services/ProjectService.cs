@@ -41,6 +41,14 @@ public class ProjectService(HttpClient http) : IProjectService
         }
     }
 
+    public async Task<ApiResponse<string>> EditProject(string id, AddEditProject editProject)
+    {
+        var result = await _http.PutAsJsonAsync($"api/Project/{id}", editProject);
+
+        var response = await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
+        return response!;
+    }
+
     public async Task<ApiResponse<ProjectDetailsDto>> GetProjectDetails(string id)
     {
         return await _http.GetFromJsonAsync<ApiResponse<ProjectDetailsDto>>($"api/Project/{id}");

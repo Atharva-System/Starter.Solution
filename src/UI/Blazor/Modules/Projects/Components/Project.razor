@@ -92,7 +92,7 @@
                         </div>
                         <div>
                             <label for="EstHour">Estimated Hours</label>
-                            <input id="EstHour" type="number" class="form-input" placeholder="Enter Estimated Hours" @bind-value="addProject.EstimatedHours"/>
+                            <input id="EstHour" type="number" step="0.01" class="form-input" placeholder="Enter Estimated Hours" @bind-value="addProject.EstimatedHours" />
                             <ValidationMessage For="@(() => addProject.EstimatedHours)" />
                         </div>
                         <div class="flex space-x-2">
@@ -145,19 +145,39 @@
 
     private async Task AddProject()
     {
-        var result = await ProjectService.AddProjectAsync(addProject);
-        if (result.Success)
+        if(addProject.Id == null)
         {
-            showToaster(result.Message, "top");
+            var result = await ProjectService.AddProjectAsync(addProject);
+            if (result.Success)
+            {
+                showToaster(result.Message, "top");
 
-            addProject = new AddEditProject();
+                addProject = new AddEditProject();
 
-            projects = await ProjectService.GetProjectlistsAsync(param);
-            StateHasChanged();
+                projects = await ProjectService.GetProjectlistsAsync(param);
+                StateHasChanged();
+            }
+            else
+            {
+                showToaster(result.Message, "top");
+            }
         }
-        else
+        else if(addProject.Id != null)
         {
-            showToaster(result.Message, "top");
+            var result = await ProjectService.EditProject(addProject.Id.ToString(), addProject);
+            if (result.Success)
+            {
+                showToaster(result.Message, "top");
+
+                addProject = new AddEditProject();
+
+                projects = await ProjectService.GetProjectlistsAsync(param);
+                StateHasChanged();
+            }
+            else
+            {
+                showToaster(result.Message, "top");
+            }
         }
     }
 
