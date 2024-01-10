@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System.Net;
+using System.Net.Http;
 using System.Net.Http.Json;
 using Starter.Blazor.Core.Response;
 using Starter.Blazor.Modules.Common;
@@ -47,7 +48,20 @@ public class ProjectService(HttpClient http) : IProjectService
         var result = await _http.PutAsJsonAsync($"api/Project/{projectDto.Id}", projectDto);
 
         var response = await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
-        return response!;
+
+        if(response  != null && response.Success)
+        {
+            return response!;
+        }
+        else
+        {
+            return new ApiResponse<string>
+            {
+                Success = false,
+                Message = response.Message,
+            };
+        }
+
     }
 
     public async Task<ApiResponse<ProjectDetailsDto>> GetProjectDetails(string id)
