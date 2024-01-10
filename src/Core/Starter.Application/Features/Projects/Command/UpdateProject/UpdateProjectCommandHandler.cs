@@ -33,8 +33,8 @@ public class UpdateProjectCommandHandler(ICommandUnitOfWork command) : IRequestH
         {
             Success = saveResult > 0,
             StatusCode = saveResult > 0 ? HttpStatusCodes.OK : HttpStatusCodes.BadRequest,
-            Data = "Project update successfully",
-            Message = saveResult > 0 ? $"Project {ConstantMessages.UpdatedSuccessfully}" : "FailedToUpdate project.",
+            Data = saveResult > 0 ? "Project update successfully" : "Failed To Update project.",
+            Message = saveResult > 0 ? $"Project {ConstantMessages.UpdatedSuccessfully}" : "Failed To Update project.",
         };
 
         return response;
