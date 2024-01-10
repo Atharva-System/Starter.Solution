@@ -4,7 +4,6 @@
     [id]="id"
     [type]="type"
     [placeholder]="placeholder"
-    [disabled]="disable"
     [formControl]="control"
     [(ngModel)]="value"
   />
@@ -42,7 +41,7 @@
       letter (a-z), and one non-alphanumeric character.
     </p>
   }
-  @if (isSubmit && control.errors?.["pattern"]) {
+  @if (isSubmit && control.errors?.["pattern"] && type != "password") {
     <p class="mt-1 text-danger">Invalid input.</p>
   }
 </div>

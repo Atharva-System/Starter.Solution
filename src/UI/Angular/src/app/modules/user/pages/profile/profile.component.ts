@@ -11,7 +11,10 @@ import { FieldValidation, Regex } from '../../../../shared/constants/constants';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 import { InputComponent } from '../../../../shared/ui/input/input.component';
 import { AlertService } from '../../../../shared/services/alert.service';
-import { IUserProfileSignal } from '../../models/user-profile.interface';
+import {
+  IUserProfile,
+  IUserProfileSignal,
+} from '../../models/user-profile.interface';
 import { AuthenticationService } from '../../../../core/services/authentication.service';
 
 @Component({
@@ -27,6 +30,7 @@ export class ProfileComponent implements OnInit {
   isSubmitFormProfile = false;
   isFormDirty = false;
   originalData = '';
+  profileEmail = '';
 
   authenticationService = inject(AuthenticationService);
   userService = inject(UserService);
@@ -56,14 +60,6 @@ export class ProfileComponent implements OnInit {
           Validators.pattern(Regex.noSpaceValidationPattern),
         ]),
       ],
-      email: [
-        '',
-        Validators.compose([
-          Validators.required,
-          Validators.email,
-          Validators.maxLength(FieldValidation.emailMaxLength),
-        ]),
-      ],
     });
   }
 
@@ -78,6 +74,7 @@ export class ProfileComponent implements OnInit {
         email: data.data?.email,
         name: data.data?.firstName + ' ' + data.data?.lastName,
       };
+      this.profileEmail = data.data?.email;
       this.userService.setProfileSignal(this.userProfileSignal);
       this.originalData = JSON.stringify(this.formProfile.value);
       this.isFormDirty = false;
@@ -90,11 +87,12 @@ export class ProfileComponent implements OnInit {
   submitFormProfile() {
     this.isSubmitFormProfile = true;
     if (this.formProfile.valid) {
-      const formValues = this.formProfile.value;
+      const formValues = this.formProfile.value as IUserProfile;
+      formValues.email = this.profileEmail;
       this.userService.updateProfile(formValues).subscribe(
         (res: any) => {
           this.userProfileSignal = {
-            email: formValues.email,
+            email: this.profileEmail,
             name: formValues.firstName + ' ' + formValues.lastName,
           };
           this.userService.setProfileSignal(this.userProfileSignal);

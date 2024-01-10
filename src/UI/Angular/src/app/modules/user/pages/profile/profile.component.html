@@ -39,12 +39,12 @@
             </div>
             <div>
               <label for="profession">Email</label>
-              <app-input
-                formControlName="email"
-                [control]="formProfile.controls['email']"
-                [isSubmit]="isSubmitFormProfile"
-                placeholder="Enter Email"
-              ></app-input>
+              <input
+                class="form-input disabled-textbox"
+                type="text"
+                [disabled]="true"
+                [value]="profileEmail"
+              />
             </div>
             <div class="mt-3 sm:col-span-2">
               <app-button

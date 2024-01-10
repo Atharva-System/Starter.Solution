@@ -22,7 +22,7 @@ export class AuthInterceptor implements HttpInterceptor {
     request = request.clone({
       setHeaders: {
         'Content-Type': 'application/json',
-        'request-source' : 'angular'
+        'request-source': 'angular',
       },
     });
 
@@ -36,10 +36,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
     return next.handle(request).pipe(
       catchError((error) => {
-        if (
-          error.status === HttpStatusCode.Unauthorized &&
-          !this.authenticationService.isAuthenticated()
-        ) {
+        if (!this.authenticationService.isAuthenticated()) {
           return this.handleTokenExpired(request, next);
         } else {
           return throwError(error);

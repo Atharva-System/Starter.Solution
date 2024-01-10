@@ -79,10 +79,9 @@ public class AuthService : IAuthService
 
         JwtSecurityToken jwtSecurityToken = await GenerateToken(user!);
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
+        #pragma warning disable CS8602 // Dereference of a possibly null reference.
         user.RefreshToken = GenerateRefreshToken();
-        //user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenExpirationInDays);
-        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddMinutes(1);
+        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenExpirationInDays);
         await _userManager.UpdateAsync(user);
 
         AuthenticationResponse response = new AuthenticationResponse
@@ -93,7 +92,7 @@ public class AuthService : IAuthService
             Email = user?.Email!,
             UserName = user?.UserName!
         };
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        #pragma warning restore CS8602 // Dereference of a possibly null reference.
 
         return response;
     }
