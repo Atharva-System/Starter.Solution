@@ -25,6 +25,8 @@ export class ProfileComponent implements OnInit {
   userProfileSignal!: IUserProfileSignal;
   formProfile!: FormGroup;
   isSubmitFormProfile = false;
+  isFormDirty = false;
+  originalData = '';
 
   authenticationService = inject(AuthenticationService);
   userService = inject(UserService);
@@ -77,6 +79,11 @@ export class ProfileComponent implements OnInit {
         name: data.data?.firstName + ' ' + data.data?.lastName,
       };
       this.userService.setProfileSignal(this.userProfileSignal);
+      this.originalData = JSON.stringify(this.formProfile.value);
+      this.isFormDirty = false;
+      this.formProfile.valueChanges.subscribe(() => {
+        this.checkFormDirty();
+      });
     });
   }
 
@@ -96,10 +103,17 @@ export class ProfileComponent implements OnInit {
             this.userProfileSignal.email,
           );
           this.isSubmitFormProfile = false;
+          this.originalData = JSON.stringify(this.formProfile.value);
+          this.isFormDirty = false;
           this.alertService.showMessage(res.data);
         },
         (error) => {},
       );
     }
+  }
+
+  checkFormDirty() {
+    this.isFormDirty =
+      JSON.stringify(this.formProfile.value) !== this.originalData;
   }
 }

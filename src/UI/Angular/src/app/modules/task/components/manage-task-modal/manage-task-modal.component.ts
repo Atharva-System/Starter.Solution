@@ -63,6 +63,8 @@ export class ManageTaskModalComponent implements OnChanges {
   signinRoute = '/' + authPaths.signin;
   formCreateTask!: FormGroup;
   isSubmitFormCreateTask = false;
+  isFormDirty = false;
+  originalData = '';
 
   commonService = inject(CommonService);
   router = inject(Router);
@@ -144,10 +146,15 @@ export class ManageTaskModalComponent implements OnChanges {
           from: this.commonService.getUTCDate(startDate),
           to: this.commonService.getUTCDate(endDate),
         },
-        status: data.data.status,
-        priority: data.data.priority,
+        status: `${data.data.status}`,
+        priority: `${data.data.priority}`,
         projectId: data.data.projectId,
         assignedTo: data.data.assignedTo,
+      });
+      this.originalData = JSON.stringify(this.formCreateTask.value);
+      this.isFormDirty = false;
+      this.formCreateTask.valueChanges.subscribe(() => {
+        this.checkFormDirty();
       });
     });
   }
@@ -237,5 +244,10 @@ export class ManageTaskModalComponent implements OnChanges {
         );
       }
     }
+  }
+
+  checkFormDirty() {
+    this.isFormDirty =
+      JSON.stringify(this.formCreateTask.value) !== this.originalData;
   }
 }

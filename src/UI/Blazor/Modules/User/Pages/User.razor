@@ -1,4 +1,5 @@
 @page "/userlist"
+@using Starter.Blazor.Core
 @using Starter.Blazor.Modules.Common
 @using Starter.Blazor.Modules.User.Models
 @using Starter.Blazor.Modules.User.Services
@@ -97,9 +98,11 @@
     private PagedDataResponse<List<UserlistDto>> DisplayedData = new PagedDataResponse<List<UserlistDto>>();
 
     private bool IsModalOpen = false;
-
+    [Inject]
+    public HttpInterceptorService Interceptor { get; set; }
     protected override void OnInitialized()
     {
+        Interceptor.RegisterEvent();
         Task.WhenAll(LoadData(1, 5, null));
     }
     private async Task PageSizeChanged(int pageNumber, int pageSize, string[] OrderBy)

@@ -1,0 +1,28 @@
+﻿@* <BlazoredModal>
+    <h1>
+        <p>Are you sure you want to delete '{TaskName}'?</p>
+    </h1>
+    <div>
+        <button class="btn btn-danger" @onclick="DeleteTask">Delete</button>
+        <button class="btn btn-secondary" @onclick="CloseModal">Cancel</button>
+    </div>
+</BlazoredModal> *@
+
+@code {
+    // [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
+    // [Parameter] public string TaskName { get; set; }
+
+    // private void DeleteTask()
+    // {
+    //     // Perform the delete action here
+    //     // You can use an event/callback to notify the parent component
+    //     // about the delete action, or call a service to handle the deletion.
+    //     // For simplicity, I'm just closing the modal here.
+    //     BlazoredModal.Close(ModalResult.Ok(true));
+    // }
+
+    // private void CloseModal()
+    // {
+    //     BlazoredModal.Cancel();
+    // }
+}
