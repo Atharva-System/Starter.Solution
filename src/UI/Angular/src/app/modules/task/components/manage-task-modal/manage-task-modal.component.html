@@ -103,7 +103,8 @@
       type="submit"
       classes="btn-primary ltr:ml-4 rtl:mr-4"
       class="d-block"
-      (click)="submitForm()"
+      (click)="!(taskId ? !isFormDirty : false) && submitForm()"
+      [disabled]="taskId ? !isFormDirty : false"
     ></app-button>
     @if (!taskId) {
       <app-button

@@ -16,7 +16,7 @@
           <form
             class="grid flex-1 grid-cols-1 gap-5 sm:grid-cols-2"
             [formGroup]="formProfile"
-            (ngSubmit)="submitFormProfile()"
+            (ngSubmit)="isFormDirty && submitFormProfile()"
             novalidate
           >
             <div>
@@ -52,6 +52,7 @@
                 type="submit"
                 classes="btn-primary"
                 class="d-block"
+                [disabled]="!isFormDirty"
               ></app-button>
             </div>
           </form>
