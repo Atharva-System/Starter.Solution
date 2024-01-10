@@ -1,0 +1,200 @@
+﻿@page "/task-list"
+@using Microsoft.AspNetCore.Authorization
+@using Starter.Blazor.Modules.Common
+@using Starter.Blazor.Modules.Login.Services
+@using Starter.Blazor.Modules.Task.Model
+@using Starter.Blazor.Modules.Task.Services
+@inject IJSRuntime JSRuntime
+@inject NavigationManager navigationManager
+@inject IAuthService AuthService
+@inject ITaskService TaskService
+@attribute [Authorize]
+
+<div>
+    <div class="relative flex h-full gap-5 sm:h-[calc(100vh_-_150px)]">
+        <div class="panel h-full flex-1 overflow-auto p-0">
+            <div class="flex h-full flex-col">
+                <div class="flex w-full flex-col gap-4 p-4 sm:flex-row sm:items-center">
+                    <div class="flex items-center ltr:mr-3 rtl:ml-3">
+                        <div class="group relative flex-1 mr-3">
+                            <button class="btn btn-primary w-full" type="button" @onclick="@(() => Modal.Show<CreateTaskModel>("Add New Task"))">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 shrink-0 ltr:mr-2 rtl:ml-2">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                Add New Task
+                            </button>
+                        </div>
+                        <button type="button"
+                                class="block hover:text-primary ltr:mr-3 rtl:ml-3 xl:hidden"
+                                @click="isShowTaskMenu = !isShowTaskMenu">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6">
+                                <path d="M20 7L4 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                                <path opacity="0.5" d="M20 12L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                                <path d="M20 17L4 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                            </svg>
+                        </button>
+                        <div class="group relative flex-1">
+                            <input type="text"
+                                   class="peer form-input ltr:!pr-10 rtl:!pl-10"
+                                   placeholder="Search Task..." />
+                            <div class="absolute top-1/2 -translate-y-1/2 peer-focus:text-primary ltr:right-[11px] rtl:left-[11px]">
+                                <svg width="24"
+                                     height="24"
+                                     viewBox="0 0 24 24"
+                                     fill="none"
+                                     xmlns="http://www.w3.org/2000/svg"
+                                     class="h-4 w-4">
+                                    <circle cx="11.5" cy="11.5" r="9.5" stroke="currentColor" stroke-width="1.5" opacity="0.5"></circle>
+                                    <path d="M18.5 18.5L22 22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-1 items-center justify-center sm:flex-auto sm:justify-end">
+                        <p class="ltr:mr-3 rtl:ml-3"></p>
+                        <button type="button"
+                                class="rounded-md bg-[#f4f4f4] p-1 enabled:hover:bg-primary-light disabled:cursor-not-allowed disabled:opacity-60 ltr:mr-3 rtl:ml-3 dark:bg-white-dark/20 enabled:dark:hover:bg-white-dark/30">
+                            <svg width="24"
+                                 height="24"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 xmlns="http://www.w3.org/2000/svg"
+                                 class="h-5 w-5 rtl:rotate-180">
+                                <path d="M15 5L9 12L15 19"
+                                      stroke="currentColor"
+                                      stroke-width="1.5"
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"></path>
+                            </svg>
+                        </button>
+                        <button type="button"
+                                class="rounded-md bg-[#f4f4f4] p-1 enabled:hover:bg-primary-light disabled:cursor-not-allowed disabled:opacity-60 dark:bg-white-dark/20 enabled:dark:hover:bg-white-dark/30">
+                            <svg width="24"
+                                 height="24"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 xmlns="http://www.w3.org/2000/svg"
+                                 class="h-5 w-5 ltr:rotate-180">
+                                <path d="M15 5L9 12L15 19"
+                                      stroke="currentColor"
+                                      stroke-width="1.5"
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="ltr:rounded-l-md rtl:rounded-r-md">Task Name</th>
+                                <th>Description</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Assigned To</th>
+                                <th class="ltr:rounded-r-md rtl:rounded-l-md">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var TaskData in Tasks)
+                            {
+                                <tr class="group text-white-dark hover:text-black dark:hover:text-white-light/90">
+                                    <td class="min-w-[150px] text-black dark:text-white">
+                                        @TaskData.TaskName
+                                    </td>
+                                    <td class="text-dark">@TaskData.Description</td>
+                                    <td class="text-dark">@TaskData.StartDate</td>
+                                    <td class="text-dark">@TaskData.EndDate</td>
+                                    <td class="text-dark">@TaskData.AssignedTo</td>
+                                    <td>
+                                        <div>
+                                            <button @onclick="() => EditTask(TaskData)">Edit</button> |
+                                            <button @onclick="() => DeleteTask(TaskData)">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* <CascadingValue Value="@EditTaskID">
+    <CreateTaskModel />
+</CascadingValue> *@
+
+@code {
+
+    [CascadingParameter] public IModalService Modal { get; set; }
+
+    private bool isAuthenticated;
+
+    private List<TaskListDto> Tasks = new List<TaskListDto>();
+    public Guid EditTaskID;
+
+    private TaskDetailsDto taskDetailsDto = new TaskDetailsDto
+        {
+            StartDate = DateTime.Now.Date,
+            EndDate = DateTime.Now.Date
+        };
+
+    private PaginationRequest param = new PaginationRequest { PageNumber = 0, PageSize = 10, OrderBy = new[] { "TaskName" } };
+
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
+    {
+        isAuthenticated = await AuthService.IsUserAuthenticated();
+
+        if (!isAuthenticated)
+        {
+            navigationManager.NavigateTo("/");
+        }
+
+        // get Tasks
+
+        Tasks = await TaskService.GetTasklistsAsync(param);
+
+    }
+
+    private async void EditTask(TaskListDto selectedTask)
+    {
+        try
+        {
+            EditTaskID = selectedTask.Id;
+            //Modal.Show<CreateTaskModel>("Edit Task");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+
+    private async void DeleteTask(TaskListDto task)
+    {
+        // var parameters = new ModalParameters();
+        // parameters.Add("TaskName", task.TaskName);
+
+        // var result = await BlazoredModal.Show<ConfirmDeleteModal>("Confirm Delete", parameters);
+        // if (result.Cancelled)
+        // {
+        //     Console.WriteLine("Delete operation canceled");
+        // }
+        // else if (result.Data is bool confirmed && confirmed)
+        // {
+        //     Console.WriteLine("Delete operation confirmed");
+        // }
+
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete '{task.TaskName}'?");
+
+        if (confirmed)
+        {
+            await TaskService.DeleteTaskAsync(task.Id);
+
+            Tasks.Remove(task);
+        }
+    }
+}

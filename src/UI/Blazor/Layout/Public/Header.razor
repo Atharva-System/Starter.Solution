@@ -1,4 +1,7 @@
-﻿<!-- start header section -->
+﻿@inject ILocalStorageService LocalStorage
+@inject NavigationManager navigationManager
+
+<!-- start header section -->
 <header :class="{'dark' : $store.app.semidark && $store.app.menu === 'horizontal'}">
     <div class="shadow-sm">
         <div class="relative flex w-full items-center bg-white px-5 py-2.5 dark:bg-[#0e1726]">
@@ -86,7 +89,7 @@
                         </svg>
                     </a>
                 </div>
-                <div class="dropdown shrink-0" x-data="dropdown" @click.outside="open = false">
+                <div class="dropdown shrink-0" x-data="dropdown">
                     <a href="javascript:;"
                        class="block rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60"
                        @click="toggle">
@@ -114,7 +117,7 @@
                         </template>
                     </ul>
                 </div>
-                <div class="dropdown flex-shrink-0" x-data="dropdown" @click.outside="open = false">
+                <div class="dropdown flex-shrink-0" x-data="dropdown">
                     <a href="javascript:;" class="group relative" @click="toggle()">
                         <span>
                             <img class="h-9 w-9 rounded-full object-cover saturate-50 group-hover:saturate-100"
@@ -208,7 +211,7 @@
                             </a>
                         </li>
                         <li class="border-t border-white-light dark:border-white-light/10">
-                            <a href="auth-boxed-signin.html" class="!py-3 text-danger" @click="toggle">
+                            <a class="!py-3 text-danger" @onclick="SignOut">
                                 <svg class="h-4.5 w-4.5 shrink-0 rotate-90 ltr:mr-2 rtl:ml-2"
                                      width="18"
                                      height="18"
@@ -279,7 +282,7 @@
                 </a>
                 <ul class="sub-menu">
                     <li>
-                        <a href="/">Dashboard</a>
+                        <a href="/dashboard">Dashboard</a>
                     </li>
                     <li>
                         <a href="/todolist">Todo List</a>
@@ -290,3 +293,13 @@
     </div>
 </header>
 <!-- end header section -->
+
+@code{
+
+    private async void SignOut()
+    {
+        await LocalStorage.RemoveItemAsync("userToken");
+
+        navigationManager.NavigateTo("/");
+    }
+}

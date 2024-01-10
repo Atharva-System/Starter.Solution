@@ -7,7 +7,7 @@
 @inject IAuthService AuthService
 @attribute [Authorize]
 
-<div x-data="sales">
+<div>
     <ul class="flex space-x-2 rtl:space-x-reverse">
         <li>
             <a href="javascript:;" class="text-primary hover:underline">Dashboard</a>
@@ -309,12 +309,12 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // Interceptor.RegisterEvent();
-        // isAuthenticated = await AuthService.IsUserAuthenticated();
-        // if (!isAuthenticated)
-        // {
-        //     navigationManager.NavigateTo("/");
-        // }
+        Interceptor.RegisterEvent();
+        isAuthenticated = await AuthService.IsUserAuthenticated();
+        if (!isAuthenticated)
+        {
+            navigationManager.NavigateTo("/");
+        }
     }
     // public void Dispose()
     // {
