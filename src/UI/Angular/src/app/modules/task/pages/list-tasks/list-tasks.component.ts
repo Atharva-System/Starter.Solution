@@ -1,7 +1,11 @@
 import { NgClass, NgStyle } from '@angular/common';
 import { Component, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DataTableModule, colDef } from '@bhplugin/ng-datatable';
+import {
+  DataTableModule,
+  NgDataTableComponent,
+  colDef,
+} from '@bhplugin/ng-datatable';
 import { MenuModule } from 'headlessui-angular';
 import { PaginationFilter } from '../../../../core/models/pagination-filter.interface';
 import { FilterService } from '../../../../core/services/filter.service';
@@ -44,15 +48,18 @@ export class ListTasksComponent {
   manageTaskModalComponent!: ManageTaskModalComponent;
   @ViewChild('deleteTaskModal')
   deleteTaskModal!: DeleteConfirmationModalComponent;
+  @ViewChild('listTaskDataTable', { static: false })
+  listTaskDataTable!: NgDataTableComponent;
+
+  taskService = inject(TaskService);
+  filterService = inject(FilterService);
+  alertService = inject(AlertService);
+
   search = '';
   searchDates: { from: any; to: any } = {
     from: '',
     to: '',
   };
-
-  taskService = inject(TaskService);
-  filterService = inject(FilterService);
-  alertService = inject(AlertService);
   timer: any;
   deleteTaskId = '';
   editTaskId = '';
@@ -61,8 +68,8 @@ export class ListTasksComponent {
   priorityOptions: ISelectItems[] = [];
   statusOptions: ISelectItems[] = [];
   params: PaginationFilter;
-
   loading: boolean = true;
+
   cols: Array<colDef> = [
     { field: 'taskName', title: 'Task' },
     { field: 'projectName', title: 'Project' },
@@ -221,7 +228,9 @@ export class ListTasksComponent {
   }
 
   onCancel() {
-    this.deleteTaskId = this.editTaskId = '';
+    setTimeout(() => {
+      this.deleteTaskId = this.editTaskId = '';
+    }, 200);
   }
 
   clearSearchBox() {
@@ -231,6 +240,7 @@ export class ListTasksComponent {
       to: '',
     };
     this.params.AdvancedFilter = null;
+    this.resetPageTo1();
     this.getTasks();
   }
 
@@ -246,6 +256,7 @@ export class ListTasksComponent {
         this.search,
         this.params,
       );
+      this.resetPageTo1();
       this.getTasks();
       this.searchTimeout = null;
     }, 1000);
@@ -279,6 +290,7 @@ export class ListTasksComponent {
         { start: fromDate, to: toDate },
         this.params,
       );
+      this.resetPageTo1();
       this.getTasks();
       this.searchDateTimeout = null;
     }, 1000);
@@ -291,5 +303,12 @@ export class ListTasksComponent {
   searchByDropDown(id: string) {
     this.search = id;
     this.onSearch();
+  }
+
+  resetPageTo1() {
+    this.params.PageNumber = 1;
+    if (this.listTaskDataTable) {
+      this.listTaskDataTable.currentPage = 1;
+    }
   }
 }

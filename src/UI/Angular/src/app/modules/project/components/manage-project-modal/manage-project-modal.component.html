@@ -58,14 +58,23 @@
       (click)="resetForm(); modalComponent.close()"
       class="btn btn-outline-danger"
     >
-      Discard
+      {{ projectId ? "Cancel" : "Discard" }}
     </button>
     <app-button
-      [text]="projectId ? 'Save' : 'Create'"
+      [text]="projectId ? 'Save' : 'Create & Close'"
       type="submit"
       classes="btn-primary ltr:ml-4 rtl:mr-4"
       class="d-block"
       (click)="submitForm()"
     ></app-button>
+    @if (!projectId) {
+      <app-button
+        [text]="'Create'"
+        type="submit"
+        classes="btn-primary ltr:ml-4 rtl:mr-4"
+        class="d-block"
+        (click)="submitForm(false)"
+      ></app-button>
+    }
   </ng-template>
 </modal>

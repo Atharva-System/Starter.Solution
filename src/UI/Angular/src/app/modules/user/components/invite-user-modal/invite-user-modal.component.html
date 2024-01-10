@@ -51,7 +51,7 @@
       (click)="resetForm(); modalComponent.close()"
       class="btn btn-outline-danger"
     >
-      Discard
+      {{ userId ? "Cancel" : "Discard" }}
     </button>
     <app-button
       [text]="userId ? 'Save' : 'Invite'"

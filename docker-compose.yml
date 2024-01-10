@@ -48,3 +48,7 @@ services:
       - ACCEPT_EULA=Y
     volumes:
       - C:\MSSQL\DockerFiles:/var/opt/mssql/data
+      #- mssql_data:/var/opt/mssql/data
+
+# volumes:
+#   mssql_data:

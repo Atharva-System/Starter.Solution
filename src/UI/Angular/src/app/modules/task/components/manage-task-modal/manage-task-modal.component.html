@@ -8,7 +8,11 @@
     <div class="!font-medium">{{ taskId ? "Edit Task" : "Add Task" }}</div>
   </ng-template>
   <ng-template #modalBody>
-    <form [formGroup]="formCreateTask" class="text-sm" (submit)="submitForm()">
+    <form
+      [formGroup]="formCreateTask"
+      class="text-sm"
+      (keydown.enter)="submitForm()"
+    >
       <div class="mb-5">
         <label for="taskName">Name</label>
         <app-input
@@ -92,14 +96,23 @@
       (click)="resetForm(); modalComponent.close()"
       class="btn btn-outline-danger"
     >
-      Discard
+      {{ taskId ? "Cancel" : "Discard" }}
     </button>
     <app-button
-      [text]="taskId ? 'Save' : 'Create'"
+      [text]="taskId ? 'Save' : 'Create & Close'"
       type="submit"
       classes="btn-primary ltr:ml-4 rtl:mr-4"
       class="d-block"
       (click)="submitForm()"
     ></app-button>
+    @if (!taskId) {
+      <app-button
+        [text]="'Create'"
+        type="submit"
+        classes="btn-primary ltr:ml-4 rtl:mr-4"
+        class="d-block"
+        (click)="submitForm(false)"
+      ></app-button>
+    }
   </ng-template>
 </modal>

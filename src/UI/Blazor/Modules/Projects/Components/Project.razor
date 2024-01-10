@@ -17,7 +17,7 @@
         </div>
 
         <div class="table-responsive">
-            <ReusableGrid @ref="gridRef" TItem="ProjectDto" HeaderData="@headerInfo" PageSizeChange="LoadData" PageNumberChange="LoadData" ColumnSortingChange="LoadData" DeleteRecord="DeleteRecord" />
+            <ReusableGrid @ref="gridRef" TItem="ProjectDto" HeaderData="@headerInfo" PageSizeChange="LoadData" PageNumberChange="LoadData" ColumnSortingChange="LoadData" DeleteRecord="DeleteRecord" EditRecord="EditRecord" />
         </div>
     </div>
 
@@ -87,7 +87,16 @@
                                 <ValidationMessage For="@(() => addProject.EndDate)" />
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary w-full">Create</button>
+                        <button type="submit" class="btn btn-primary w-full">
+                            @if (isEditing)
+                            {
+                                <span>Update</span>
+                            }
+                            else
+                            {
+                                <span>Create</span>
+                            }
+                        </button>
                     </EditForm>
                 </div>
             </div>
@@ -109,6 +118,7 @@
 
 @code {
     private bool IsModalOpen = false;
+    private bool isEditing = false;
 
     private ReusableGrid<ProjectDto> gridRef;
     private PagedDataResponse<List<ProjectDto>> DisplayedData = new PagedDataResponse<List<ProjectDto>>();
@@ -121,8 +131,7 @@
         new Dictionary<string, string> { { "Name", "Start Date" }, { "Key", "StartDateDisplay" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" } },
         new Dictionary<string, string> { { "Name", "End Date" }, { "Key", "EndDateDisplay" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" }},
         new Dictionary<string, string> { { "Name", "Hours" }, { "Key", "EstimatedHours" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" }},
-        new Dictionary<string, string> { { "Name", "Action" }, { "Key", "Delete" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" },{ "IsActionButton","true"} }
-    };
+        new Dictionary<string, string> { { "Name", "Action" }, { "Key", "Edit,Delete" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" },{ "IsActionButton","true"} }    };
 
     private List<ProjectDto> projects = new List<ProjectDto>();
     private AddEditProject addProject = new AddEditProject();
@@ -147,13 +156,16 @@
 
     private async Task AddProject()
     {
-        if (addProject.Id == null)
+        if (!isEditing)
         {
+            addProject.Id = "";
             var result = await ProjectService.AddProjectAsync(addProject);
             if (result.Success)
             {
                 showToaster(result.Message, "top");
                 addProject = new AddEditProject();
+                addProject.Id = string.Empty;
+                isEditing = false;
 
                 await ToggleModal();
                 await LoadData(1, 5, null);
@@ -163,21 +175,9 @@
                 showToaster(result.Message, "top");
             }
         }
-        else if (addProject.Id != null)
+        else 
         {
-            var result = await ProjectService.EditProject(addProject.Id.ToString(), addProject);
-            if (result.Success)
-            {
-                showToaster(result.Message, "top");
-                addProject = new AddEditProject();
-
-                await ToggleModal();
-                await LoadData(1, 5, null);
-            }
-            else
-            {
-                showToaster(result.Message, "top");
-            }
+            UpdateProject();
         }
     }
 
@@ -240,6 +240,57 @@
         if (result.Success)
         {
             showToaster(result.Message, "top");
+            await LoadData(1, 5, null);
+        }
+        else
+        {
+            showToaster(result.Messages.FirstOrDefault(), "top");
+        }
+    }
+
+    private async Task EditRecord(string id)
+    {
+        var result = await ProjectService.GetProjectDetails(id);
+
+        if (result.Success)
+        {
+            isEditing = true;
+            addProject.ProjectName = result.Data.ProjectName;
+            addProject.Description = result.Data.Description;
+            addProject.StartDate = result.Data.StartDate;
+            addProject.EndDate = result.Data.EndDate;
+            addProject.EstimatedHours = result.Data.EstimatedHours;
+            addProject.Id = result.Data.Id;
+            await ToggleModal();
+        }
+        else
+        {
+            showToaster(result.Messages.FirstOrDefault(), "top");
+        }
+    }
+
+    private async Task UpdateProject()
+    {
+        ProjectDto projectDto = new ProjectDto();
+        projectDto.ProjectName = addProject.ProjectName;
+        projectDto.Description = addProject.Description;
+        projectDto.StartDate = addProject.StartDate;
+        projectDto.EndDate = addProject.EndDate;
+        projectDto.EstimatedHours = addProject.EstimatedHours;
+        projectDto.Id = addProject.Id;
+
+        var result = await ProjectService.EditProject(projectDto);
+
+        if (result.Success)
+        {
+            showToaster(result.Data, "top");
+            addProject.ProjectName = string.Empty;
+            addProject.Description = string.Empty;
+            addProject.StartDate = DateTime.UtcNow;
+            addProject.EndDate = DateTime.UtcNow;
+            addProject.EstimatedHours = 0;
+            isEditing = false;
+            await ToggleModal();
             await LoadData(1, 5, null);
         }
         else

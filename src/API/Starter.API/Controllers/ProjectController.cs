@@ -19,7 +19,7 @@ public class ProjectController : BaseApiController
 {
     [HttpPost("Create")]
     [MustHavePermission(Action.Create, Resource.Project)]
-    public async Task<ApiResponse<int>> CreateProject(CreateProjectCommandRequest request)
+    public async Task<ApiResponse<string>> CreateProject(CreateProjectCommandRequest request)
     {
         return await Mediator.Send(request);
     }

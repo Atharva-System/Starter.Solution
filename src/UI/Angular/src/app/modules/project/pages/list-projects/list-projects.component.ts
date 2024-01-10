@@ -1,7 +1,11 @@
 import { NgClass, NgStyle } from '@angular/common';
 import { Component, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DataTableModule, colDef } from '@bhplugin/ng-datatable';
+import {
+  DataTableModule,
+  NgDataTableComponent,
+  colDef,
+} from '@bhplugin/ng-datatable';
 import { PaginationFilter } from '../../../../core/models/pagination-filter.interface';
 import { FilterService } from '../../../../core/services/filter.service';
 import { AlertService } from '../../../../shared/services/alert.service';
@@ -39,23 +43,26 @@ export class ListProjectsComponent {
   manageProjectModalComponent!: ManageProjectModalComponent;
   @ViewChild('deleteProjectModal')
   deleteProjectModal!: DeleteConfirmationModalComponent;
+  @ViewChild('listProjectDataTable', { static: false })
+  listProjectDataTable!: NgDataTableComponent;
+
+  projectService = inject(ProjectService);
+  filterService = inject(FilterService);
+  alertService = inject(AlertService);
+
   search = '';
   searchDates: { from: any; to: any } = {
     from: '',
     to: '',
   };
-
-  projectService = inject(ProjectService);
-  filterService = inject(FilterService);
-  alertService = inject(AlertService);
   timer: any;
   deleteProjectId = '';
   editProjectId = '';
   selectedFilterDropdownField = 'projectName';
   searchBoxType = 'text';
   params: PaginationFilter;
-
   loading: boolean = true;
+
   cols: Array<colDef> = [
     { field: 'projectName', title: 'Project Name' },
     { field: 'startDateDisplay', title: 'Start Date' },
@@ -177,7 +184,9 @@ export class ListProjectsComponent {
   }
 
   onCancel() {
-    this.deleteProjectId = this.editProjectId = '';
+    setTimeout(() => {
+      this.deleteProjectId = this.editProjectId = '';
+    }, 200);
   }
 
   clearSearchBox() {
@@ -187,6 +196,7 @@ export class ListProjectsComponent {
       to: '',
     };
     this.params.AdvancedFilter = null;
+    this.resetPageTo1();
     this.getProject();
   }
 
@@ -202,6 +212,7 @@ export class ListProjectsComponent {
         this.parsValue(this.selectedFilterDropdownField, this.search),
         this.params,
       );
+      this.resetPageTo1();
       this.getProject();
       this.searchTimeout = null;
     }, 1000);
@@ -243,6 +254,7 @@ export class ListProjectsComponent {
         { start: fromDate, to: toDate },
         this.params,
       );
+      this.resetPageTo1();
       this.getProject();
       this.searchDateTimeout = null;
     }, 1000);
@@ -250,5 +262,12 @@ export class ListProjectsComponent {
 
   dateRangeclear() {
     this.clearSearchBox();
+  }
+
+  resetPageTo1() {
+    this.params.PageNumber = 1;
+    if (this.listProjectDataTable) {
+      this.listProjectDataTable.currentPage = 1;
+    }
   }
 }
