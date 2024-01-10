@@ -1,4 +1,5 @@
 ﻿@using Starter.Blazor.Core
+@using Starter.Blazor.Modules.Common
 @using Starter.Blazor.Modules.Task.Model
 @using Starter.Blazor.Modules.Task.Services
 @inject ITaskService TaskService
@@ -22,9 +23,10 @@
                 <label for="priority">Priority</label>
                 <InputSelect id="priority" class="form-select" @bind-Value="taskDetailsDto.Priority">
                     <option value="">Select Priority</option>
-                    <option value="1">Low</option>
-                    <option value="2">Medium</option>
-                    <option value="3">High</option>
+                    @foreach (var Priority in PriorityList)
+                    {
+                        <option value="@Priority.Id">@Priority.DisplayName</option>
+                    }
                 </InputSelect>
             </div>
         </div>
@@ -41,12 +43,10 @@
             <label for="status">Status</label>
             <InputSelect id="status" class="form-select" @bind-Value="taskDetailsDto.Status">
                 <option value="">Select Status</option>
-                <option value="1">In Progress</option>
-                <option value="2">Partial Done</option>
-                <option value="3">Done</option>
-                <option value="4">Under Review</option>
-                <option value="5">Deployed</option>
-                <option value="6">Bug</option>
+                @foreach (var Status in StatusList)
+                {
+                    <option value="@Status.Id">@Status.DisplayName</option>
+                }
             </InputSelect>
         </div>
         <div class="mb-5">
@@ -73,6 +73,9 @@
 @code {
 
     [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
+    [Parameter] public Guid EditTaskID { get; set; }
+    [Parameter]
+    public Guid DataToPass { get; set; }
 
     [Inject]
     public HttpInterceptorService Interceptor { get; set; }
@@ -83,8 +86,9 @@
             EndDate = DateTime.Now.Date
         };
 
-    // //Dropdwon
-    // private List<ProjectListDto> projectList = new List<ProjectListDto>();
+    private List<ProjectListDto> projectList = new List<ProjectListDto>();
+    private List<EnumTypeViewDto> StatusList = new List<EnumTypeViewDto>();
+    private List<EnumTypeViewDto> PriorityList = new List<EnumTypeViewDto>();
 
     private string mode;
     private string buttonText;
@@ -92,7 +96,13 @@
     protected override async void OnInitialized()
     {
         Interceptor.RegisterEvent();
-        if (taskDetailsDto == null) //|| taskDetailsDto.Id == Guid.Empty
+
+        // Get Project
+        projectList = await TaskService.GetProjectlistsAsync();
+        var StatusList = await TaskService.GetStatuslistsAsync();
+        var PriorityList = await TaskService.GetPrioritylistsAsync();
+
+        if (EditTaskID == Guid.Empty)
         {
             mode = "create";
             taskDetailsDto = new TaskDetailsDto();
@@ -102,11 +112,19 @@
         {
             mode = "edit";
             buttonText = "Update";
+
+            //Get Task Details
+            var UpdatetaskDetails = await TaskService.GetTaskDetails(EditTaskID);
+
+            taskDetailsDto.Description = UpdatetaskDetails.Description;
+            taskDetailsDto.Status = UpdatetaskDetails.Status;
+            taskDetailsDto.TaskName = UpdatetaskDetails.TaskName;
+            taskDetailsDto.StartDate = UpdatetaskDetails.StartDate;
+            taskDetailsDto.EndDate = UpdatetaskDetails.EndDate;
+            taskDetailsDto.AssignedTo = UpdatetaskDetails.AssignedTo;
+            taskDetailsDto.Priority = UpdatetaskDetails.Priority;
+            taskDetailsDto.ProjectId = UpdatetaskDetails.ProjectId;
         }
-
-        // // Get Project
-        // projectList = await TaskService.GetProjectlistsAsync();
-
     }
 
     private async void SaveTask()

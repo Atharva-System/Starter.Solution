@@ -9,7 +9,6 @@ using Starter.Application.Features.Tasks.Command.UpdateTask;
 using Starter.Application.Features.Tasks.Dto;
 using Starter.Application.Features.Tasks.Query;
 using Starter.Application.Models.Specification.Filters;
-using Starter.Application.Features.Tasks.Query.GetTasks;
 using Starter.Application.Models.Task.Dto;
 using Starter.Identity.Authorizations;
 using Starter.Identity.Authorizations.Permissions;

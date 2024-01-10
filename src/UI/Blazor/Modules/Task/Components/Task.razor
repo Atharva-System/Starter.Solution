@@ -85,135 +85,49 @@
                         </button>
                     </div>
                 </div>
-                @foreach (TaskListDto x in Tasks)
-                {
-                    <div>
-                        <p>Tasks.TaskName</p>
-                        <p>Tasks.Description</p>
-                        <p>
-                            <button class="edit-icon" @onclick="@(() => Modal.Show<CreateTaskModel>("Add New Task"))" @onclick="() => OpenEditModal(task.Id)">
-                                <img src="edit-icon.png" alt="Edit" />
-                            </button>
-                        </p>
-                    </div>
-                }
-            </div>
-        </div>
-
-        <div class="fixed inset-0 z-[999] hidden overflow-y-auto bg-[black]/60 px-4">
-            <div class="flex min-h-screen items-center justify-center">
-                <div x-transition
-                     x-transition.duration.300
-                     class="panel my-8 w-[90%] max-w-lg overflow-hidden rounded-lg border-0 p-0 md:w-full">
-                    <button type="button"
-                            class="absolute top-4 text-white-dark hover:text-dark ltr:right-4 rtl:left-4">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             width="24px"
-                             height="24px"
-                             viewBox="0 0 24 24"
-                             fill="none"
-                             stroke="currentColor"
-                             stroke-width="1.5"
-                             stroke-linecap="round"
-                             stroke-linejoin="round"
-                             class="h-6 w-6">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
-                    </button>
-                    <div class="bg-[#fbfbfb] py-3 text-lg font-medium ltr:pl-5 ltr:pr-[50px] rtl:pr-5 rtl:pl-[50px] dark:bg-[#121c2c]"></div>
-                    <div class="p-5">
-                        <form>
-                            <div class="mb-5">
-                                <label for="title">Title</label>
-                                <input id="title" type="text" placeholder="Enter Task Title" class="form-input" />
-                            </div>
-                            <div class="mb-5">
-                                <label for="assignee">Assignee</label>
-                                <select id="assignee" class="form-select">
-                                    <option value="">Select Assignee</option>
-                                    <option value="John Smith">John Smith</option>
-                                    <option value="Kia Vega">Kia Vega</option>
-                                    <option value="Sandy Doe">Sandy Doe</option>
-                                    <option value="Jane Foster">Jane Foster</option>
-                                    <option value="Donna Frank">Donna Frank</option>
-                                </select>
-                            </div>
-                            <div class="mb-5 flex justify-between gap-4">
-                                <div class="flex-1">
-                                    <label for="tag">Tag</label>
-                                    <select id="tag" class="form-select">
-                                        <option value="">Select Tag</option>
-                                        <option value="team">Team</option>
-                                        <option value="update">Update</option>
-                                    </select>
-                                </div>
-                                <div class="flex-1">
-                                    <label for="priority">Priority</label>
-                                    <select id="priority" class="form-select">
-                                        <option value="">Select Priority</option>
-                                        <option value="low">Low</option>
-                                        <option value="medium">Medium</option>
-                                        <option value="high">High</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="mb-5">
-                                <label>Description</label>
-                                <div x-ref="editor"></div>
-                            </div>
-                            <div class="mt-8 flex items-center justify-end ltr:text-right rtl:text-left">
-                                <button type="button" class="btn btn-outline-danger">Cancel</button>
-                                <button type="submit" class="btn btn-primary ltr:ml-4 rtl:mr-4">
-                                    Add
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="fixed inset-0 z-[999] hidden overflow-y-auto bg-[black]/60">
-            <div class="flex min-h-screen items-center justify-center px-4">
-                <div class="panel my-8 w-[90%] max-w-lg overflow-hidden rounded-lg border-0 p-0 md:w-full">
-                    <button type="button"
-                            class="absolute top-4 text-white-dark hover:text-dark ltr:right-4 rtl:left-4">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             width="24px"
-                             height="24px"
-                             viewBox="0 0 24 24"
-                             fill="none"
-                             stroke="currentColor"
-                             stroke-width="1.5"
-                             stroke-linecap="round"
-                             stroke-linejoin="round"
-                             class="h-6 w-6">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
-                    </button>
-                    <div class="flex flex-wrap items-center gap-2 bg-[#fbfbfb] py-3 text-lg font-medium ltr:pl-5 ltr:pr-[50px] rtl:pr-5 rtl:pl-[50px] dark:bg-[#121c2c]">
-                        <div></div>
-                        <div class="badge rounded-3xl capitalize"></div>
-
-                        <div class="badge rounded-3xl capitalize"></div>
-                    </div>
-                    <div class="p-5">
-                        <div class="prose text-base"></div>
-
-                        <div class="mt-8 flex items-center justify-end">
-                            <button type="button" class="btn btn-outline-danger">Close</button>
-                        </div>
-                    </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="ltr:rounded-l-md rtl:rounded-r-md">Task Name</th>
+                                <th>Description</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Assigned To</th>
+                                <th class="ltr:rounded-r-md rtl:rounded-l-md">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var TaskData in Tasks)
+                            {
+                                <tr class="group text-white-dark hover:text-black dark:hover:text-white-light/90">
+                                    <td class="min-w-[150px] text-black dark:text-white">
+                                        @TaskData.TaskName
+                                    </td>
+                                    <td class="text-dark">@TaskData.Description</td>
+                                    <td class="text-dark">@TaskData.StartDate</td>
+                                    <td class="text-dark">@TaskData.EndDate</td>
+                                    <td class="text-dark">@TaskData.AssignedTo</td>
+                                    <td>
+                                        <div>
+                                            <button @onclick="() => EditTask(TaskData)">Edit</button> |
+                                            <button @onclick="() => DeleteTask(TaskData)">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 </div>
-@* <CascadingBlazoredModal>
-    <CreateTaskModel></CreateTaskModel>
-</CascadingBlazoredModal> *@
+
+@* <CascadingValue Value="@EditTaskID">
+    <CreateTaskModel />
+</CascadingValue> *@
+
 @code {
 
     [CascadingParameter] public IModalService Modal { get; set; }
@@ -221,6 +135,13 @@
     private bool isAuthenticated;
 
     private List<TaskListDto> Tasks = new List<TaskListDto>();
+    public Guid EditTaskID;
+
+    private TaskDetailsDto taskDetailsDto = new TaskDetailsDto
+        {
+            StartDate = DateTime.Now.Date,
+            EndDate = DateTime.Now.Date
+        };
 
     private PaginationRequest param = new PaginationRequest { PageNumber = 0, PageSize = 10, OrderBy = new[] { "TaskName" } };
 
@@ -239,4 +160,41 @@
 
     }
 
+    private async void EditTask(TaskListDto selectedTask)
+    {
+        try
+        {
+            EditTaskID = selectedTask.Id;
+            //Modal.Show<CreateTaskModel>("Edit Task");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+
+    private async void DeleteTask(TaskListDto task)
+    {
+        // var parameters = new ModalParameters();
+        // parameters.Add("TaskName", task.TaskName);
+
+        // var result = await BlazoredModal.Show<ConfirmDeleteModal>("Confirm Delete", parameters);
+        // if (result.Cancelled)
+        // {
+        //     Console.WriteLine("Delete operation canceled");
+        // }
+        // else if (result.Data is bool confirmed && confirmed)
+        // {
+        //     Console.WriteLine("Delete operation confirmed");
+        // }
+
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete '{task.TaskName}'?");
+
+        if (confirmed)
+        {
+            await TaskService.DeleteTaskAsync(task.Id);
+
+            Tasks.Remove(task);
+        }
+    }
 }

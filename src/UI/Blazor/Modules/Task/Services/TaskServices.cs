@@ -2,8 +2,10 @@
 using Blazored.Modal.Services;
 using Starter.Blazor.Core.Response;
 using Starter.Blazor.Modules.Common;
+using Starter.Blazor.Modules.Projects.Models;
 using Starter.Blazor.Modules.Task.Model;
 using Starter.Blazor.Shared.Response;
+using static System.Net.WebRequestMethods;
 
 namespace Starter.Blazor.Modules.Task.Services;
 
@@ -72,6 +74,74 @@ public class TaskServices(HttpClient http) : ModalService, ITaskService
         {
             Console.WriteLine($"Error: {ex.Message}");
             return [];
+        }
+    }
+
+    public async Task<TaskListDto> GetTaskDetails(Guid Id)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"api/Task/{Id}");
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadFromJsonAsync<TaskListDto>();
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+            return null;
+        }
+    }
+
+    public async Task<TaskListDto> DeleteTaskAsync(Guid Id)
+    {
+        try
+        {
+            var response = await _httpClient.DeleteAsync($"api/Task/{Id}");
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadFromJsonAsync<TaskListDto>();
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+            return null;
+        }
+    }
+
+    public async Task<ApiResponse<List<EnumTypeViewDto>>> GetStatuslistsAsync()
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync("api/Task/status-list");
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadFromJsonAsync<ApiResponse<List<EnumTypeViewDto>>>();
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+            return null;
+        }
+    }
+
+    public async Task<ApiResponse<List<EnumTypeViewDto>>> GetPrioritylistsAsync()
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync("api/Task/priority-list");
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadFromJsonAsync<ApiResponse<List<EnumTypeViewDto>>>();
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+            return null;
         }
     }
 }
