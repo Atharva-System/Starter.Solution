@@ -25,14 +25,14 @@ public class AuthService : IAuthService
         return (await _authStateProvider.GetAuthenticationStateAsync()).User.Identity.IsAuthenticated;
     }
 
-    public async Task<AuthResponseDto> Login(loginModel request)
+    public async Task<ApiResponse<AuthResponseDto>> Login(loginModel request)
     {
         var result = await _http.PostAsJsonAsync<loginModel>($"{AuthBaseURL}signin", request);
 
         var content = await result.Content.ReadAsStringAsync();
         Console.WriteLine($"Raw Response Content: {content}");
 
-        return await result.Content.ReadFromJsonAsync<AuthResponseDto>();
+        return await result.Content.ReadFromJsonAsync<ApiResponse<AuthResponseDto>>();
     }
 
     public async Task<string> RefreshToken()

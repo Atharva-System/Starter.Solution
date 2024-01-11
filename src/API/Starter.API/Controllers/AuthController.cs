@@ -15,9 +15,22 @@ public class AuthController(ILogger<AuthController> logger, IAuthService authSer
     private readonly IConfiguration _configuration = configuration;
 
     [HttpPost("signin")]
-    public async Task<ActionResult<AuthenticationResponse>> SignInAsync(AuthenticationRequest request)
+    public async Task<ApiResponse<AuthenticationResponse>> SignInAsync(AuthenticationRequest request)
     {
-        return Ok(await _authService.AuthenticateAsync(request));
+        var response = new ApiResponse<AuthenticationResponse>();
+        try
+        {
+            response.Data = await _authService.AuthenticateAsync(request);
+            response.Success = true;
+            response.StatusCode = HttpStatusCodes.OK;
+            response.Message = "Successfully logged in.";
+        }catch(Exception ex)
+        {
+            response.Message = ex.Message;
+            response.Success = false;
+            response.StatusCode = HttpStatusCodes.BadRequest;
+        }
+        return response;
     }
 
 

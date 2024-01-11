@@ -19,6 +19,8 @@ using Starter.Blazor.Modules.ChangePassword.Services;
 using Starter.Blazor.Modules.Projects.Services;
 using Starter.Blazor.Core;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
+using Starter.Blazor.Core.Services.IServices;
+using Starter.Blazor.Core.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -45,6 +47,9 @@ builder.Services.AddScoped<UserAuthID>();
 builder.Services.AddScoped<HttpInterceptorService>();
 builder.Services.AddScoped<RefreshTokenService>();
 builder.Services.AddScoped<UserService>();
+
+//Utility services registered
+builder.Services.AddTransient<INotificationService,NotificationService>();
 
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
