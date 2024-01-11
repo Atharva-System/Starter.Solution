@@ -109,7 +109,7 @@
         }
         else
         {
-            Notification.Failure(response.Message);
+            Notification.Failure(String.Join(",",response.Messages));
         }
     }
 
