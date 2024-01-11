@@ -21,6 +21,9 @@ public class AuthController(ILogger<AuthController> logger, IAuthService authSer
         try
         {
             response.Data = await _authService.AuthenticateAsync(request);
+            response.Success = true;
+            response.StatusCode = HttpStatusCodes.OK;
+            response.Message = "Successfully logged in.";
         }catch(Exception ex)
         {
             response.Message = ex.Message;

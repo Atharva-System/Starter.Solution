@@ -13,6 +13,7 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IAuthService AuthService
 @inject UserAuthID UserAuthId
+@inject INotificationService Notification
 
 <div class="main-container min-h-screen text-black dark:text-white-dark">
     <!-- start main content section -->
@@ -104,10 +105,11 @@
             await LocalStorage.SetItemAsync("refreshToken", response.Data.RefreshToken);
             await AuthenticationStateProvider.GetAuthenticationStateAsync();
             navigationManager.NavigateTo("/dashboard");
+            await Notification.Success(response.Message);
         }
         else
         {
-            
+            Notification.Failure(response.Message);
         }
     }
 
