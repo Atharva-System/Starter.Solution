@@ -36,7 +36,10 @@ export class AuthInterceptor implements HttpInterceptor {
 
     return next.handle(request).pipe(
       catchError((error) => {
-        if (!this.authenticationService.isAuthenticated()) {
+        if (
+          !this.authenticationService.isAuthenticated() &&
+          !this.isRequestUrlAllowAnonymous(request.url)
+        ) {
           return this.handleTokenExpired(request, next);
         } else {
           return throwError(error);
@@ -81,6 +84,8 @@ export class AuthInterceptor implements HttpInterceptor {
       APIs.signinApi,
       APIs.signupApi,
       APIs.refreshTokenApi,
+      APIs.forgotPasswordApi,
+      APIs.resetPasswordApi,
     ];
     return anonymousEndpoints.some((endpoint) => url.endsWith(endpoint));
   }
