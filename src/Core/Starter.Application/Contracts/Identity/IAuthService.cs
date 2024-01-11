@@ -1,11 +1,12 @@
-﻿using Starter.Application.Models.Authentication;
+﻿using Starter.Application.Contracts.Responses;
+using Starter.Application.Models.Authentication;
 using System.Threading.Tasks;
 
 namespace Starter.Application.Contracts.Identity;
 
 public interface IAuthService : ITransientService
 {
-    Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest request);
+    Task<IResponse> AuthenticateAsync(AuthenticationRequest request);
     Task<RegistrationResponse> RegisterAsync(RegistrationRequest request);
     Task<RefreshTokenResponse> RefreshTokenAsync(RefreshTokenRequest request);
     Task<bool> IsInRoleAsync(string userId, string role);

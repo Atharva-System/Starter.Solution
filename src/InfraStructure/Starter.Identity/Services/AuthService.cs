@@ -12,7 +12,9 @@ using Microsoft.IdentityModel.Tokens;
 using Starter.Application.Contracts.Identity;
 using Starter.Application.Contracts.Mailing;
 using Starter.Application.Contracts.Mailing.Models;
+using Starter.Application.Contracts.Responses;
 using Starter.Application.Exceptions;
+using Starter.Application.Features.Common;
 using Starter.Application.Interfaces;
 using Starter.Application.Models.Authentication;
 using Starter.Domain.Events;
@@ -59,7 +61,7 @@ public class AuthService : IAuthService
         return user.UserName;
     }
 
-    public async Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest request)
+    public async Task<IResponse> AuthenticateAsync(AuthenticationRequest request)
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
 
@@ -92,9 +94,15 @@ public class AuthService : IAuthService
             Email = user?.Email!,
             UserName = user?.UserName!
         };
-        #pragma warning restore CS8602 // Dereference of a possibly null reference.
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
-        return response;
+        return new ApiResponse<AuthenticationResponse>
+        {
+            Data = response,
+            StatusCode = HttpStatusCodes.OK,
+            Success = true,
+            Message = "Logged in successfully."
+        };
     }
 
     public async Task<RegistrationResponse> RegisterAsync(RegistrationRequest request)
