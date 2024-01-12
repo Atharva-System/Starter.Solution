@@ -94,11 +94,11 @@
 
 <script>
 
-    window.showModal = function () {
+    window.showProjectModal = function () {
         document.getElementById('projectPopup').style.display = 'block';
     };
 
-    window.hideModal = function () {
+    window.hideProjectModal = function () {
         document.getElementById('projectPopup').style.display = 'none';
     };
 </script>
@@ -180,11 +180,11 @@
 
         if (IsModalOpen)
         {
-            await JSRuntime.InvokeVoidAsync("showModal");
+            await JSRuntime.InvokeVoidAsync("showProjectModal");
         }
         else
         {
-            await JSRuntime.InvokeVoidAsync("hideModal");
+            await JSRuntime.InvokeVoidAsync("hideProjectModal");
         }
     }
 

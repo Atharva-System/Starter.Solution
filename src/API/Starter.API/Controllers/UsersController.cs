@@ -46,7 +46,7 @@ public class UsersController(IUsersService userService, IConfiguration configura
                 StatusCode = HttpStatusCodes.BadRequest
             };
         }
-        return await _usersService.UpdateAsync(request);
+        return await _usersService.UpdateAsync(new UpdateUserRequest() {user = request, Origin = GetOriginFromRequest(_configuration) });
     }
 
     [HttpDelete("{id}")]
