@@ -54,6 +54,8 @@ builder.Services.AddScoped<IModalService, ModalService>();
 
 
 builder.Services.AddTransient<IAuthService, AuthService>();
+builder.Services.AddScoped<IForgotPasswordService,ForgotPasswordService>();
+builder.Services.AddScoped<IResetPasswordService,ResetPasswordService>();
 builder.Services.AddScoped<ForgotPasswordService>();
 builder.Services.AddScoped<ResetPasswordService>();
 builder.Services.AddScoped<IUserService, UserService>();
