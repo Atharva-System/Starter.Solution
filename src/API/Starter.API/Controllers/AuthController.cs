@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Starter.API.Controllers.Base;
 using Starter.Application.Contracts.Identity;
+using Starter.Application.Contracts.Responses;
 using Starter.Application.Features.Common;
 using Starter.Application.Models.Authentication;
 
@@ -15,9 +16,9 @@ public class AuthController(ILogger<AuthController> logger, IAuthService authSer
     private readonly IConfiguration _configuration = configuration;
 
     [HttpPost("signin")]
-    public async Task<ActionResult<AuthenticationResponse>> SignInAsync(AuthenticationRequest request)
+    public async Task<IResponse> SignInAsync(AuthenticationRequest request)
     {
-        return Ok(await _authService.AuthenticateAsync(request));
+        return await _authService.AuthenticateAsync(request);
     }
 
 

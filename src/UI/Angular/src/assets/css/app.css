@@ -9,3 +9,10 @@
 .d-none{
     display: none;
 }
+
+.disabled-textbox {
+    background-color: #f0f0f0;
+    color: #777;
+    border: 1px solid #ccc;
+    cursor: not-allowed;
+}

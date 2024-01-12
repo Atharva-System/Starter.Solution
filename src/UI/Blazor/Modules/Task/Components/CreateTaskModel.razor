@@ -91,9 +91,12 @@
     [Parameter] public ApiResponse<List<TaskAssigneeDto>> AssigneeList { get; set; }
     [Parameter] public TaskListDto TaskDetails { get; set; }
 
-    protected override async void OnInitialized()
-    {
+    private string mode;
+    private string buttonText;
         if (TaskDetails.Id == Guid.Empty)
+        var PriorityList = await TaskService.GetPrioritylistsAsync();
+
+        if (EditTaskID == Guid.Empty)
         {
             buttonText = "Add";
         }

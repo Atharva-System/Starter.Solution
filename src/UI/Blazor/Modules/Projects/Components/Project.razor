@@ -28,21 +28,6 @@
             <div x-transition x-transition.duration.300 class="panel border-0 py-1 px-4 rounded-lg overflow-hidden w-full max-w-sm my-8">
                 <div class="flex items-center justify-between p-5 font-semibold text-lg dark:text-white">
                     Add Project
-                    <button type="button" @onclick="ToggleModal" class="text-white-dark hover:text-dark">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             width="24px"
-                             height="24px"
-                             viewBox="0 0 24 24"
-                             fill="none"
-                             stroke="currentColor"
-                             stroke-width="1.5"
-                             stroke-linecap="round"
-                             stroke-linejoin="round"
-                             class="h-6 w-6">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
-                    </button>
                 </div>
                 <!-- form -->
                 <div class="p-5">
@@ -78,8 +63,8 @@
                                 <ValidationMessage For="@(() => addProject.StartDate)" />
                             </div>
                             <div>
-                                <label for="startDate">End Date</label>
-                                <input id="startDate"
+                                <label for="endDate">End Date</label>
+                                <input id="endDate"
                                        type="date"
                                        name="inv-date"
                                        class="form-input"
@@ -87,16 +72,19 @@
                                 <ValidationMessage For="@(() => addProject.EndDate)" />
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary w-full">
-                            @if (isEditing)
-                            {
-                                <span>Update</span>
-                            }
-                            else
-                            {
-                                <span>Create</span>
-                            }
-                        </button>
+                        <div class="flex space-x-2 ">
+                            <button  class="btn btn-danger w-full" @onclick="CloseModal">Close</button>
+                            <button type="submit" class="btn btn-primary w-full">
+                                @if (isEditing)
+                                {
+                                    <span>Update</span>
+                                }
+                                else
+                                {
+                                    <span>Create</span>
+                                }
+                            </button>
+                        </div>
                     </EditForm>
                 </div>
             </div>
@@ -106,14 +94,13 @@
 
 <script>
 
-    window.showModal = function () {
+    window.showProjectModal = function () {
         document.getElementById('projectPopup').style.display = 'block';
     };
 
-    window.hideModal = function () {
+    window.hideProjectModal = function () {
         document.getElementById('projectPopup').style.display = 'none';
     };
-
 </script>
 
 @code {
@@ -181,21 +168,6 @@
         }
     }
 
-    private async Task EditProject(ProjectDto project)
-    {
-        var projectDetails = await ProjectService.GetProjectDetails(project.Id);
-        if (projectDetails.Success)
-        {
-            projectDetailsdto = projectDetails.Data;
-            addProject.ProjectName = projectDetailsdto.ProjectName;
-            addProject.Description = projectDetailsdto.Description;
-            addProject.EstimatedHours = projectDetailsdto.EstimatedHours;
-            addProject.StartDate = projectDetailsdto.StartDate;
-            addProject.EndDate = projectDetailsdto.EndDate;
-            addProject.Id = project.Id;
-        }
-    }
-
     private void showToaster(string msg, string position)
     {
         string toastScript = $"{toastScriptConstant} toast.fire({{ title: '{msg}' }});";
@@ -208,12 +180,19 @@
 
         if (IsModalOpen)
         {
-            await JSRuntime.InvokeVoidAsync("showModal");
+            await JSRuntime.InvokeVoidAsync("showProjectModal");
         }
         else
         {
-            await JSRuntime.InvokeVoidAsync("hideModal");
+            await JSRuntime.InvokeVoidAsync("hideProjectModal");
         }
+    }
+
+    private async Task CloseModal()
+    {
+        addProject = new AddEditProject();
+        await ToggleModal();
+        isEditing = false;
     }
 
     private async Task LoadData(int PageNumber, int PageSize, string[] OrderBy)
@@ -295,7 +274,7 @@
         }
         else
         {
-            showToaster(result.Messages.FirstOrDefault(), "top");
+            showToaster(result.Message, "top");
         }
     }
 }

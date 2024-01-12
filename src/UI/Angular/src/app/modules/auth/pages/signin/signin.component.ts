@@ -56,7 +56,7 @@ export class SigninComponent {
       const formValues = this.formSignin.value;
       this.authService.signin(formValues).subscribe(
         (res: any) => {
-          let response = res as IAuthenticationResponse;
+          let response = res.data as IAuthenticationResponse;
           this.isSubmitFormSignin = false;
           this.authenticationService.setToken(response.token);
           this.authenticationService.setRefreshToken(response.refreshToken);

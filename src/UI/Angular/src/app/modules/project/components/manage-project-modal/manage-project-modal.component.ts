@@ -53,6 +53,8 @@ export class ManageProjectModalComponent implements OnChanges {
   signinRoute = '/' + authPaths.signin;
   formCreateProject!: FormGroup;
   isSubmitFormCreateProject = false;
+  isFormDirty = false;
+  originalData = '';
 
   commonService = inject(CommonService);
   router = inject(Router);
@@ -85,7 +87,12 @@ export class ManageProjectModalComponent implements OnChanges {
           from: this.commonService.getUTCDate(startDate),
           to: this.commonService.getUTCDate(endDate),
         },
-        estimatedHours: data.data.estimatedHours,
+        estimatedHours: `${data.data.estimatedHours}`,
+      });
+      this.originalData = JSON.stringify(this.formCreateProject.value);
+      this.isFormDirty = false;
+      this.formCreateProject.valueChanges.subscribe(() => {
+        this.checkFormDirty();
       });
     });
   }
@@ -172,5 +179,10 @@ export class ManageProjectModalComponent implements OnChanges {
         );
       }
     }
+  }
+
+  checkFormDirty() {
+    this.isFormDirty =
+      JSON.stringify(this.formCreateProject.value) !== this.originalData;
   }
 }

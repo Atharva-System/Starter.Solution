@@ -25,7 +25,6 @@ export class InputComponent implements ControlValueAccessor {
   @Input() type = 'text';
   @Input() placeholder = '';
   @Input() isSubmit = false;
-  @Input() disable = false;
   @Input() control: any;
   @Input() value: string = '';
 
@@ -40,8 +39,5 @@ export class InputComponent implements ControlValueAccessor {
   }
   registerOnTouched(fn: any): void {
     this.onTouched = fn;
-  }
-  setDisabledState?(isDisabled: boolean): void {
-    this.disable = isDisabled;
   }
 }

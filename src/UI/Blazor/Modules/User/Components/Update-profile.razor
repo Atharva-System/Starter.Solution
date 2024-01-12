@@ -1,9 +1,11 @@
 ﻿@page "/update-profile"
 @using Microsoft.AspNetCore.Authorization
 @using Starter.Blazor.Core.AuthProviders
+@using Starter.Blazor.Core.Constants
 @using Starter.Blazor.Modules.Login.Services
 @using Starter.Blazor.Modules.User.Models
-@using Starter.Blazor.Modules.User.Services
+@using Starter.Blazor.Modules.User.Services;
+@using Starter.Blazor.Modules.Login.Services.IServices
 @inject IUserService UserService
 @inject NavigationManager navigationManager
 @inject ILocalStorageService LocalStorage
@@ -65,28 +67,27 @@
 
 @code {
     private UpdateProfileDto UpdateProfile = new UpdateProfileDto();
-    bool isAuthenticated = false;
 
     protected override async Task OnInitializedAsync()
     {
-        isAuthenticated = await AuthService.IsUserAuthenticated();
-        if (!isAuthenticated)
+        var authState = await _stateProvider.GetAuthenticationStateAsync();
+        if (!authState.User.Identity.IsAuthenticated)
         {
             navigationManager.NavigateTo("/");
         }
 
-        UpdateProfile = await UserService.GetProfileDetailAsync();
-
+        var response = await UserService.GetProfileDetailAsync();
+        UpdateProfile = response.Data;
     }
 
     private async Task HandleUpdateProfile()
     {
         UpdateProfile.Id = UserAuthId.GetUserId();
-        var response = await UserService.UpdateUserProfileAsync(UserAuthId.GetUserId(), UpdateProfile);
+        var response = await UserService.UpdateUserProfileAsync(UpdateProfile);
 
         if (response != null)
         {
-            if (response != null)
+            if (response.Success && response.StatusCode == HttpStatusCodes.OK)
             {
                 navigationManager.NavigateTo("/dashboard");
             }

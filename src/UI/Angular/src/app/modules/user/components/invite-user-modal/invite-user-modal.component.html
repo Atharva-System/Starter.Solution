@@ -58,7 +58,8 @@
       type="submit"
       classes="btn-primary ltr:ml-4 rtl:mr-4"
       class="d-block"
-      (click)="submitForm()"
+      (click)="!(userId ? !isFormDirty : false) && submitForm()"
+      [disabled]="userId ? !isFormDirty : false"
     ></app-button>
   </ng-template>
 </modal>

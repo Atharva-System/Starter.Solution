@@ -48,6 +48,7 @@
           [control]="formCreateProject.controls['estimatedHours']"
           [isSubmit]="isSubmitFormCreateProject"
           placeholder="Enter Estimated Hours"
+          type="number"
         ></app-input>
       </div>
     </form>
@@ -65,7 +66,8 @@
       type="submit"
       classes="btn-primary ltr:ml-4 rtl:mr-4"
       class="d-block"
-      (click)="submitForm()"
+      (click)="!(projectId ? !isFormDirty : false) && submitForm()"
+      [disabled]="projectId ? !isFormDirty : false"
     ></app-button>
     @if (!projectId) {
       <app-button

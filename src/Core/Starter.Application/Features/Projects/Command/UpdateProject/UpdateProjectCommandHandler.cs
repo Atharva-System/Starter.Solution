@@ -31,10 +31,10 @@ public class UpdateProjectCommandHandler(ICommandUnitOfWork command) : IRequestH
 
         var response = new ApiResponse<string>
         {
-            Success = saveResult > 0,
-            StatusCode = saveResult > 0 ? HttpStatusCodes.OK : HttpStatusCodes.BadRequest,
+            Success = true,
+            StatusCode =  HttpStatusCodes.OK ,
             Data = "Project update successfully",
-            Message = saveResult > 0 ? $"Project {ConstantMessages.UpdatedSuccessfully}" : "FailedToUpdate project.",
+            Message = $"Project {ConstantMessages.UpdatedSuccessfully}",
         };
 
         return response;

@@ -47,6 +47,8 @@ export class InviteUserModalComponent implements OnChanges {
   signinRoute = '/' + authPaths.signin;
   formInviteUser!: FormGroup;
   isSubmitFormInviteUser = false;
+  isFormDirty = false;
+  originalData = '';
 
   router = inject(Router);
   fb = inject(FormBuilder);
@@ -69,6 +71,11 @@ export class InviteUserModalComponent implements OnChanges {
   setUserDetails() {
     this.userService.getUser(this.userId).subscribe((data) => {
       this.formInviteUser.patchValue(data.data);
+      this.originalData = JSON.stringify(this.formInviteUser.value);
+      this.isFormDirty = false;
+      this.formInviteUser.valueChanges.subscribe(() => {
+        this.checkFormDirty();
+      });
     });
   }
 
@@ -147,5 +154,10 @@ export class InviteUserModalComponent implements OnChanges {
         );
       }
     }
+  }
+
+  checkFormDirty() {
+    this.isFormDirty =
+      JSON.stringify(this.formInviteUser.value) !== this.originalData;
   }
 }
