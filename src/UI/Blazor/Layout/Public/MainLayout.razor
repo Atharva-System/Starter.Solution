@@ -1,5 +1,5 @@
 ﻿@inherits LayoutComponentBase
-@attribute [Authorize]
+@inject AppStateProvider appState
 
 
 
@@ -55,6 +55,15 @@
 
 @code {
     //bool IsLoginPage() => NavigationManager.Uri.Contains("login", StringComparison.OrdinalIgnoreCase);
+    protected override async void OnInitialized()
+    {
+        base.OnInitialized();
+        var user = await appState.GetAuthenticationStateProviderUserAsync();
+        if(user == null || user.Identities == null || !user.Identity.IsAuthenticated)
+        {
+            _navManager.NavigateTo("/");
+        }
+    }
 }
 
 

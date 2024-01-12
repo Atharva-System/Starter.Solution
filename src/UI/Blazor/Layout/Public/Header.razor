@@ -1,5 +1,7 @@
-﻿@inject ILocalStorageService LocalStorage
+﻿@using Starter.Blazor.Modules.Login.Services.IServices
+@inject ILocalStorageService LocalStorage
 @inject NavigationManager navigationManager
+@inject IAuthService _auth
 
 <!-- start header section -->
 <header :class="{'dark' : $store.app.semidark && $store.app.menu === 'horizontal'}">
@@ -298,8 +300,8 @@
 
     private async void SignOut()
     {
-        await LocalStorage.RemoveItemAsync("userToken");
-
+        await _stateProvider.MarkAsLoggedOut();
+         _auth.Logout();
         navigationManager.NavigateTo("/");
     }
 }
