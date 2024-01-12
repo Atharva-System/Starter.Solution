@@ -77,9 +77,6 @@
     [Parameter]
     public Guid DataToPass { get; set; }
 
-    [Inject]
-    public HttpInterceptorService Interceptor { get; set; }
-
     private TaskDetailsDto taskDetailsDto = new TaskDetailsDto
         {
             StartDate = DateTime.Now.Date,
@@ -95,7 +92,7 @@
 
     protected override async void OnInitialized()
     {
-        Interceptor.RegisterEvent();
+        _httpInterceptor.RegisterEvent();
 
         // Get Project
         projectList = await TaskService.GetProjectlistsAsync();

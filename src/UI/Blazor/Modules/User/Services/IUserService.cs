@@ -11,8 +11,8 @@ public interface IUserService
     Task<ApiResponse<string>> InviteUserAsync(InviteUserDto userDto);
     Task<ApiResponse<AcceptInviteDto>> GetAcceptInviteDetails(string userId);
     Task<ApiResponse<string>> AcceptInvite(UserRegisterDto userRegister);
-    Task<string> UpdateUserProfileAsync(string UserId, UpdateProfileDto userDto);
-    Task<UpdateProfileDto> GetProfileDetailAsync();
+    Task<ApiResponse<string>> UpdateUserProfileAsync(UpdateProfileDto userDto);
+    Task<ApiResponse<UpdateProfileDto>> GetProfileDetailAsync();
     Task<ApiResponse<string>> DeleteUser(string id);
     Task<ApiResponse<UserlistDto>> GetUserDetailsByIdAsync(string userId);
     Task<ApiResponse<string>> UpdateUserAsync(UserlistDto userDto);

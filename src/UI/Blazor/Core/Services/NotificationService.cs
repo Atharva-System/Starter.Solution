@@ -19,19 +19,19 @@ public class NotificationService : INotificationService
         _jsRuntime = jSRuntime;
     }
 
-    public async Task Failure(string Message)
+    public async Task Failure(List<string> Messages)
     {
-        await this.ShowToaster(Message, "error");
+        await this.ShowToaster(String.Join(",",Messages), NotificationType.Error.ToString());
     }
 
     public async Task Message(string Message)
     {
-        await this.ShowToaster(Message, "");
+        await this.ShowToaster(Message, NotificationType.Info.ToString());
     }
 
     public async Task Success(string Message)
     {
-        await this.ShowToaster(Message, "success");
+        await this.ShowToaster(Message, NotificationType.Success.ToString());
     }
 
     private async Task ShowToaster(string message,string type)

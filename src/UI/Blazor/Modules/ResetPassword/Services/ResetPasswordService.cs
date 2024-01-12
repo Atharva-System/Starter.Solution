@@ -4,7 +4,7 @@ using System.Net.Http.Json;
 
 namespace Starter.Blazor.Modules.ResetPassword.Services;
 
-public class ResetPasswordService
+public class ResetPasswordService : IResetPasswordService
 {
     private readonly HttpClient _httpClient;
 
