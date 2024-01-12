@@ -2,6 +2,6 @@
 
 public static class TokenEndpoints
 {
-    public static string Get = "api/Auth/signin";
-    public static string Refresh = "api/Auth/refreshToken";
+    public static string Get = "Auth/signin";
+    public static string Refresh = "Auth/refreshToken";
 }

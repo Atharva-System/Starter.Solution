@@ -76,7 +76,7 @@ public class AuthService : IAuthService
         await _localStorageService.RemoveItemAsync(StorageConstants.Local.Email);
         await ((AppStateProvider) _authenticationStateProvider).MarkAsLoggedOut();
         this._apiHandler.RemoveToken();
-        _navManager.NavigateTo("/login");
+        _navManager.NavigateTo("/");
     }
 
     public async void RefreshToken()
@@ -105,13 +105,15 @@ public class AuthService : IAuthService
     public async void TryRefreshToken()
     {
         var availableToken = await _localStorageService.GetItemAsync<string>(StorageConstants.Local.RefreshToken);
-        if (string.IsNullOrEmpty(availableToken)) return;
+        if (string.IsNullOrEmpty(availableToken)) _navManager.NavigateTo("/");
         var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         var exp = user.FindFirst(c => c.Type.Equals("exp"))?.Value;
         var expTime = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(exp));
         var timeUTC = DateTime.UtcNow;
         var diff = expTime - timeUTC;
-        return;
+
+        if (diff.TotalMinutes <= 1)
+            RefreshToken();
     }
 }
