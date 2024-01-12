@@ -1,29 +1,38 @@
 ﻿@using Starter.Blazor.Core
+@using Starter.Blazor.Core.Response
 @using Starter.Blazor.Modules.Common
 @using Starter.Blazor.Modules.Task.Model
 @using Starter.Blazor.Modules.Task.Services
+@using Microsoft.AspNetCore.Authorization
+@using Starter.Blazor.Modules.Login.Services
+@using DataTables.AspNet;
+@using Blazored.Modal
+@using Blazored.Modal.Services
 @inject ITaskService TaskService
 
 <CascadingBlazoredModal>
-    <EditForm Model="@taskDetailsDto" OnValidSubmit="@(SaveTask)">
+    <EditForm Model="@TaskDetails" OnValidSubmit="@(SaveTask)">
         <DataAnnotationsValidator />
         <div class="mb-5">
             <label for="title">Title</label>
-            <InputText id="title" type="text" placeholder="Enter Task Title" class="form-input" @bind-Value="taskDetailsDto.TaskName" />
+            <InputText id="title" type="text" placeholder="Enter Task Title" class="form-input" @bind-Value="TaskDetails.TaskName" />
         </div>
         <div class="mb-5">
             <label for="assignee">Assignee</label>
-            <InputSelect id="assignee" class="form-select" @bind-Value="taskDetailsDto.AssignedTo">
-                <option value="">Select Assignee</option>
-                <option value="459299df-5cc1-4c70-bf77-6b573e06b83a">Stater Admin</option>
+            <InputSelect id="assignee" class="form-select" @bind-Value="TaskDetails">
+                <option value="0">Select Assignee</option>
+                @foreach (var Assignee in AssigneeList.Data)
+                {
+                    <option value="@Assignee.Id">@Assignee.Name</option>
+                }
             </InputSelect>
         </div>
         <div class="mb-5 flex justify-between gap-4">
             <div class="flex-1">
                 <label for="priority">Priority</label>
-                <InputSelect id="priority" class="form-select" @bind-Value="taskDetailsDto.Priority">
-                    <option value="">Select Priority</option>
-                    @foreach (var Priority in PriorityList)
+                <InputSelect id="priority" class="form-select" placeholder="Select Priority" @bind-Value="TaskDetails.Priority">
+                    <option value="0">Select Priority</option>
+                    @foreach (var Priority in PriorityList.Data)
                     {
                         <option value="@Priority.Id">@Priority.DisplayName</option>
                     }
@@ -32,18 +41,18 @@
         </div>
         <div class="mb-5">
             <label for="startDate">Start Date</label>
-            <InputDate id="startDate" class="form-input" @bind-Value="taskDetailsDto.StartDate" />
+            <InputDate id="startDate" class="form-input" @bind-Value="TaskDetails.StartDate" />
         </div>
 
         <div class="mb-5">
             <label for="endDate">End Date</label>
-            <InputDate id="endDate" class="form-input" @bind-Value="taskDetailsDto.EndDate" />
+            <InputDate id="endDate" class="form-input" @bind-Value="TaskDetails.EndDate" />
         </div>
         <div class="mb-5">
             <label for="status">Status</label>
-            <InputSelect id="status" class="form-select" @bind-Value="taskDetailsDto.Status">
-                <option value="">Select Status</option>
-                @foreach (var Status in StatusList)
+            <InputSelect id="status" placeholder="Select Status" class="form-select" @bind-Value="TaskDetails.Status">
+                <option value="0">Select Status</option>
+                @foreach (var Status in StatusList.Data)
                 {
                     <option value="@Status.Id">@Status.DisplayName</option>
                 }
@@ -53,7 +62,7 @@
             <label for="projectId">Project</label>
             <InputSelect id="projectId" placeholder="Enter Project" class="form-select" @bind-Value="projectIdString">
                 <option value="0">Select Project</option>
-                @foreach (var project in TaskService.Projects)
+                @foreach (var project in projectList.Data)
                 {
                     <option value="@project.Id">@project.ProjectName</option>
                 }
@@ -61,7 +70,7 @@
         </div>
         <div class="mb-5">
             <label>Description</label>
-            <InputText class="form-input" @bind-Value="taskDetailsDto.Description" Placeholder="Enter Description here" />
+            <InputText class="form-input" @bind-Value="TaskDetails.Description" Placeholder="Enter Description here" />
         </div>
         <div class="mt-8 flex items-center justify-end ltr:text-right rtl:text-left">
             <button type="button" class="btn btn-outline-danger" @onclick="@(Cancel)">Cancel</button>
@@ -74,56 +83,23 @@
 
     [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
     [Parameter] public Guid EditTaskID { get; set; }
-    [Parameter]
-    public Guid DataToPass { get; set; }
-
-    [Inject]
-    public HttpInterceptorService Interceptor { get; set; }
-
-    private TaskDetailsDto taskDetailsDto = new TaskDetailsDto
-        {
-            StartDate = DateTime.Now.Date,
-            EndDate = DateTime.Now.Date
-        };
-
-    private List<ProjectListDto> projectList = new List<ProjectListDto>();
-    private List<EnumTypeViewDto> StatusList = new List<EnumTypeViewDto>();
-    private List<EnumTypeViewDto> PriorityList = new List<EnumTypeViewDto>();
-
-    private string mode;
     private string buttonText;
+
+    [Parameter] public ApiResponse<List<ProjectListDto>> projectList { get; set; }
+    [Parameter] public ApiResponse<List<EnumTypeViewDto>> StatusList   { get; set; }
+    [Parameter] public ApiResponse<List<EnumTypeViewDto>> PriorityList { get; set; }
+    [Parameter] public ApiResponse<List<TaskAssigneeDto>> AssigneeList { get; set; }
+    [Parameter] public TaskListDto TaskDetails { get; set; }
 
     protected override async void OnInitialized()
     {
-        Interceptor.RegisterEvent();
-
-        // Get Project
-        projectList = await TaskService.GetProjectlistsAsync();
-        var StatusList = await TaskService.GetStatuslistsAsync();
-        var PriorityList = await TaskService.GetPrioritylistsAsync();
-
-        if (EditTaskID == Guid.Empty)
+        if (TaskDetails.Id == Guid.Empty)
         {
-            mode = "create";
-            taskDetailsDto = new TaskDetailsDto();
             buttonText = "Add";
         }
         else
         {
-            mode = "edit";
             buttonText = "Update";
-
-            //Get Task Details
-            var UpdatetaskDetails = await TaskService.GetTaskDetails(EditTaskID);
-
-            taskDetailsDto.Description = UpdatetaskDetails.Description;
-            taskDetailsDto.Status = UpdatetaskDetails.Status;
-            taskDetailsDto.TaskName = UpdatetaskDetails.TaskName;
-            taskDetailsDto.StartDate = UpdatetaskDetails.StartDate;
-            taskDetailsDto.EndDate = UpdatetaskDetails.EndDate;
-            taskDetailsDto.AssignedTo = UpdatetaskDetails.AssignedTo;
-            taskDetailsDto.Priority = UpdatetaskDetails.Priority;
-            taskDetailsDto.ProjectId = UpdatetaskDetails.ProjectId;
         }
     }
 
@@ -131,13 +107,13 @@
     {
         try
         {
-            if (mode == "create")
+            if (TaskDetails.Id == Guid.Empty)
             {
-                var response = await TaskService.CreateTaskAsync(taskDetailsDto);
+                var response = await TaskService.CreateTaskAsync(TaskDetails);
             }
             else
             {
-                //var response = await TaskService.UpdateTaskAsync(taskDetailsDto);
+                var response = await TaskService.UpdateTaskAsync(TaskDetails.Id, TaskDetails);
             }
         }
         catch (Exception ex)
@@ -145,6 +121,7 @@
             Console.WriteLine($"Error: {ex.Message}");
         }
         await BlazoredModal.CloseAsync();
+        StateHasChanged();
     }
 
     private async void Cancel()
@@ -154,12 +131,12 @@
 
     private string projectIdString
     {
-        get => taskDetailsDto.ProjectId.ToString();
+        get => TaskDetails.ProjectId.ToString();
         set
         {
             if (Guid.TryParse(value, out var result))
             {
-                taskDetailsDto.ProjectId = result;
+                TaskDetails.ProjectId = result;
             }
             else
             {

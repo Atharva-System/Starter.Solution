@@ -11,6 +11,6 @@ public class ChangePasswordRequest
         ErrorMessage = "Password must meet requirements")]
     public string NewPassword { get; set; }
 
-    [Compare("NewPassword", ErrorMessage = "Passwords do not match")]
+    [Compare("NewPassword", ErrorMessage = "Password do not match")]
     public string ConfirmPassword { get; set; }
 }

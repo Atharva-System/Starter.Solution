@@ -1,5 +1,7 @@
 ﻿@inject ILocalStorageService LocalStorage
 @inject NavigationManager navigationManager
+@inject ILocalStorageService _localStorageService
+
 
 <!-- start header section -->
 <header :class="{'dark' : $store.app.semidark && $store.app.menu === 'horizontal'}">
@@ -137,10 +139,10 @@
                                 </div>
                                 <div class="truncate ltr:pl-4 rtl:pr-4">
                                     <h4 class="text-base">
-                                        John Doe<span class="rounded bg-success-light px-1 text-xs text-success ltr:ml-2 rtl:ml-2">Pro</span>
+                                        @name
                                     </h4>
                                     <a class="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white" href="javascript:;">
-                                        johndoe@gmail.com
+                                        @email
                                     </a>
                                 </div>
                             </div>
@@ -295,6 +297,13 @@
 <!-- end header section -->
 
 @code{
+    private string email;
+    private string name;
+    protected override async Task OnInitializedAsync()
+    {
+        email = await _localStorageService.GetItemAsStringAsync("email");
+        name = await _localStorageService.GetItemAsStringAsync("username");
+    }
 
     private async void SignOut()
     {

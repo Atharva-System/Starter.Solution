@@ -27,16 +27,17 @@
                 <h2 class="mb-3 text-3xl font-bold">Sign In</h2>
                 <p class="mb-7">Enter your email and password to login</p>
                 <EditForm class="space-y-5" Model="@LoginDto" OnValidSubmit="HandleLogin">
-
-                    @* <DataAnnotationsValidator />
-                    <ValidationSummary /> *@
+                    <DataAnnotationsValidator />
+                    @* <ValidationSummary />  *@
                     <div>
                         <label for="email">Email</label>
                         <InputText id="email" type="email" class="form-input" placeholder="Enter Email" @bind-Value="LoginDto.Email" />
+                        <ValidationMessage For="@(() => LoginDto.Email)" />
                     </div>
                     <div>
                         <label for="password">Password</label>
                         <InputText id="password" type="password" class="form-input" placeholder="Enter Password" @bind-Value="LoginDto.Password" />
+                        <ValidationMessage For="@(() => LoginDto.Password)" />
                     </div>
                     <div>
                         <label class="cursor-pointer">
@@ -137,16 +138,19 @@
         {
             await LocalStorage.SetItemAsync("authToken", response.Token);
             await LocalStorage.SetItemAsync("refreshToken", response.RefreshToken);
+            await LocalStorage.SetItemAsync("username", response.UserName);
+            await LocalStorage.SetItemAsync("email", response.Email);
             await AuthenticationStateProvider.GetAuthenticationStateAsync();
             navigationManager.NavigateTo("/dashboard");
         }
         else
         {
+            navigationManager.NavigateTo("/");
         }
     }
 
-    // public void Dispose()
-    // {
-    //     Interceptor.DisposeEvent();
-    // }
+    public void Dispose()
+    {
+        Interceptor.DisposeEvent();
+    }
 }

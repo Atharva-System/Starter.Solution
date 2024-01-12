@@ -16,7 +16,7 @@ public class TaskServices(HttpClient http) : ModalService, ITaskService
     public event Func<Task<string>> OnClose;
     public List<ProjectListDto> Projects { get; set; } = new List<ProjectListDto>();
 
-    public async Task<string> CreateTaskAsync(TaskDetailsDto dto)
+    public async Task<string> CreateTaskAsync(TaskListDto dto)
     {
         try
         {
@@ -42,21 +42,20 @@ public class TaskServices(HttpClient http) : ModalService, ITaskService
         }
     }
 
-    public async Task<List<ProjectListDto>> GetProjectlistsAsync()
+    public async Task<ApiResponse<List<ProjectListDto>>> GetProjectlistsAsync()
     {
         try
         {
             var response = await _httpClient.GetAsync("api/Task/projects");
             response.EnsureSuccessStatusCode();
 
-            var result = await response.Content.ReadFromJsonAsync<List<ProjectListDto>>();
-            this.Projects = result;
+            var result = await response.Content.ReadFromJsonAsync<ApiResponse<List<ProjectListDto>>>();
             return result;
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error: {ex.Message}");
-            return [];
+            return null;
         }
     }
 
@@ -77,14 +76,14 @@ public class TaskServices(HttpClient http) : ModalService, ITaskService
         }
     }
 
-    public async Task<TaskListDto> GetTaskDetails(Guid Id)
+    public async Task<ApiResponse<TaskListDto>> GetTaskDetails(Guid Id)
     {
         try
         {
             var response = await _httpClient.GetAsync($"api/Task/{Id}");
             response.EnsureSuccessStatusCode();
 
-            var result = await response.Content.ReadFromJsonAsync<TaskListDto>();
+            var result = await response.Content.ReadFromJsonAsync <ApiResponse<TaskListDto>>();
             return result;
         }
         catch (Exception ex)
@@ -142,6 +141,49 @@ public class TaskServices(HttpClient http) : ModalService, ITaskService
         {
             Console.WriteLine($"Error: {ex.Message}");
             return null;
+        }
+    }
+
+    public async Task<ApiResponse<List<TaskAssigneeDto>>> GetAssigneeListAsync()
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync("api/Task/assignee-list");
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadFromJsonAsync<ApiResponse<List<TaskAssigneeDto>>>();
+            return result;
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+            return null;
+        }
+    }
+
+    public async Task<string> UpdateTaskAsync(Guid Id, TaskListDto dto)
+    {
+        try
+        {
+            var apiUrl = $"api/Task/{Id}";
+
+            var result = await _httpClient.PutAsJsonAsync(apiUrl, dto);
+
+            result.EnsureSuccessStatusCode();
+
+            var newResponse = await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
+
+            if (newResponse != null && newResponse.Success)
+            {
+                return newResponse.Data;
+            }
+
+            return "";
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+            return "";
         }
     }
 }

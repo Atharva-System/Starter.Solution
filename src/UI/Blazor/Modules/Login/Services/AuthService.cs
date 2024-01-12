@@ -31,7 +31,10 @@ public class AuthService : IAuthService
 
         var content = await result.Content.ReadAsStringAsync();
         Console.WriteLine($"Raw Response Content: {content}");
-
+        if(result.StatusCode != System.Net.HttpStatusCode.OK)
+        {
+            _navigationManager.NavigateTo("/");
+        }
         return await result.Content.ReadFromJsonAsync<AuthResponseDto>();
     }
 
@@ -53,7 +56,7 @@ public class AuthService : IAuthService
             }
             else
             {
-                _navigationManager.NavigateTo("/login");
+                _navigationManager.NavigateTo("/");
             }
         }
 

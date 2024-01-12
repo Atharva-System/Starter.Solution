@@ -8,7 +8,7 @@ public class TaskListDto
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public int Status { get; set; }
-    public string Priority { get; set; }
+    public int Priority { get; set; }
     public Guid ProjectId { get; set; }
     public string AssignedTo { get; set; }
     public DateTime CreatedOn { get; set; }

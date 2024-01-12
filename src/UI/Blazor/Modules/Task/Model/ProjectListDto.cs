@@ -2,7 +2,7 @@
 
 public class ProjectListDto
 {
-    public string Id { get; set; }
+    public Guid Id { get; set; }
     public string ProjectName { get; set; }
 
 }
