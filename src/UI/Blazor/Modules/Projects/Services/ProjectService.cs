@@ -16,7 +16,7 @@ public class ProjectService(HttpClient http) : IProjectService
     {
         try
         {
-            var result = await _http.PostAsJsonAsync("api/Project/Create", projectDto);
+            var result = await _http.PostAsJsonAsync("Project/Create", projectDto);
 
             var newResponse = await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
 
@@ -45,7 +45,7 @@ public class ProjectService(HttpClient http) : IProjectService
 
     public async Task<ApiResponse<string>> EditProject(ProjectDto projectDto)
     {
-        var result = await _http.PutAsJsonAsync($"api/Project/{projectDto.Id}", projectDto);
+        var result = await _http.PutAsJsonAsync($"Project/{projectDto.Id}", projectDto);
 
         var response = await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
 
@@ -66,14 +66,14 @@ public class ProjectService(HttpClient http) : IProjectService
 
     public async Task<ApiResponse<ProjectDetailsDto>> GetProjectDetails(string id)
     {
-        return await _http.GetFromJsonAsync<ApiResponse<ProjectDetailsDto>>($"api/Project/{id}");
+        return await _http.GetFromJsonAsync<ApiResponse<ProjectDetailsDto>>($"Project/{id}");
     }
 
     public async Task<PagedDataResponse<List<ProjectDto>>> GetProjectlistsAsync(PaginationRequest param)
     {
         try
         {
-            var response = await _http.PostAsJsonAsync("api/Project/search", param);
+            var response = await _http.PostAsJsonAsync("Project/search", param);
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content.ReadFromJsonAsync<PagedDataResponse<List<ProjectDto>>>();
@@ -87,7 +87,7 @@ public class ProjectService(HttpClient http) : IProjectService
     }
     public async Task<ApiResponse<string>> DeleteProject(ProjectDto project)
     {
-        var result = await _http.DeleteAsync($"api/Project/{project.Id}");
+        var result = await _http.DeleteAsync($"Project/{project.Id}");
 
         var newResponse = await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
 
@@ -107,7 +107,7 @@ public class ProjectService(HttpClient http) : IProjectService
 
     public async Task<ApiResponse<string>> DeleteProject(string id)
     {
-        var result = await _http.DeleteAsync($"api/Project/{id}");
+        var result = await _http.DeleteAsync($"Project/{id}");
 
         var newResponse = await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
 
