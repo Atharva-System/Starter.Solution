@@ -21,6 +21,8 @@ using Starter.Blazor.Core;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
 using Starter.Blazor.Core.Services.IServices;
 using Starter.Blazor.Core.Services;
+using Starter.Blazor.Modules.Login.Services.IServices;
+using Starter.Blazor.Core.Authentication;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -37,26 +39,28 @@ builder.Services.AddScoped(sp => new HttpClient
 builder.Services.AddHttpClientInterceptor();
 
 
-builder.Services.AddScoped<IAuthService, AuthService>();
+//Utility services registered
+builder.Services.AddTransient<INotificationService, NotificationService>();
+builder.Services.AddTransient<IHttpInterceptorService, HttpInterceptorService>();
+builder.Services.AddScoped<IApiHandler,ApiHandler>();
+
+builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<AppStateProvider>();
+builder.Services.AddScoped<AuthenticationStateProvider, AppStateProvider>();
+builder.Services.AddTransient<AuthenticationHeaderHandler>();
+builder.Services.AddBlazoredModal();
+builder.Services.AddScoped<ITaskService, TaskServices>();
+builder.Services.AddScoped<IModalService, ModalService>();
+
+
+builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddScoped<ForgotPasswordService>();
 builder.Services.AddScoped<ResetPasswordService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IChangePasswordServices, ChangePasswordServices>();
 builder.Services.AddScoped<UserAuthID>();
-builder.Services.AddScoped<HttpInterceptorService>();
 builder.Services.AddScoped<RefreshTokenService>();
 builder.Services.AddScoped<UserService>();
-
-//Utility services registered
-builder.Services.AddTransient<INotificationService,NotificationService>();
-
-builder.Services.AddAuthorizationCore();
-builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
-builder.Services.AddHttpClientInterceptor();
-builder.Services.AddScoped<HttpInterceptorService>();
-builder.Services.AddBlazoredModal();
-builder.Services.AddScoped<ITaskService, TaskServices>();
-builder.Services.AddScoped<IModalService, ModalService>();
 
 await builder.Build().RunAsync();

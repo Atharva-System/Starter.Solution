@@ -5,5 +5,5 @@ namespace Starter.Blazor.Modules.ChangePassword.Services;
 
 public interface IChangePasswordServices
 {
-    Task<ApiResponse<string>> ChangePasswordAsync(ChangePasswordRequest chnagePassword);
+    Task<ChangePasswordResponse> ChangePasswordAsync(ChangePasswordRequest chnagePassword);
 }
