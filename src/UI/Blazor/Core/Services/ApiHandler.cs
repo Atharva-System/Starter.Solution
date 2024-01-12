@@ -19,14 +19,11 @@ public class ApiHandler : IApiHandler
         try
         {
             var response = await _httpClient.DeleteAsync(url);
-            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest ||
-                   response.StatusCode == System.Net.HttpStatusCode.NotFound ||
-                   response.StatusCode == System.Net.HttpStatusCode.Unauthorized ||
-                   response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                throw new Exception(await response.Content.ReadAsStringAsync());
+                return await this.ConvertResponse<T>(response);
             }
-            return await response.Content.ReadFromJsonAsync<T>();
+            throw new Exception(await response.Content.ReadAsStringAsync());
         }
         catch (Exception ex)
         {
@@ -39,15 +36,11 @@ public class ApiHandler : IApiHandler
         try
         {
             var response = await _httpClient.GetAsync(url);
-            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest ||
-                   response.StatusCode == System.Net.HttpStatusCode.NotFound ||
-                   response.StatusCode == System.Net.HttpStatusCode.Unauthorized ||
-                   response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                throw new Exception(await response.Content.ReadAsStringAsync());
+                return await this.ConvertResponse<T>(response);
             }
-
-            return await response.Content.ReadFromJsonAsync<T>();
+            throw new Exception(await response.Content.ReadAsStringAsync());
         }
         catch(Exception ex)
         {
@@ -60,14 +53,11 @@ public class ApiHandler : IApiHandler
         try
         {
             var response = await _httpClient.PostAsJsonAsync<U>(url, model);
-            if(response.StatusCode == System.Net.HttpStatusCode.BadRequest ||
-               response.StatusCode == System.Net.HttpStatusCode.NotFound ||
-               response.StatusCode == System.Net.HttpStatusCode.Unauthorized ||
-               response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+            if(response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                throw new  Exception(await response.Content.ReadAsStringAsync());
+                return await this.ConvertResponse<T>(response);
             }
-            return await this.ConvertResponse<T>(response);
+            throw new  Exception(await response.Content.ReadAsStringAsync());
         }
         catch (Exception ex)
         {
@@ -81,14 +71,11 @@ public class ApiHandler : IApiHandler
         try
         {
             var response = await _httpClient.PutAsJsonAsync<U>(url, model);
-            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest ||
-               response.StatusCode == System.Net.HttpStatusCode.NotFound ||
-               response.StatusCode == System.Net.HttpStatusCode.Unauthorized ||
-               response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                throw new Exception(await response.Content.ReadAsStringAsync());
+                return await this.ConvertResponse<T>(response);
             }
-            return await this.ConvertResponse<T>(response);
+            throw new Exception(await response.Content.ReadAsStringAsync());
         }
         catch (Exception ex)
         {
