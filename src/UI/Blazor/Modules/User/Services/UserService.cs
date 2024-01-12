@@ -1,8 +1,12 @@
-﻿using System.Net.Http.Json;
+﻿using System.Collections.Generic;
+using System.Net.Http.Json;
 using Blazored.LocalStorage;
 using Microsoft.JSInterop;
 using Starter.Blazor.Core.AuthProviders;
+using Starter.Blazor.Core.Constants;
 using Starter.Blazor.Core.Response;
+using Starter.Blazor.Core.Routes;
+using Starter.Blazor.Core.Services.IServices;
 using Starter.Blazor.Modules.Common;
 using Starter.Blazor.Modules.User.Models;
 using Starter.Blazor.Shared.Response;
@@ -10,93 +14,80 @@ using Starter.Blazor.Shared.Response;
 
 namespace Starter.Blazor.Modules.User.Services;
 
-public class UserService(HttpClient http, ILocalStorageService localStorageService, IJSRuntime jsRuntime, UserAuthID UserAuthId) : IUserService
+public class UserService(IApiHandler api, ILocalStorageService localStorageService, IJSRuntime jsRuntime, INotificationService notificationService) : IUserService
 {
-    private readonly HttpClient _httpClient = http;
+    private readonly IApiHandler _api = api;
     private readonly ILocalStorageService _localStorageService = localStorageService;
-    private readonly IJSRuntime _jsRuntime = jsRuntime;
-    private readonly UserAuthID _UserAuthId = UserAuthId;
+    private readonly INotificationService _notificationService = notificationService;
 
-    public async Task<UpdateProfileDto> GetProfileDetailAsync()
+    public async Task<ApiResponse<UpdateProfileDto>> GetProfileDetailAsync()
     {
         try
         {
-            var response = await _httpClient.GetAsync("api/Users/get-profile-details");
-            if (response.IsSuccessStatusCode)
-            {
-                var user = await response.Content.ReadFromJsonAsync<ApiResponse<UpdateProfileDto>>();
-                return user.Data;
-            }
-            return null;
+            return await _api.Get<ApiResponse<UpdateProfileDto>>(UserEndpoints.GetProfile);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error: {ex.Message}");
+            var errorResponse = await _api.ConvertStringToResponse<ApiResponse<object>>(ex.Message);
+            await _notificationService.Failure(errorResponse.Messages);
             return null;
         }
     }
+
     public async Task<ApiResponse<UserlistDto>> GetUserDetailsByIdAsync(string userId)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"api/Users/{userId}");
-
-            if (response.IsSuccessStatusCode)
-            {
-                var userDetails = await response.Content.ReadFromJsonAsync<ApiResponse<UserlistDto>>();
-
-
-                return userDetails;
-            }
+            return await _api.Get<ApiResponse<UserlistDto>>(UserEndpoints.GetById(userId));
         }
         catch (Exception ex)
         {
-            // Handle or log the exception
-            Console.WriteLine($"Error: {ex.Message}");
+            var errorResponse = await _api.ConvertStringToResponse<ApiResponse<object>>(ex.Message);
+            await _notificationService.Failure(errorResponse.Messages);
+            return null;// Return null or handle error case appropriately
         }
-
-        return null; // Return null or handle error case appropriately
     }
 
     public async Task<ApiResponse<string>> UpdateUserAsync(UserlistDto userDto)
     {
         try
         {
-            var result = await _httpClient.PutAsJsonAsync($"api/Users/{userDto.Id}", userDto);
-
-            var newResponse = await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
-
-            return newResponse;
+            return await _api.Put<ApiResponse<string>,UserlistDto>(UserEndpoints.Update(userDto.Id), userDto);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error: {ex.Message}");
-            return new ApiResponse<string>
-            {
-                Success = false,
-            };
+            var errorResponse = await _api.ConvertStringToResponse<ApiResponse<string>>(ex.Message);
+            await _notificationService.Failure(errorResponse.Messages);
+            return errorResponse;// Return null or handle error case appropriately
         }
     }
     public async Task<ApiResponse<AcceptInviteDto>> GetAcceptInviteDetails(string userId)
     {
-        return await _httpClient.GetFromJsonAsync<ApiResponse<AcceptInviteDto>>($"api/Users/get-invite-details/{userId}");
+        try
+        {
+            return await _api.Get<ApiResponse<AcceptInviteDto>>(UserEndpoints.GetAcceptInviteDetails(userId));
+        }
+        catch (Exception ex)
+        {
+            var errorResponse = await _api.ConvertStringToResponse<ApiResponse<AcceptInviteDto>>(ex.Message);
+            await _notificationService.Failure(errorResponse.Messages);
+            errorResponse.Data = null;
+            return errorResponse;// Return null or handle error case appropriately
+        }
     }
 
     public async Task<PagedDataResponse<List<UserlistDto>>> GetUserlistsAsync(PaginationRequest param)
     {
-        try {
-            var response = await _httpClient.PostAsJsonAsync("api/Users/search", param);
-
-            response.EnsureSuccessStatusCode();
-
-            var result = await response.Content.ReadFromJsonAsync<PagedDataResponse<List<UserlistDto>>>();
-
-            return result;
+        try
+        {
+            return await _api.Post<PagedDataResponse<List<UserlistDto>>, PaginationRequest>(UserEndpoints.Search, param);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error: {ex.Message}");
-            return null;
+            var errorResponse = await _api.ConvertStringToResponse<PagedDataResponse<List<UserlistDto>>>(ex.Message);
+            await _notificationService.Failure(errorResponse.Messages);
+            errorResponse.Data = null;
+            return errorResponse;// Return null or handle error case appropriately
         }
     }
 
@@ -104,28 +95,14 @@ public class UserService(HttpClient http, ILocalStorageService localStorageServi
     {
         try
         {
-            var result = await _httpClient.PostAsJsonAsync("api/Users/accept-invite", userRegister);
-            var newResponse = await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
-            if (newResponse != null && newResponse.Success)
-            {
-                return newResponse;
-            }
-            else
-            {
-                return new ApiResponse<string>
-                {
-                    Success = false,
-                    Messages = newResponse.Messages,
-                };
-            }
+            return await _api.Post<ApiResponse<string>,UserRegisterDto>(UserEndpoints.AcceptInvite, userRegister);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error: {ex.Message}");
-            return new ApiResponse<string>
-            {
-                Success = false,
-            };
+            var errorResponse = await _api.ConvertStringToResponse<ApiResponse<string>>(ex.Message);
+            await _notificationService.Failure(errorResponse.Messages);
+            errorResponse.Data = null;
+            return errorResponse;// Return null or handle error case appropriately
         }
     }
 
@@ -133,77 +110,45 @@ public class UserService(HttpClient http, ILocalStorageService localStorageServi
     {
         try
         {
-            var result = await _httpClient.PostAsJsonAsync("api/Users/invite-user", userDto);
-
-            var newResponse = await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
-
-            if (newResponse != null && newResponse.Success)
-            {
-                return newResponse;
-            }
-            else
-            {
-                return new ApiResponse<string>
-                {
-                    Success = false,
-                    Messages = newResponse.Messages,
-                };
-            }
+            return await _api.Post<ApiResponse<string>,InviteUserDto>(UserEndpoints.InviteUser, userDto);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error: {ex.Message}");
-            return new ApiResponse<string>
-            {
-                Success = false,
-            };
+            var errorResponse = await _api.ConvertStringToResponse<ApiResponse<string>>(ex.Message);
+            await _notificationService.Failure(errorResponse.Messages);
+            errorResponse.Data = null;
+            return errorResponse;// Return null or handle error case appropriately
         }
     }
 
-    public async Task<string> UpdateUserProfileAsync(string UserId,UpdateProfileDto userDto)
+    public async Task<ApiResponse<string>> UpdateUserProfileAsync(UpdateProfileDto userDto)
     {
         try
         {
-            var apiUrl = $"api/Users/{UserId}/update-profile";
-            userDto.Id = UserAuthId.GetUserId();
-
-            var result = await _httpClient.PutAsJsonAsync(apiUrl, userDto);
-
-            result.EnsureSuccessStatusCode();
-
-            var newResponse = await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
-
-            if (newResponse != null && newResponse.Success)
-            {
-                return newResponse.Data;
-            }
-
-            return "";
+            userDto.Id = await _localStorageService.GetItemAsync<string>(StorageConstants.Local.Id);
+            return await _api.Put<ApiResponse<string>, UpdateProfileDto>(UserEndpoints.UpdateUserProfile(userDto.Id), userDto);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error: {ex.Message}");
-            return "";
+            var errorResponse = await _api.ConvertStringToResponse<ApiResponse<string>>(ex.Message);
+            await _notificationService.Failure(errorResponse.Messages);
+            errorResponse.Data = null;
+            return errorResponse;// Return null or handle error case appropriately
         }
     }
 
     public async Task<ApiResponse<string>> DeleteUser(string id)
     {
-            var result = await _httpClient.DeleteAsync($"api/Users/{id}");
-
-            var newResponse = await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
-
-            if (newResponse != null && newResponse.Success)
-            {
-                return newResponse;
-            }
-            else
-            {
-                return new ApiResponse<string>
-                {
-                    Success = false,
-                    Messages = newResponse.Messages,
-                };
-            }
+        try
+        {
+            return await _api.Delete<ApiResponse<string>>(UserEndpoints.DeleteUser(id));
+        }
+        catch (Exception ex)
+        {
+            var errorResponse = await _api.ConvertStringToResponse<ApiResponse<string>>(ex.Message);
+            await _notificationService.Failure(errorResponse.Messages);
+            errorResponse.Data = null;
+            return errorResponse;// Return null or handle error case appropriately
+        }
     }
 }

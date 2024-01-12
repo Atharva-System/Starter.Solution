@@ -2,8 +2,9 @@
 @using Microsoft.AspNetCore.Authorization
 @using Starter.Blazor.Modules.Common
 @using Starter.Blazor.Modules.Login.Services
+@using Starter.Blazor.Modules.Login.Services.IServices
 @using Starter.Blazor.Modules.Task.Model
-@using Starter.Blazor.Modules.Task.Services
+@using Starter.Blazor.Modules.Task.Services;
 @inject IJSRuntime JSRuntime
 @inject NavigationManager navigationManager
 @inject IAuthService AuthService
@@ -147,9 +148,9 @@
 
     protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {
-        isAuthenticated = await AuthService.IsUserAuthenticated();
+        var authState = await _stateProvider.GetAuthenticationStateProviderUserAsync();
 
-        if (!isAuthenticated)
+        if (!authState.Identity.IsAuthenticated)
         {
             navigationManager.NavigateTo("/");
         }

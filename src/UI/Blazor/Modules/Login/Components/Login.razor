@@ -4,6 +4,7 @@
 @using Starter.Blazor.Core
 @using Starter.Blazor.Core.AuthProviders
 @using Starter.Blazor.Modules.Login.Services
+@using Starter.Blazor.Modules.Login.Services.IServices
 @using Starter.Blazor.Shared.Icons
 @using System.Net
 @layout Layout.Public.AuthLayout
@@ -91,9 +92,6 @@
 @code {
     private loginModel LoginDto = new loginModel();
 
-    [Inject]
-    public HttpInterceptorService Interceptor { get; set; }
-
     // protected override void OnInitialized()
     // {
     //     Interceptor.RegisterEvent();
@@ -104,15 +102,7 @@
         var response = await AuthService.Login(LoginDto);
         if (response.Success && response.StatusCode == 200)
         {
-            await LocalStorage.SetItemAsync("authToken", response.Data.Token);
-            await LocalStorage.SetItemAsync("refreshToken", response.Data.RefreshToken);
-            await AuthenticationStateProvider.GetAuthenticationStateAsync();
             navigationManager.NavigateTo("/dashboard");
-            await Notification.Success(response.Message);
-        }
-        else
-        {
-            Notification.Failure(String.Join(",",response.Messages));
         }
     }
 
