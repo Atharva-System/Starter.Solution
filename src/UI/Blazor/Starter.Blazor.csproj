@@ -38,7 +38,7 @@
     <Folder Include="Modules\Login\Page\" />
     <Folder Include="Modules\Users\" />
     <Folder Include="Modules\ForgotPassword\" />
-    <Folder Include="Modules\ResetPassword\" />
+     <Folder Include="Modules\ResetPassword\" />
     <Folder Include="Shared\Components\Button\" />
     <Folder Include="Shared\Components\Grid\" />
     <Folder Include="Shared\Utility\" />

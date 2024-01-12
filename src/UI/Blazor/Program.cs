@@ -38,8 +38,8 @@ builder.Services.AddHttpClientInterceptor();
 
 
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<ForgotPasswordService>();
-builder.Services.AddScoped<ResetPasswordService>();
+builder.Services.AddScoped<IForgotPasswordService,ForgotPasswordService>();
+builder.Services.AddScoped<IResetPasswordService,ResetPasswordService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IChangePasswordServices, ChangePasswordServices>();
