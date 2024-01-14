@@ -6,7 +6,6 @@
 @using Starter.Blazor.Modules.Login.Services.IServices
 @using Starter.Blazor.Modules.Task.Model
 @using Starter.Blazor.Modules.Task.Services;
-@using Starter.Blazor.Modules.Task.Services
 @using DataTables.AspNet;
 @using Blazored.Modal
 @using Blazored.Modal.Services
@@ -18,6 +17,7 @@
 @inject IModalService TaskModal
 @attribute [Authorize]
 @inject IJSRuntime JSRuntime
+@inject IModalService ModalService
 
 <div>
     <div class="relative flex h-full gap-5 sm:h-[calc(100vh_-_150px)]">
@@ -147,8 +147,10 @@
     [CascadingParameter] public IModalService Modal { get; set; } = default;
 
     private bool isAuthenticated;
+    public Guid EditTaskID;
+    public bool IsEditMode;
 
-    public List<TaskListDto> Tasks = new List<TaskListDto>();
+    private List<TaskListDto> Tasks = new List<TaskListDto>();
 
     private PaginationRequest param = new PaginationRequest { PageNumber = 0, PageSize = 10, OrderBy = new[] { "TaskName" } };
 
@@ -165,6 +167,23 @@
 
     }
 
+    private async void AddTask()
+    {
+        var projectList = await TaskService.GetProjectlistsAsync();
+        var StatusList = await TaskService.GetStatuslistsAsync();
+        var PriorityList = await TaskService.GetPrioritylistsAsync();
+        var AssigneeList = await TaskService.GetAssigneeListAsync();
+
+        Modal.Show<CreateTaskModel>("Add New Task", new ModalParameters
+        {
+            { nameof(CreateTaskModel.projectList), projectList },
+            { nameof(CreateTaskModel.StatusList), StatusList },
+            { nameof(CreateTaskModel.PriorityList), PriorityList },
+            { nameof(CreateTaskModel.AssigneeList), AssigneeList },
+            { nameof(CreateTaskModel.TaskDetails), new TaskListDto(){ Id = Guid.Empty } }
+        });
+    }
+
     private async void DeleteTask(TaskListDto task)
     {
         var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete '{task.TaskName}'?");
@@ -178,38 +197,27 @@
         }
     }
 
-    private async Task<ModalParameters> GetCommonModalParametersAsync()
+    private async void EditTask(TaskListDto selectedTask)
     {
+        var TaskDetails = await TaskService.GetTaskDetails(selectedTask.Id);
         var projectList = await TaskService.GetProjectlistsAsync();
         var StatusList = await TaskService.GetStatuslistsAsync();
         var PriorityList = await TaskService.GetPrioritylistsAsync();
         var AssigneeList = await TaskService.GetAssigneeListAsync();
-
-        return new ModalParameters
-        {
-            { nameof(CreateTaskModel.projectList), projectList },
-            { nameof(CreateTaskModel.StatusList), StatusList },
-            { nameof(CreateTaskModel.PriorityList), PriorityList },
-            { nameof(CreateTaskModel.AssigneeList), AssigneeList },
-        };
-    }
-
-    private async void AddTask()
-    {
-        var modalParameters = await GetCommonModalParametersAsync();
-
-        Modal.Show<CreateTaskModel>("Add New Task", modalParameters);
-    }
-
-    private async void EditTask(TaskListDto selectedTask)
-    {
-        var TaskDetails = await TaskService.GetTaskDetails(selectedTask.Id);
         if (TaskDetails.Success == true)
         {
-            var modalParameters = await GetCommonModalParametersAsync();
-            modalParameters.Add(nameof(CreateTaskModel.TaskDetails), TaskDetails.Data);
+            Modal.Show<CreateTaskModel>("Edit Task", new ModalParameters
+            {
+                { nameof(CreateTaskModel.projectList), projectList },
+                { nameof(CreateTaskModel.StatusList), StatusList },
+                { nameof(CreateTaskModel.PriorityList), PriorityList },
+                { nameof(CreateTaskModel.AssigneeList), AssigneeList },
+                { nameof(CreateTaskModel.TaskDetails), TaskDetails.Data }
+            });
+        }
+        else
+        {
 
-            Modal.Show<CreateTaskModel>("Edit Task", modalParameters);
         }
     }
 }

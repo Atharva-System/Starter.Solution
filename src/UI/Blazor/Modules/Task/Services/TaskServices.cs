@@ -20,7 +20,7 @@ public class TaskServices(HttpClient http) : ModalService, ITaskService
     {
         try
         {
-            var apiUrl = $"api/Task/Create";
+            var apiUrl = $"Task/Create";
 
             var result = await _httpClient.PostAsJsonAsync(apiUrl, dto);
 
@@ -46,7 +46,7 @@ public class TaskServices(HttpClient http) : ModalService, ITaskService
     {
         try
         {
-            var response = await _httpClient.GetAsync("api/Task/projects");
+            var response = await _httpClient.GetAsync("Task/projects");
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content.ReadFromJsonAsync<ApiResponse<List<ProjectListDto>>>();
@@ -63,7 +63,7 @@ public class TaskServices(HttpClient http) : ModalService, ITaskService
     {
         try
         {
-            var response = await _httpClient.PostAsJsonAsync("api/Task/search", param);
+            var response = await _httpClient.PostAsJsonAsync("Task/search", param);
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content.ReadFromJsonAsync<PagedDataResponse<List<TaskListDto>>>();
@@ -80,7 +80,7 @@ public class TaskServices(HttpClient http) : ModalService, ITaskService
     {
         try
         {
-            var response = await _httpClient.GetAsync($"api/Task/{Id}");
+            var response = await _httpClient.GetAsync($"Task/{Id}");
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content.ReadFromJsonAsync <ApiResponse<TaskListDto>>();
@@ -97,7 +97,7 @@ public class TaskServices(HttpClient http) : ModalService, ITaskService
     {
         try
         {
-            var response = await _httpClient.DeleteAsync($"api/Task/{Id}");
+            var response = await _httpClient.DeleteAsync($"Task/{Id}");
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content.ReadFromJsonAsync<TaskListDto>();
@@ -114,7 +114,7 @@ public class TaskServices(HttpClient http) : ModalService, ITaskService
     {
         try
         {
-            var response = await _httpClient.GetAsync("api/Task/status-list");
+            var response = await _httpClient.GetAsync("Task/status-list");
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content.ReadFromJsonAsync<ApiResponse<List<EnumTypeViewDto>>>();
@@ -131,7 +131,7 @@ public class TaskServices(HttpClient http) : ModalService, ITaskService
     {
         try
         {
-            var response = await _httpClient.GetAsync("api/Task/priority-list");
+            var response = await _httpClient.GetAsync("Task/priority-list");
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content.ReadFromJsonAsync<ApiResponse<List<EnumTypeViewDto>>>();
@@ -148,7 +148,7 @@ public class TaskServices(HttpClient http) : ModalService, ITaskService
     {
         try
         {
-            var response = await _httpClient.GetAsync("api/Task/assignee-list");
+            var response = await _httpClient.GetAsync("Task/assignee-list");
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content.ReadFromJsonAsync<ApiResponse<List<TaskAssigneeDto>>>();
@@ -165,7 +165,7 @@ public class TaskServices(HttpClient http) : ModalService, ITaskService
     {
         try
         {
-            var apiUrl = $"api/Task/{Id}";
+            var apiUrl = $"Task/{Id}";
 
             var result = await _httpClient.PutAsJsonAsync(apiUrl, dto);
 

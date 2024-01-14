@@ -9,6 +9,7 @@
 @using Blazored.Modal
 @using Blazored.Modal.Services
 @inject ITaskService TaskService
+@inject IModalService Modal
 
 <CascadingBlazoredModal>
     <EditForm Model="@TaskDetails" OnValidSubmit="@(SaveTask)">
@@ -86,17 +87,14 @@
     private string buttonText;
 
     [Parameter] public ApiResponse<List<ProjectListDto>> projectList { get; set; }
-    [Parameter] public ApiResponse<List<EnumTypeViewDto>> StatusList   { get; set; }
+    [Parameter] public ApiResponse<List<EnumTypeViewDto>> StatusList { get; set; }
     [Parameter] public ApiResponse<List<EnumTypeViewDto>> PriorityList { get; set; }
     [Parameter] public ApiResponse<List<TaskAssigneeDto>> AssigneeList { get; set; }
     [Parameter] public TaskListDto TaskDetails { get; set; }
 
-    private string mode;
-    private string buttonText;
+    protected override async void OnInitialized()
+    {
         if (TaskDetails.Id == Guid.Empty)
-        var PriorityList = await TaskService.GetPrioritylistsAsync();
-
-        if (EditTaskID == Guid.Empty)
         {
             buttonText = "Add";
         }
