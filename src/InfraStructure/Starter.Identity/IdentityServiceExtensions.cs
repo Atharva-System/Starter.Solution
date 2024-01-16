@@ -21,7 +21,7 @@ public static class IdentityServiceExtensions
     {
         services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
 
-        services.AddDbContext<AppIdentityDbContext>((sp,options) =>
+        services.AddDbContext<AppIdentityDbContext>((sp, options) =>
         {
             options.AddInterceptors(sp.GetRequiredService<AuditableEntitySaveChangesInterceptor>());
 
@@ -75,6 +75,21 @@ public static class IdentityServiceExtensions
                              return Task.CompletedTask;
                          },
                          OnForbidden = _ => throw new UnauthorizedException("You are not authorized to access this resource."),
+                         OnMessageReceived = context =>
+                         {
+                             var accessToken = context.Request.Query["access_token"];
+
+                             if (!string.IsNullOrEmpty(accessToken) &&
+                                     (context.HttpContext.Request.Path.StartsWithSegments("/notifications")
+                                     )
+                                 )
+                             {
+                                 // Read the token out of the query string
+                                 context.Token = accessToken;
+                             }
+
+                             return Task.CompletedTask;
+                         }
                          //OnAuthenticationFailed = c =>
                          //{
                          //    c.NoResult();
