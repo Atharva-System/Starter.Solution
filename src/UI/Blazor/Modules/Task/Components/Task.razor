@@ -93,8 +93,6 @@
 
         await System.Threading.Tasks.Task.WhenAll(LoadData(1, 5, null));
 
-        Tasks = await TaskService.GetTasklistsAsync(param);
-
     }
 
     private async System.Threading.Tasks.Task PageSizeChanged(int pageNumber, int pageSize, string[] OrderBy)
@@ -115,12 +113,17 @@
             { nameof(CreateTaskModel.StatusList), StatusList },
             { nameof(CreateTaskModel.PriorityList), PriorityList },
             { nameof(CreateTaskModel.AssigneeList), AssigneeList },
-            { nameof(CreateTaskModel.TaskDetails), new TaskListDto(){ Id = Guid.Empty,StartDate = DateTime.UtcNow,EndDate = DateTime.UtcNow.AddDays(2) } }
+            { nameof(CreateTaskModel.TaskDetails), new TaskListDto(){ Id = Guid.Empty,StartDate = DateTime.UtcNow,EndDate = DateTime.UtcNow.AddDays(2) } },
+            { nameof(CreateTaskModel.OnTaskSaved), EventCallback.Factory.Create(this, (TaskListDto task) => OnTaskSavedHandler(task)) }
         });
 
-        await System.Threading.Tasks.Task.WhenAll(LoadData(1, 5, null));
+        //await System.Threading.Tasks.Task.WhenAll(LoadData(1, 5, null));
     }
 
+    private async void OnTaskSavedHandler(TaskListDto savedTaskDetails)
+    {
+        await LoadData(1, 5, null);
+    }
     private async void EditRecord(string Id)
     {
         var TaskDetails = await TaskService.GetTaskDetails(Id);
@@ -136,15 +139,14 @@
                 { nameof(CreateTaskModel.StatusList), StatusList },
                 { nameof(CreateTaskModel.PriorityList), PriorityList },
                 { nameof(CreateTaskModel.AssigneeList), AssigneeList },
-                { nameof(CreateTaskModel.TaskDetails), TaskDetails.Data }
+                { nameof(CreateTaskModel.TaskDetails), TaskDetails.Data },
+                { nameof(CreateTaskModel.OnTaskSaved), EventCallback.Factory.Create<TaskListDto>(this, OnTaskSavedHandler) }
             });
         }
         else
         {
 
         }
-
-        await System.Threading.Tasks.Task.WhenAll(LoadData(1, 5, null));
     }
 
     private async System.Threading.Tasks.Task DeleteRecord(string id)
@@ -167,4 +169,6 @@
         string toastScript = $"{toastScriptConstant} toast.fire({{ title: '{msg}' }});";
         JSRuntime.InvokeVoidAsync("eval", toastScript);
     }
+
+    
 }

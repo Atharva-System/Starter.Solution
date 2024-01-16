@@ -92,8 +92,7 @@
     [Parameter] public ApiResponse<List<TaskAssigneeDto>> AssigneeList { get; set; }
     [Parameter] public TaskListDto TaskDetails { get; set; }
 
-    [Parameter] public EventCallback OnTaskSaved { get; set; }
-
+    [Parameter] public EventCallback<TaskListDto> OnTaskSaved { get; set; }
 
     protected override async void OnInitialized()
     {
@@ -124,7 +123,7 @@
         {
             Console.WriteLine($"Error: {ex.Message}");
         }
-       await OnTaskSaved.InvokeAsync();
+        await OnTaskSaved.InvokeAsync(TaskDetails);
         await BlazoredModal.CloseAsync();
         StateHasChanged();
     }

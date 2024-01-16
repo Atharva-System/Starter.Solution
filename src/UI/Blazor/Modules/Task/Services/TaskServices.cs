@@ -80,7 +80,7 @@ public class TaskServices(HttpClient http) : ModalService, ITaskService
     {
         try
         {
-            var response = await _httpClient.GetAsync($"Task/{Id}");
+            var response = await _httpClient.GetAsync($"Task/{Guid.Parse(Id)}");
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content.ReadFromJsonAsync <ApiResponse<TaskListDto>>();
@@ -93,14 +93,14 @@ public class TaskServices(HttpClient http) : ModalService, ITaskService
         }
     }
 
-    public async Task<ApiResponse<TaskListDto>> DeleteTaskAsync(string Id)
+    public async Task<ApiResponse<string>> DeleteTaskAsync(string Id)
     {
         try
         {
-            var response = await _httpClient.DeleteAsync($"Task/{Id}");
+            var response = await _httpClient.DeleteAsync($"Task/{Guid.Parse(Id)}");
             response.EnsureSuccessStatusCode();
 
-            var result = await response.Content.ReadFromJsonAsync<ApiResponse<TaskListDto>>();
+            var result = await response.Content.ReadFromJsonAsync<ApiResponse<string>>();
             return result;
         }
         catch (Exception ex)

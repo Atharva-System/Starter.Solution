@@ -15,7 +15,7 @@ public interface ITaskService : IModalService
     Task<PagedDataResponse<List<TaskListDto>>> GetTasklistsAsync(PaginationRequest param);
     Task<ApiResponse<List<ProjectListDto>>> GetProjectlistsAsync();
     Task<ApiResponse<TaskListDto>> GetTaskDetails(string Id);
-    Task<ApiResponse<TaskListDto>> DeleteTaskAsync(string Id);
+    Task<ApiResponse<string>> DeleteTaskAsync(string Id);
     Task<ApiResponse<List<EnumTypeViewDto>>> GetStatuslistsAsync();
     Task<ApiResponse<List<EnumTypeViewDto>>> GetPrioritylistsAsync();
     Task<ApiResponse<List<TaskAssigneeDto>>> GetAssigneeListAsync();
