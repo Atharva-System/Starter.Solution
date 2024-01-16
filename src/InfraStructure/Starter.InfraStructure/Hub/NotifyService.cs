@@ -15,7 +15,7 @@ public class NotifyService(IHubContext<NotificationHub> notificationHubContext, 
 
         if (!string.IsNullOrEmpty(connectionId))
         {
-            await _notificationHubContext.Clients.Client(connectionId).SendAsync(method, param, DateTime.Now.ToString());
+            await _notificationHubContext.Clients.Client(connectionId).SendAsync(method, param, DateTime.Now);
         }
     }
 }
