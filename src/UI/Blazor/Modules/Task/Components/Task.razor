@@ -24,7 +24,7 @@
 <div class="panel h-full w-full">
     <div class="mb-5 flex items-center justify-between">
         <h5 class="text-lg font-semibold dark:text-white-light">Tasks</h5>
-        <button type="button" class="btn btn-primary" @onclick="AddTask">Create Task</button>
+        <button type="button" class="btn btn-primary" @onclick="AddTask">Add Task</button>
     </div>
     <div class="table-responsive">
         <ReusableGrid @ref="gridRef" TItem="TaskListDto" HeaderData="@headerInfo" PageSizeChange="LoadData" PageNumberChange="LoadData" ColumnSortingChange="LoadData" DeleteRecord="DeleteRecord" EditRecord="EditRecord" />
@@ -107,7 +107,7 @@
         var PriorityList = await TaskService.GetPrioritylistsAsync();
         var AssigneeList = await TaskService.GetAssigneeListAsync();
 
-        Modal.Show<CreateTaskModel>("Create New Task", new ModalParameters
+        Modal.Show<CreateTaskModel>("Add New Task", new ModalParameters
         {
             { nameof(CreateTaskModel.projectList), projectList },
             { nameof(CreateTaskModel.StatusList), StatusList },
