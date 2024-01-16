@@ -23,6 +23,7 @@
   <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" />
     <PackageReference Include="Blazored.Modal" />
+    <PackageReference Include="DataTables.AspNet.Core" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" />
