@@ -24,7 +24,7 @@ public class DeleteProjectCommandHandler(IQueryUnitOfWork query,
 
         if (projectTask)
         {
-            throw new Exception($"Cannot delete as Task is created for '{request.id}' project.");
+            throw new Exception($"Cannot delete as Task is created for project.");
         }
 
         _command.CommandRepository<Project>().Remove(project);
