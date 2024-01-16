@@ -1,4 +1,4 @@
-﻿import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
   Router,
@@ -18,6 +18,7 @@ import { appPaths } from '../../shared/constants/routes';
 import { UserService } from '../../modules/user/services/user.service';
 import { IUserProfileSignal } from '../../modules/user/models/user-profile.interface';
 import { MenuService } from '../services/menu.service';
+import { SendReciveNotificationService } from '../services/send-recive-notification.service';
 
 @Component({
   selector: 'header',
@@ -48,6 +49,7 @@ export class HeaderComponent implements OnInit {
   menuItems: Array<{ label: string; link: string }> = [];
   profileRoute = '/' + appPaths.profile;
 
+  sendReciveNotificationService = inject(SendReciveNotificationService);
   menuService = inject(MenuService);
   appSetting = inject(AppService);
   router = inject(Router);
@@ -198,6 +200,7 @@ export class HeaderComponent implements OnInit {
   }
 
   signOut() {
+    this.sendReciveNotificationService.leaveSignalRConnection();
     this.authenticationService.signOut();
   }
 

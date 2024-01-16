@@ -1,5 +1,6 @@
 ﻿using Starter.Application.Features.Common;
 using Starter.Application.UnitOfWork;
+using Starter.Domain.Events;
 
 namespace Starter.Application.Features.Tasks.Command;
 public sealed class CreateTaskCommandRequest : IRequest<ApiResponse<int>>
@@ -33,6 +34,7 @@ public class CreateTaskCommandHandler(ICommandUnitOfWork command) : IRequestHand
         };
 
         await _commandUnitofWork.CommandRepository<Domain.Entities.Tasks>().AddAsync(entity);
+        entity.AddDomainEvent(new TaskCreatedDomainEvent(entity.AssignedTo!, entity.Id.ToString(), entity.TaskName!));
         var saveResult = await _commandUnitofWork.SaveAsync(cancellationToken);
         var response = new ApiResponse<int>
         {
