@@ -1,4 +1,4 @@
-﻿import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
   Router,
@@ -8,7 +8,7 @@ import {
 } from '@angular/router';
 import { AppService } from '../../shared/services/app.service';
 import { animate, style, transition, trigger } from '@angular/animations';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { MenuModule } from 'headlessui-angular';
 import { FormsModule } from '@angular/forms';
@@ -18,6 +18,7 @@ import { appPaths } from '../../shared/constants/routes';
 import { UserService } from '../../modules/user/services/user.service';
 import { IUserProfileSignal } from '../../modules/user/models/user-profile.interface';
 import { MenuService } from '../services/menu.service';
+import { SendReciveNotificationService } from '../services/send-recive-notification.service';
 
 @Component({
   selector: 'header',
@@ -48,6 +49,7 @@ export class HeaderComponent implements OnInit {
   menuItems: Array<{ label: string; link: string }> = [];
   profileRoute = '/' + appPaths.profile;
 
+  sendReciveNotificationService = inject(SendReciveNotificationService);
   menuService = inject(MenuService);
   appSetting = inject(AppService);
   router = inject(Router);
@@ -56,7 +58,9 @@ export class HeaderComponent implements OnInit {
   sanitizer = inject(DomSanitizer);
   authenticationService = inject(AuthenticationService);
   userService = inject(UserService);
+
   profileFromSignal = this.userService.profileSignal;
+  notifications = this.sendReciveNotificationService.notifications;
 
   constructor() {
     this.initStore();
@@ -70,28 +74,7 @@ export class HeaderComponent implements OnInit {
 
   store: any;
   search = false;
-  notifications = [
-    {
-      id: 1,
-      profile: 'user-profile.jpeg',
-      message:
-        '<strong class="text-sm mr-1">John Doe</strong>invite you to <strong>Prototyping</strong>',
-      time: '45 min ago',
-    },
-    {
-      id: 2,
-      profile: 'profile-34.jpeg',
-      message:
-        '<strong class="text-sm mr-1">Adam Nolan</strong>mentioned you to <strong>UX Basics</strong>',
-      time: '9h Ago',
-    },
-    {
-      id: 3,
-      profile: 'profile-16.jpeg',
-      message: '<strong class="text-sm mr-1">Anna Morgan</strong>Upload a file',
-      time: '9h Ago',
-    },
-  ];
+
   messages = [
     {
       id: 1,
@@ -178,8 +161,8 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  removeNotification(value: number) {
-    this.notifications = this.notifications.filter((d) => d.id !== value);
+  removeNotification(value: string) {
+    this.sendReciveNotificationService.removeNotification(value);
   }
 
   removeMessage(value: number) {
@@ -198,6 +181,7 @@ export class HeaderComponent implements OnInit {
   }
 
   signOut() {
+    this.sendReciveNotificationService.leaveSignalRConnection();
     this.authenticationService.signOut();
   }
 

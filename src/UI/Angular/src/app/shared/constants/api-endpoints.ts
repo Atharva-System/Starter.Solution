@@ -35,4 +35,7 @@ export class APIs {
   static getTaskPriorityListApi = '/Task/priority-list';
   static getAssigneeListApi = '/Task/assignee-list';
   static getProjectListApi = '/Task/projects';
+
+  //SignalR
+  static getNotifications = 'notifications';
 }
