@@ -24,4 +24,10 @@ public class TaskListDto
     public string CreatedBy { get; set; }
     public DateTime? ModifiedOn { get; set; }
     public string ModifiedBy { get; set; }
+    public string StartDateDisplay { get; set; }
+    public string EndDateDisplay { get; set; }
+    public string StatusDisplay { get; set; }
+    public string PriorityDisplay { get; set; }
+    public string? ProjectName { get; set; }
+    public string? AssignedToName { get; set; }
 }
