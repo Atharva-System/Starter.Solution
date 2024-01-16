@@ -26,7 +26,7 @@
                 <div class="flex w-full flex-col gap-4 p-4 sm:flex-row sm:items-center">
                     <div class="flex items-center ltr:mr-3 rtl:ml-3">
                         <div class="group relative flex-1 mr-3">
-                            <button class="btn btn-primary w-full" type="button" @onclick="AddTask">
+                            <button class="btn btn-primary w-full" type="button" @onclick="AddTask" OnTaskSaved="HandleTaskSaved">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 shrink-0 ltr:mr-2 rtl:ml-2">
                                     <line x1="12" y1="5" x2="12" y2="19"></line>
                                     <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -149,6 +149,7 @@
     private bool isAuthenticated;
     public Guid EditTaskID;
     public bool IsEditMode;
+    public bool Save = false;
 
     private List<TaskListDto> Tasks = new List<TaskListDto>();
 
@@ -180,7 +181,7 @@
             { nameof(CreateTaskModel.StatusList), StatusList },
             { nameof(CreateTaskModel.PriorityList), PriorityList },
             { nameof(CreateTaskModel.AssigneeList), AssigneeList },
-            { nameof(CreateTaskModel.TaskDetails), new TaskListDto(){ Id = Guid.Empty } }
+            { nameof(CreateTaskModel.TaskDetails), new TaskListDto(){ Id = Guid.Empty,StartDate = DateTime.UtcNow,EndDate = DateTime.UtcNow.AddDays(2) } }
         });
     }
 
@@ -219,5 +220,12 @@
         {
 
         }
+    }
+
+    private async System.Threading.Tasks.Task HandleTaskSaved()
+    {
+        // Refresh the list of tasks
+        Tasks = await TaskService.GetTasklistsAsync(param);
+        StateHasChanged();
     }
 }

@@ -12,72 +12,82 @@
 @inject IModalService Modal
 
 <CascadingBlazoredModal>
-    <EditForm Model="@TaskDetails" OnValidSubmit="@(SaveTask)">
-        <DataAnnotationsValidator />
-        <div class="mb-5">
-            <label for="title">Title</label>
-            <InputText id="title" type="text" placeholder="Enter Task Title" class="form-input" @bind-Value="TaskDetails.TaskName" />
-        </div>
-        <div class="mb-5">
-            <label for="assignee">Assignee</label>
-            <InputSelect id="assignee" class="form-select" @bind-Value="TaskDetails">
-                <option value="0">Select Assignee</option>
-                @foreach (var Assignee in AssigneeList.Data)
-                {
-                    <option value="@Assignee.Id">@Assignee.Name</option>
-                }
-            </InputSelect>
-        </div>
-        <div class="mb-5 flex justify-between gap-4">
-            <div class="flex-1">
-                <label for="priority">Priority</label>
-                <InputSelect id="priority" class="form-select" placeholder="Select Priority" @bind-Value="TaskDetails.Priority">
-                    <option value="0">Select Priority</option>
-                    @foreach (var Priority in PriorityList.Data)
+    @if (TaskDetails != null)
+    {
+        <EditForm Model="@TaskDetails" OnValidSubmit="@(SaveTask)">
+            <DataAnnotationsValidator />
+            <div class="mb-5">
+                <label for="title">Title</label>
+                <InputText id="title" type="text" placeholder="Enter Task Title" class="form-input" @bind-Value="TaskDetails.TaskName" />
+                <ValidationMessage For="@(() => TaskDetails.TaskName)" />
+            </div>
+            <div class="mb-5">
+                <label for="assignee">Assignee</label>
+                <InputSelect id="assignee" class="form-select" @bind-Value="TaskDetails">
+                    <option value="0">Select Assignee</option>
+                    @foreach (var Assignee in AssigneeList.Data)
                     {
-                        <option value="@Priority.Id">@Priority.DisplayName</option>
+                        <option value="@Assignee.Id">@Assignee.Name</option>
                     }
                 </InputSelect>
             </div>
-        </div>
-        <div class="mb-5">
-            <label for="startDate">Start Date</label>
-            <InputDate id="startDate" class="form-input" @bind-Value="TaskDetails.StartDate" />
-        </div>
+            <div class="mb-5 flex justify-between gap-4">
+                <div class="flex-1">
+                    <label for="priority">Priority</label>
+                    <InputSelect id="priority" class="form-select" placeholder="Select Priority" @bind-Value="TaskDetails.Priority">
+                        <option value="0">Select Priority</option>
+                        @foreach (var Priority in PriorityList.Data)
+                        {
+                            <option value="@Priority.Id">@Priority.DisplayName</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="@(() => TaskDetails.Priority)" />
+                </div>
+            </div>
+            <div class="mb-5">
+                <label for="startDate">Start Date</label>
+                <InputDate id="startDate" class="form-input" @bind-Value="TaskDetails.StartDate" />
+                <ValidationMessage For="@(() => TaskDetails.StartDate)" />
+            </div>
 
-        <div class="mb-5">
-            <label for="endDate">End Date</label>
-            <InputDate id="endDate" class="form-input" @bind-Value="TaskDetails.EndDate" />
-        </div>
-        <div class="mb-5">
-            <label for="status">Status</label>
-            <InputSelect id="status" placeholder="Select Status" class="form-select" @bind-Value="TaskDetails.Status">
-                <option value="0">Select Status</option>
-                @foreach (var Status in StatusList.Data)
-                {
-                    <option value="@Status.Id">@Status.DisplayName</option>
-                }
-            </InputSelect>
-        </div>
-        <div class="mb-5">
-            <label for="projectId">Project</label>
-            <InputSelect id="projectId" placeholder="Enter Project" class="form-select" @bind-Value="projectIdString">
-                <option value="0">Select Project</option>
-                @foreach (var project in projectList.Data)
-                {
-                    <option value="@project.Id">@project.ProjectName</option>
-                }
-            </InputSelect>
+            <div class="mb-5">
+                <label for="endDate">End Date</label>
+                <InputDate id="endDate" class="form-input" @bind-Value="TaskDetails.EndDate" />
+                <ValidationMessage For="@(() => TaskDetails.EndDate)" />
+            </div>
+            <div class="mb-5">
+                <label for="status">Status</label>
+                <InputSelect id="status" placeholder="Select Status" class="form-select" @bind-Value="TaskDetails.Status">
+                    <option value="0">Select Status</option>
+                    @foreach (var Status in StatusList.Data)
+                    {
+                        <option value="@Status.Id">@Status.DisplayName</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => TaskDetails.Status)" />
+            </div>
+            <div class="mb-5">
+                <label for="projectId">Project</label>
+                <InputSelect id="projectId" placeholder="Enter Project" class="form-select" @bind-Value="projectIdString">
+                    <option value="0">Select Project</option>
+                    @foreach (var project in projectList.Data)
+                    {
+                        <option value="@project.Id">@project.ProjectName</option>
+                    }
+                </InputSelect>
+            <ValidationMessage For="@(() => TaskDetails.ProjectId)" />
         </div>
         <div class="mb-5">
             <label>Description</label>
             <InputText class="form-input" @bind-Value="TaskDetails.Description" Placeholder="Enter Description here" />
+            <ValidationMessage For="@(() => TaskDetails.Description)" />
         </div>
         <div class="mt-8 flex items-center justify-end ltr:text-right rtl:text-left">
             <button type="button" class="btn btn-outline-danger" @onclick="@(Cancel)">Cancel</button>
             <button type="submit" class="btn btn-primary ltr:ml-4 rtl:mr-4">@buttonText</button>
         </div>
     </EditForm>
+    }
 </CascadingBlazoredModal>
 
 @code {
@@ -91,6 +101,9 @@
     [Parameter] public ApiResponse<List<EnumTypeViewDto>> PriorityList { get; set; }
     [Parameter] public ApiResponse<List<TaskAssigneeDto>> AssigneeList { get; set; }
     [Parameter] public TaskListDto TaskDetails { get; set; }
+
+    [Parameter] public EventCallback OnTaskSaved { get; set; }
+
 
     protected override async void OnInitialized()
     {
@@ -121,6 +134,7 @@
         {
             Console.WriteLine($"Error: {ex.Message}");
         }
+       await OnTaskSaved.InvokeAsync();
         await BlazoredModal.CloseAsync();
         StateHasChanged();
     }
