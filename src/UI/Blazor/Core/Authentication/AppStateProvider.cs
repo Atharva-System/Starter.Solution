@@ -50,6 +50,10 @@ public class AppStateProvider : AuthenticationStateProvider
         {
             return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
         }
+        if (!_httpClient.DefaultRequestHeaders.Contains("request-source"))
+        {
+            _httpClient.DefaultRequestHeaders.Add("request-source", "blazor");
+        }
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", savedToken);
         var state = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(GetClaimsFromJWT(savedToken), "jwt")));
         AuthenticationStateUser = state.User;
