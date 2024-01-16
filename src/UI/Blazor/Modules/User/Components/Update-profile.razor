@@ -50,7 +50,7 @@
                                 </div>
                                 <div>
                                     <label for="email">Email</label>
-                                    <InputText id="email" type="email" placeholder="Jimmy@gmail.com" class="form-input" @bind-Value="UpdateProfile.Email" />
+                                    <InputText id="email" type="email" placeholder="Jimmy@gmail.com" class="form-input" @bind-Value="UpdateProfile.Email" disabled />
                                     <ValidationMessage For="@(() => UpdateProfile.Email)" />
                                 </div>
                                 <div class="mt-3 sm:col-span-2">

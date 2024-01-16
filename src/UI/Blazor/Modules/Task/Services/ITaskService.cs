@@ -8,12 +8,14 @@ namespace Starter.Blazor.Modules.Task.Services;
 
 public interface ITaskService : IModalService
 {
-    Task<string> CreateTaskAsync(TaskDetailsDto dto);
+    Task<string> CreateTaskAsync(TaskListDto dto);
+    Task<string> UpdateTaskAsync(Guid Id, TaskListDto dto);
     List<ProjectListDto> Projects { get; }
     Task<List<TaskListDto>> GetTasklistsAsync(PaginationRequest param);
-    Task<List<ProjectListDto>> GetProjectlistsAsync();
-    Task<TaskListDto> GetTaskDetails(Guid Id);
+    Task<ApiResponse<List<ProjectListDto>>> GetProjectlistsAsync();
+    Task<ApiResponse<TaskListDto>> GetTaskDetails(Guid Id);
     Task<TaskListDto> DeleteTaskAsync(Guid Id);
     Task<ApiResponse<List<EnumTypeViewDto>>> GetStatuslistsAsync();
     Task<ApiResponse<List<EnumTypeViewDto>>> GetPrioritylistsAsync();
+    Task<ApiResponse<List<TaskAssigneeDto>>> GetAssigneeListAsync();
 }
