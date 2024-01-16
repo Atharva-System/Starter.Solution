@@ -1,128 +1,86 @@
-﻿using System.Net;
-using System.Net.Http;
-using System.Net.Http.Json;
-using Starter.Blazor.Core.Response;
+﻿using Starter.Blazor.Core.Response;
+using Starter.Blazor.Core.Routes;
+using Starter.Blazor.Core.Services.IServices;
 using Starter.Blazor.Modules.Common;
 using Starter.Blazor.Modules.Projects.Models;
 using Starter.Blazor.Shared.Response;
 
 namespace Starter.Blazor.Modules.Projects.Services;
 
-public class ProjectService(HttpClient http) : IProjectService
+public class ProjectService(IApiHandler api, INotificationService notificationService) : IProjectService
 {
-    private readonly HttpClient _http = http;
+    private readonly IApiHandler _api = api;
+    private readonly INotificationService _notificationService = notificationService;
 
     public async Task<ApiResponse<string>> AddProjectAsync(AddEditProject projectDto)
     {
         try
         {
-            var result = await _http.PostAsJsonAsync("Project/Create", projectDto);
-
-            var newResponse = await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
-
-            if (newResponse != null && newResponse.Success)
-            {
-                return newResponse;
-            }
-            else
-            {
-                return new ApiResponse<string>
-                {
-                    Success = false,
-                    Message = newResponse.Message,
-                };
-            }
+            return await _api.Post<ApiResponse<string>, AddEditProject>(ProjectEndpoints.Add, projectDto);
         }
-        catch (Exception ex)
+        catch(Exception ex)
         {
-            Console.WriteLine($"Error: {ex.Message}");
-            return new ApiResponse<string>
-            {
-                Success = false,
-            };
+            var errorResponse = await _api.ConvertStringToResponse<ApiResponse<string>>(ex.Message);
+            await _notificationService.Message(errorResponse.Message);
+            errorResponse.Data = null;
+            return errorResponse;// Return null or handle error case appropriately
         }
     }
 
     public async Task<ApiResponse<string>> EditProject(ProjectDto projectDto)
     {
-        var result = await _http.PutAsJsonAsync($"Project/{projectDto.Id}", projectDto);
-
-        var response = await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
-
-        if(response  != null && response.Success)
+        try
         {
-            return response!;
+            return await _api.Put<ApiResponse<string>, ProjectDto>(ProjectEndpoints.Update(projectDto.Id), projectDto);
         }
-        else
+        catch (Exception ex)
         {
-            return new ApiResponse<string>
-            {
-                Success = false,
-                Message = response.Message,
-            };
+            var errorResponse = await _api.ConvertStringToResponse<ApiResponse<string>>(ex.Message);
+            await _notificationService.Message(errorResponse.Message);
+            return errorResponse;// Return null or handle error case appropriately
         }
-
     }
 
     public async Task<ApiResponse<ProjectDetailsDto>> GetProjectDetails(string id)
     {
-        return await _http.GetFromJsonAsync<ApiResponse<ProjectDetailsDto>>($"Project/{id}");
+        try
+        {
+            return await _api.Get<ApiResponse<ProjectDetailsDto>>(ProjectEndpoints.GetDetails(id));
+        }
+        catch (Exception ex)
+        {
+            var errorResponse = await _api.ConvertStringToResponse<ApiResponse<object>>(ex.Message);
+            await _notificationService.Failure(errorResponse.Messages);
+            return null;// Return null or handle error case appropriately
+        }
     }
 
     public async Task<PagedDataResponse<List<ProjectDto>>> GetProjectlistsAsync(PaginationRequest param)
     {
         try
         {
-            var response = await _http.PostAsJsonAsync("Project/search", param);
-            response.EnsureSuccessStatusCode();
-
-            var result = await response.Content.ReadFromJsonAsync<PagedDataResponse<List<ProjectDto>>>();
-            return result;
+            return await _api.Post<PagedDataResponse<List<ProjectDto>>, PaginationRequest>(ProjectEndpoints.GetList, param);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error: {ex.Message}");
-            return null;
+            var errorResponse = await _api.ConvertStringToResponse<ApiResponse<object>>(ex.Message);
+            await _notificationService.Failure(errorResponse.Messages);
+            return null;// Return null or handle error case appropriately
         }
     }
-   
-    //public async Task<ApiResponse<string>> DeleteProject(ProjectDto project)
-    //{
-    //    var result = await _http.DeleteAsync($"Project/{project.Id}");
-
-    //    var newResponse = await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
-
-    //    if (newResponse != null && newResponse.Success)
-    //    {
-    //        return newResponse;
-    //    }
-    //    else
-    //    {
-    //        return new ApiResponse<string>
-    //        {
-    //            Success = false,
-    //            Messages = newResponse.Messages,
-    //        };
-    //    }
-    //}
 
     public async Task<ApiResponse<string>> DeleteProject(string id)
     {
-        var result = await _http.DeleteAsync($"Project/{id}");
-
-        var newResponse = await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
-
-        if (newResponse != null && newResponse.Success)
+        try
         {
-            return newResponse;
+            return await _api.Delete<ApiResponse<string>>(ProjectEndpoints.Delete(id));
         }
-        else
+        catch (Exception ex)
         {
-            return new ApiResponse<string>
-            {
-                Success = false,
-                Messages = newResponse.Messages,
-            };
+            var errorResponse = await _api.ConvertStringToResponse<ApiResponse<string>>(ex.Message);
+            await _notificationService.Failure(errorResponse.Messages);
+            errorResponse.Data = null;
+            return errorResponse;// Return null or handle error case appropriately
         }
     }
 }
