@@ -59,24 +59,24 @@ public class TaskServices(HttpClient http) : ModalService, ITaskService
         }
     }
 
-    public async Task<List<TaskListDto>> GetTasklistsAsync(PaginationRequest param)
+    public async Task<PagedDataResponse<List<TaskListDto>>> GetTasklistsAsync(PaginationRequest param)
     {
         try
         {
             var response = await _httpClient.PostAsJsonAsync("Task/search", param);
             response.EnsureSuccessStatusCode();
 
-            var result = await response.Content.ReadFromJsonAsync<PagedDataResponse<List<TaskListDto>>>();
-            return result?.Data ?? [];
+            return await response.Content.ReadFromJsonAsync<PagedDataResponse<List<TaskListDto>>>();
+            
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error: {ex.Message}");
-            return [];
+            return null;
         }
     }
 
-    public async Task<ApiResponse<TaskListDto>> GetTaskDetails(Guid Id)
+    public async Task<ApiResponse<TaskListDto>> GetTaskDetails(string Id)
     {
         try
         {
@@ -93,14 +93,14 @@ public class TaskServices(HttpClient http) : ModalService, ITaskService
         }
     }
 
-    public async Task<TaskListDto> DeleteTaskAsync(Guid Id)
+    public async Task<ApiResponse<TaskListDto>> DeleteTaskAsync(string Id)
     {
         try
         {
             var response = await _httpClient.DeleteAsync($"Task/{Id}");
             response.EnsureSuccessStatusCode();
 
-            var result = await response.Content.ReadFromJsonAsync<TaskListDto>();
+            var result = await response.Content.ReadFromJsonAsync<ApiResponse<TaskListDto>>();
             return result;
         }
         catch (Exception ex)
