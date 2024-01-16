@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Starter.Application.Contracts.Application;
@@ -6,6 +7,7 @@ using Starter.Application.Interfaces;
 using Starter.InfraStructure.BackgroundJobs;
 using Starter.InfraStructure.Caching;
 using Starter.InfraStructure.Cors;
+using Starter.InfraStructure.Hub;
 using Starter.InfraStructure.Mailing;
 using Starter.InfraStructure.Services;
 
@@ -17,7 +19,7 @@ public static class InfrastructureServiceExtensions
     {
         services
        .AddServices()
-       .AddMailing(configuration)       
+       .AddMailing(configuration)
        .AddBackgroundJobs(configuration)
        .AddCaching(configuration)
        .AddScoped<IDateTimeService, DateTimeService>();
@@ -77,5 +79,21 @@ public static class InfrastructureServiceExtensions
     {
         return builder
             .UseHangfireDashboard(config);
+    }
+
+    public static IEndpointRouteBuilder UseInfraEndpoints(this IEndpointRouteBuilder builder)
+    {
+        builder.MapNotifications();
+        return builder;
+    }
+
+    internal static IEndpointRouteBuilder MapNotifications(this IEndpointRouteBuilder endpoints)
+    {
+        endpoints.MapHub<NotificationHub>("/notifications", options =>
+        {
+            options.CloseOnAuthenticationExpiration = true;
+        });
+
+        return endpoints;
     }
 }

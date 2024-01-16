@@ -12,6 +12,7 @@ import { ResetPasswordComponent } from './modules/auth/pages/reset-password/rese
 import { ProfileComponent } from './modules/user/pages/profile/profile.component';
 import { ListProjectsComponent } from './modules/project/pages/list-projects/list-projects.component';
 import { ListTasksComponent } from './modules/task/pages/list-tasks/list-tasks.component';
+import { TaskDetailsComponent } from './modules/task/pages/task-details/task-details.component';
 
 export const routes: Routes = [
   {
@@ -42,6 +43,11 @@ export const routes: Routes = [
         path: appPaths.tasks,
         component: ListTasksComponent,
         title: pageTitle.tasks,
+      },
+      {
+        path: appPaths.tasksDetails,
+        component: TaskDetailsComponent,
+        title: pageTitle.tasksDetails,
       },
     ],
     canActivate: [AuthGuard],
