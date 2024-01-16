@@ -98,11 +98,10 @@
     private PagedDataResponse<List<UserlistDto>> DisplayedData = new PagedDataResponse<List<UserlistDto>>();
 
     private bool IsModalOpen = false;
-    [Inject]
-    public HttpInterceptorService Interceptor { get; set; }
+
     protected override void OnInitialized()
     {
-        Interceptor.RegisterEvent();
+        _httpInterceptor.RegisterEvent();
         Task.WhenAll(LoadData(1, 5, null));
     }
     private async Task PageSizeChanged(int pageNumber, int pageSize, string[] OrderBy)

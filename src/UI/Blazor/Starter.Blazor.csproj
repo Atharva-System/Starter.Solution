@@ -1,12 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <ItemGroup>
+    <Compile Remove="Modules\Login\Page\**" />
     <Compile Remove="Modules\Settings\**" />
     <Compile Remove="Modules\Users\**" />
+    <Content Remove="Modules\Login\Page\**" />
     <Content Remove="Modules\Settings\**" />
     <Content Remove="Modules\Users\**" />
+    <EmbeddedResource Remove="Modules\Login\Page\**" />
     <EmbeddedResource Remove="Modules\Settings\**" />
     <EmbeddedResource Remove="Modules\Users\**" />
+    <None Remove="Modules\Login\Page\**" />
     <None Remove="Modules\Settings\**" />
     <None Remove="Modules\Users\**" />
 	
@@ -35,10 +39,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Modules\Login\Page\" />
     <Folder Include="Modules\Users\" />
     <Folder Include="Modules\ForgotPassword\" />
-    <Folder Include="Modules\ResetPassword\" />
+     <Folder Include="Modules\ResetPassword\" />
     <Folder Include="Shared\Components\Button\" />
     <Folder Include="Shared\Components\Grid\" />
     <Folder Include="Shared\Utility\" />

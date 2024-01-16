@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 
 namespace Starter.Blazor.Modules.ForgotPassword.Services;
 
-public class ForgotPasswordService
+public class ForgotPasswordService : IForgotPasswordService
 {
     private readonly HttpClient _httpClient;
 

@@ -1,40 +1,48 @@
 ﻿using System.Net.Http.Json;
+using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components;
 using Starter.Blazor.Core.Response;
+using Starter.Blazor.Core.Services.IServices;
 using Starter.Blazor.Modules.ChangePassword.Model;
+using Starter.Blazor.Core.Routes;
+using Starter.Blazor.Core.Constants;
 
 namespace Starter.Blazor.Modules.ChangePassword.Services;
 
-public class ChangePasswordServices(HttpClient http) : IChangePasswordServices
+public class ChangePasswordServices : IChangePasswordServices
 {
-    private readonly HttpClient _httpClient = http;
+    private readonly IApiHandler _apiHandler;
+    private readonly ILocalStorageService _localStorageService;
+    private readonly AuthenticationStateProvider _authenticationStateProvider;
+    private readonly INotificationService _notificationService;
 
-    public async Task<ApiResponse<string>> ChangePasswordAsync(ChangePasswordRequest chnagePassword)
+    public ChangePasswordServices(
+        IApiHandler apiHandler,
+        ILocalStorageService localStorageService,
+        AuthenticationStateProvider authenticationStateProvider,
+        INotificationService notificationService,
+        NavigationManager navManager)
+    {
+        _apiHandler = apiHandler;
+        _localStorageService = localStorageService;
+        _authenticationStateProvider = authenticationStateProvider;
+        _notificationService = notificationService;
+    }
+
+    public async Task<ChangePasswordResponse> ChangePasswordAsync(ChangePasswordRequest chnagePassword)
     {
         try
         {
-            var response = await _httpClient.PostAsJsonAsync("api/Auth/changePassword", chnagePassword);
-            var newResponse = await response.Content.ReadFromJsonAsync<ApiResponse<string>>();
-
-            if (newResponse != null && newResponse.Success)
-            {
-                return newResponse;
-            }
-            else
-            {
-                return new ApiResponse<string>
-                {
-                    Success = false,
-                    Messages = newResponse.Messages,
-                };
-            }
+            var response = await _apiHandler.Post<ChangePasswordResponse, ChangePasswordRequest>(IdentityEndpoints.ChangePassword, chnagePassword);
+            await _notificationService.Success(response.Message);
+            return response;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error: {ex.Message}");
-            return new ApiResponse<string>
-            {
-                Success = false,
-            };
+            var errorResponse = await _apiHandler.ConvertStringToResponse<ApiResponse<object>>(ex.Message);
+            await _notificationService.Failure(errorResponse.Messages);
+            return new ChangePasswordResponse { Message = String.Join(",", errorResponse.Messages), Success = errorResponse.Success };
         }
     }
 }

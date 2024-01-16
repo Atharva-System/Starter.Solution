@@ -1,5 +1,5 @@
 ﻿@inherits LayoutComponentBase
-@inject NavigationManager NavigationManager
+@inject AppStateProvider appState
 
 
 
@@ -41,27 +41,28 @@
 @* <ThemeCustomizer></ThemeCustomizer> *@
 
 <div class="main-container min-h-screen text-black dark:text-white-dark" :class="[$store.app.navbar]">
-    @if (!IsLoginPage()) // Conditionally render based on login page
-    {
-        <NavMenu></NavMenu>
-        <div class="main-content">
-            <Header></Header>
-
-            <div class="animate__animated p-6 [$store.app.animation]">
-                @Body
-                <Footer />
-            </div>
+    <NavMenu></NavMenu>
+    <div class="main-content">
+        <Header></Header>
+    
+        <div class="animate__animated p-6 [$store.app.animation]">
+            @Body
+            <Footer />
         </div>
-    }
-    else
-    {
-        @Body
-    }
+    </div>
 </div>
 
 
 @code {
-    bool IsLoginPage() => NavigationManager.Uri.Contains("login", StringComparison.OrdinalIgnoreCase);
+    protected override async void OnInitialized()
+    {
+        base.OnInitialized();
+        var user = await appState.GetAuthenticationStateProviderUserAsync();
+        if(user == null || user.Identities == null || !user.Identity.IsAuthenticated)
+        {
+            _navManager.NavigateTo("/");
+        }
+    }
 }
 
 
