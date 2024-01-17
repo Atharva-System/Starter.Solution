@@ -58,8 +58,8 @@
             </div>
             <div class="mb-5">
                 <label for="projectId">Project</label>
-                <InputSelect id="projectId" placeholder="Enter Project" class="form-select" @bind-Value="projectIdString">
-                    <option value="0">Select Project</option>
+                <InputSelect id="projectId" class="form-select" @bind-Value="projectIdString">
+                    <option value="">Select Project</option>
                     @foreach (var project in projectList.Data)
                     {
                         <option value="@project.Id">@project.ProjectName</option>
@@ -136,7 +136,7 @@
 
     private string projectIdString
     {
-        get => TaskDetails.ProjectId.ToString();
+        get => TaskDetails.ProjectId.ToString() ?? "";
         set
         {
             if (Guid.TryParse(value, out var result))
