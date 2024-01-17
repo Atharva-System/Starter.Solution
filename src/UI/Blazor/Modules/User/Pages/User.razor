@@ -50,7 +50,7 @@
                         </div>
                         <div class="flex space-x-2 ">
                             <button class="btn btn-danger w-full" @onclick="CloseModal">Close</button>
-                            <button type="submit" class="btn btn-primary w-full">
+                            <button type="submit" class="btn btn-primary w-full" disabled="@(isProcessing)">
                                 @if (isEditing)
                                 {
                                     <span>Update</span>
@@ -83,6 +83,7 @@
 
 @code {
     private bool isEditing = false;
+    private bool isProcessing = false;
     private readonly string toastScriptConstant = @"
         const toast = window.Swal.mixin({
             toast: true,
@@ -151,6 +152,7 @@
         userlistDto.Email = inviteUser.Email;
         userlistDto.Id = inviteUser.Id;
         var result = await UserService.UpdateUserAsync(userlistDto);
+        isProcessing = true;
 
         if (result.Success)
         {
@@ -160,12 +162,14 @@
             inviteUser.Email = string.Empty;
             inviteUser.Id = string.Empty;
             isEditing = false;
+            isProcessing = false;
             await ToggleModal();
             await LoadData(1, 5, null);
         }
         else
         {
             showToaster(result.Messages.FirstOrDefault(), "top");
+            this.isProcessing = false;
         }
     }
 
@@ -203,9 +207,11 @@
     {
         if (!isEditing)
         {
+            isProcessing = true;
             var result = await UserService.InviteUserAsync(inviteUser);
             if (result.Success)
             {
+                isProcessing = false;
                 showToaster(result.Data, "top");
 
                 inviteUser.FirstName = string.Empty;
@@ -218,6 +224,7 @@
             }
             else
             {
+                isProcessing = false;
                 showToaster(result.Messages.FirstOrDefault(), "top");
             }
         }
