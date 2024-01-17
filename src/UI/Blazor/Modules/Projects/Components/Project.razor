@@ -134,6 +134,7 @@
 
     protected override void OnInitialized()
     {
+        _httpInterceptor.RegisterEvent();
         Task.WhenAll(LoadData(1, 5, null));
     }
     private async Task PageSizeChanged(int pageNumber, int pageSize, string[] OrderBy)
