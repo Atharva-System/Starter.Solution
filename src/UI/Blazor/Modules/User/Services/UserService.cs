@@ -126,6 +126,7 @@ public class UserService(IApiHandler api, ILocalStorageService localStorageServi
         try
         {
             userDto.Id = await _localStorageService.GetItemAsync<string>(StorageConstants.Local.Id);
+            await _notificationService.Success("Update Profile update successful");
             return await _api.Put<ApiResponse<string>, UpdateProfileDto>(UserEndpoints.UpdateUserProfile(userDto.Id), userDto);
         }
         catch (Exception ex)
