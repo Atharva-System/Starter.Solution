@@ -1,7 +1,7 @@
 ﻿@using Starter.Blazor.Layout.Pagenotfound
 @using Starter.Blazor.Layout.Public
 <CascadingAuthenticationState>
-    <CascadingBlazoredModal>
+    <CascadingBlazoredModal DisableBackgroundCancel="true">
         <Router AppAssembly="@typeof(App).Assembly">
             <Found Context="routeData">
                 <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">

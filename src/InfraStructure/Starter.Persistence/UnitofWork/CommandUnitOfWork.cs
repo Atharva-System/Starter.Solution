@@ -12,15 +12,12 @@ public class CommandUnitOfWork : ICommandUnitOfWork
 {
     private readonly AppDbContext _appDbContext;
     private Hashtable _repositories;
-    private readonly IPublisher _publisher;
-
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    public CommandUnitOfWork(AppDbContext appDbContext, IPublisher publisher)
+    public CommandUnitOfWork(AppDbContext appDbContext)
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     {
         _appDbContext = appDbContext;
-        _publisher = publisher;
     }
 
     //public TodoCommandRepository _todoCommandRepository;
@@ -30,21 +27,7 @@ public class CommandUnitOfWork : ICommandUnitOfWork
     public async Task<int> SaveAsync(CancellationToken cancellationToken)
     {
         var result = await _appDbContext.SaveChangesAsync(cancellationToken);
-        await SendDomainEventsAsync();
         return result;
-    }
-
-    private async Task SendDomainEventsAsync()
-    {
-        var domainEvents = _appDbContext.ChangeTracker.Entries<BaseEntity>()
-            .Select(e => e.Entity)
-            .Where(e => e.DomainEvents.Any())
-            .SelectMany(x => x.DomainEvents);
-
-        foreach (var domainEvent in domainEvents)
-        {
-            await _publisher.Publish(domainEvent);
-        }
     }
 
     public ICommandRepository<TEntity> CommandRepository<TEntity>() where TEntity : BaseEntity, new()

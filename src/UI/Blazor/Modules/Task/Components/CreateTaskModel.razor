@@ -11,7 +11,7 @@
 @inject ITaskService TaskService
 @inject IModalService Modal
 
-<CascadingBlazoredModal>
+<CascadingBlazoredModal DisableBackgroundCancel="true">
     @if (TaskDetails != null)
     {
         <EditForm Model="@TaskDetails" OnValidSubmit="@(SaveTask)">
@@ -20,16 +20,6 @@
                 <label for="title">Title</label>
                 <InputText id="title" type="text" placeholder="Enter Task Title" class="form-input" @bind-Value="TaskDetails.TaskName" />
                 <ValidationMessage For="@(() => TaskDetails.TaskName)" />
-            </div>
-            <div class="mb-5">
-                <label for="assignee">Assignee</label>
-                <InputSelect id="assignee" class="form-select" @bind-Value="TaskDetails">
-                    <option value="0">Select Assignee</option>
-                    @foreach (var Assignee in AssigneeList.Data)
-                    {
-                        <option value="@Assignee.Id">@Assignee.Name</option>
-                    }
-                </InputSelect>
             </div>
             <div class="mb-5 flex justify-between gap-4">
                 <div class="flex-1">
@@ -75,18 +65,18 @@
                         <option value="@project.Id">@project.ProjectName</option>
                     }
                 </InputSelect>
-            <ValidationMessage For="@(() => TaskDetails.ProjectId)" />
-        </div>
-        <div class="mb-5">
-            <label>Description</label>
-            <InputText class="form-input" @bind-Value="TaskDetails.Description" Placeholder="Enter Description here" />
-            <ValidationMessage For="@(() => TaskDetails.Description)" />
-        </div>
-        <div class="mt-8 flex items-center justify-end ltr:text-right rtl:text-left">
-            <button type="button" class="btn btn-outline-danger" @onclick="@(Cancel)">Cancel</button>
-            <button type="submit" class="btn btn-primary ltr:ml-4 rtl:mr-4">@buttonText</button>
-        </div>
-    </EditForm>
+                <ValidationMessage For="@(() => TaskDetails.ProjectId)" />
+            </div>
+            <div class="mb-5">
+                <label>Description</label>
+                <InputText class="form-input" @bind-Value="TaskDetails.Description" Placeholder="Enter Description here" />
+                <ValidationMessage For="@(() => TaskDetails.Description)" />
+            </div>
+            <div class="flex space-x-2 ">
+                <button class="btn btn-danger w-full" @onclick="@(Cancel)">Close</button>
+                <button type="submit" class="btn btn-primary w-full"><span>@buttonText</span></button>
+            </div>
+        </EditForm>
     }
 </CascadingBlazoredModal>
 
@@ -102,14 +92,13 @@
     [Parameter] public ApiResponse<List<TaskAssigneeDto>> AssigneeList { get; set; }
     [Parameter] public TaskListDto TaskDetails { get; set; }
 
-    [Parameter] public EventCallback OnTaskSaved { get; set; }
-
+    [Parameter] public EventCallback<TaskListDto> OnTaskSaved { get; set; }
 
     protected override async void OnInitialized()
     {
         if (TaskDetails.Id == Guid.Empty)
         {
-            buttonText = "Add";
+            buttonText = "Create";
         }
         else
         {
@@ -134,7 +123,7 @@
         {
             Console.WriteLine($"Error: {ex.Message}");
         }
-       await OnTaskSaved.InvokeAsync();
+        await OnTaskSaved.InvokeAsync(TaskDetails);
         await BlazoredModal.CloseAsync();
         StateHasChanged();
     }
