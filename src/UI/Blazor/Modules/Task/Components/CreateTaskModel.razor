@@ -11,7 +11,7 @@
 @inject ITaskService TaskService
 @inject IModalService Modal
 
-<CascadingBlazoredModal DisableBackgroundCancel="true">
+<CascadingBlazoredModal DisableBackgroundCancel="true" HideCloseButton="true">
     @if (TaskDetails != null)
     {
         <EditForm Model="@TaskDetails" OnValidSubmit="@(SaveTask)">
@@ -73,7 +73,7 @@
                 <ValidationMessage For="@(() => TaskDetails.Description)" />
             </div>
             <div class="flex space-x-2 ">
-                <button class="btn btn-danger w-full" @onclick="@(Cancel)">Close</button>
+                <button type="button" class="btn btn-danger w-full" @onclick="Cancel">Close</button>
                 <button type="submit" class="btn btn-primary w-full"><span>@buttonText</span></button>
             </div>
         </EditForm>
@@ -118,14 +118,15 @@
             {
                 var response = await TaskService.UpdateTaskAsync(TaskDetails.Id, TaskDetails);
             }
+
+            await BlazoredModal.CloseAsync();
+            await OnTaskSaved.InvokeAsync(TaskDetails);
+            StateHasChanged();
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error: {ex.Message}");
         }
-        await OnTaskSaved.InvokeAsync(TaskDetails);
-        await BlazoredModal.CloseAsync();
-        StateHasChanged();
     }
 
     private async void Cancel()
