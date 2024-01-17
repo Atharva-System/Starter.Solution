@@ -11,7 +11,7 @@
 @inject ITaskService TaskService
 @inject IModalService Modal
 
-<CascadingBlazoredModal>
+<CascadingBlazoredModal DisableBackgroundCancel="true">
     @if (TaskDetails != null)
     {
         <EditForm Model="@TaskDetails" OnValidSubmit="@(SaveTask)">
@@ -65,18 +65,18 @@
                         <option value="@project.Id">@project.ProjectName</option>
                     }
                 </InputSelect>
-            <ValidationMessage For="@(() => TaskDetails.ProjectId)" />
-        </div>
-        <div class="mb-5">
-            <label>Description</label>
-            <InputText class="form-input" @bind-Value="TaskDetails.Description" Placeholder="Enter Description here" />
-            <ValidationMessage For="@(() => TaskDetails.Description)" />
-        </div>
-        <div class="mt-8 flex items-center justify-end ltr:text-right rtl:text-left">
-            <button type="button" class="btn btn-outline-danger" @onclick="@(Cancel)">Cancel</button>
-            <button type="submit" class="btn btn-primary ltr:ml-4 rtl:mr-4">@buttonText</button>
-        </div>
-    </EditForm>
+                <ValidationMessage For="@(() => TaskDetails.ProjectId)" />
+            </div>
+            <div class="mb-5">
+                <label>Description</label>
+                <InputText class="form-input" @bind-Value="TaskDetails.Description" Placeholder="Enter Description here" />
+                <ValidationMessage For="@(() => TaskDetails.Description)" />
+            </div>
+            <div class="flex space-x-2 ">
+                <button class="btn btn-danger w-full" @onclick="@(Cancel)">Close</button>
+                <button type="submit" class="btn btn-primary w-full"><span>@buttonText</span></button>
+            </div>
+        </EditForm>
     }
 </CascadingBlazoredModal>
 
@@ -98,7 +98,7 @@
     {
         if (TaskDetails.Id == Guid.Empty)
         {
-            buttonText = "Add";
+            buttonText = "Create";
         }
         else
         {
