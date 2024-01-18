@@ -1,8 +1,9 @@
-﻿using Starter.Blazor.Modules.ResetPassword.Models;
+﻿using Starter.Blazor.Core.Response;
+using Starter.Blazor.Modules.ResetPassword.Models;
 
 namespace Starter.Blazor.Modules.ResetPassword.Services;
 
 public interface IResetPasswordService
 {
-    Task<string> ResetPasswordAsync(ResetPasswordDto resetPassword);
+    Task<ApiResponse<string>> ResetPasswordAsync(ResetPasswordDto resetPassword);
 }
