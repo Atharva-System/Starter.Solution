@@ -40,10 +40,10 @@
 
 @* <ThemeCustomizer></ThemeCustomizer> *@
 
-<div class="main-container min-h-screen text-black dark:text-white-dark" :class="[$store.app.navbar]">
+<div class="main-container min-h-screen text-black dark:text-white-dark" :class="[$store.app.navbar]" @onclick="HideShowDropdown">
     <NavMenu></NavMenu>
     <div class="main-content">
-        <Header></Header>
+        <Header @ref="childComponentRef"></Header>
     
         <div class="animate__animated p-6 [$store.app.animation]">
             @Body
@@ -53,7 +53,9 @@
 </div>
 
 
+
 @code {
+    private Header childComponentRef;
     protected override async void OnInitialized()
     {
         base.OnInitialized();
@@ -61,6 +63,17 @@
         if(user == null || user.Identities == null || !user.Identity.IsAuthenticated)
         {
             _navManager.NavigateTo("/");
+        }
+    }
+    public void HideShowDropdown()
+    {
+        if (childComponentRef.IsDropdownOpenEnd)
+        {
+            childComponentRef.ToggleDropdown(!childComponentRef.IsDropdownOpenEnd);
+        }
+        else
+        {
+            childComponentRef.IsDropdownOpenEnd = true;
         }
     }
 }
