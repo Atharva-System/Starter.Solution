@@ -23,7 +23,7 @@
             </div>
             <div class="mb-5">
                 <label for="Assignee">Assignee</label>
-                <InputSelect id="Assignee" placeholder="Select Assignee" class="form-select" @bind-Value="TaskDetails.AssignedToName">
+                <InputSelect id="Assignee" placeholder="Select Assignee" class="form-select" @bind-Value="TaskDetails.AssignedTo">
                     <option value="0">Select Status</option>
                     @foreach (var data in AssigneeList.Data)
                     {
