@@ -27,7 +27,14 @@
         <div class="flex items-center justify-center min-h-screen px-4">
             <div x-transition x-transition.duration.300 class="panel border-0 py-1 px-4 rounded-lg overflow-hidden w-full max-w-sm my-8">
                 <div class="flex items-center justify-between p-5 font-semibold text-lg dark:text-white">
-                    Add Project
+                    @if (isEditing)
+                    {
+                        <span>Update Project</span>
+                    }
+                    else
+                    {
+                        <span>Add Project</span>
+                    }
                 </div>
                 <!-- form -->
                 <div class="p-5">
@@ -114,7 +121,7 @@
     private List<Dictionary<string, string>> headerInfo = new List<Dictionary<string, string>>
     {
         new Dictionary<string, string> { {"Name", "Name"}, {"Key","ProjectName"}, {"CssClass", ""}, {"ShowSorting", "true"}, {"SorderOrder","asc" }, {"ShowFilter", "false"},{"SpanTd","" } },
-        new Dictionary<string, string> { { "Name", "Description" }, { "Key", "Description" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" } },
+        //new Dictionary<string, string> { { "Name", "Description" }, { "Key", "Description" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" } },
         new Dictionary<string, string> { { "Name", "Start Date" }, { "Key", "StartDateDisplay" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" } },
         new Dictionary<string, string> { { "Name", "End Date" }, { "Key", "EndDateDisplay" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" }},
         new Dictionary<string, string> { { "Name", "Hours" }, { "Key", "EstimatedHours" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" }},
