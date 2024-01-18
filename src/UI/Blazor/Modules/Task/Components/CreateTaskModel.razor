@@ -21,6 +21,17 @@
                 <InputText id="title" type="text" placeholder="Enter Task Title" class="form-input" @bind-Value="TaskDetails.TaskName" />
                 <ValidationMessage For="@(() => TaskDetails.TaskName)" />
             </div>
+            <div class="mb-5">
+                <label for="Assignee">Assignee</label>
+                <InputSelect id="Assignee" placeholder="Select Assignee" class="form-select" @bind-Value="TaskDetails.AssignedToName">
+                    <option value="0">Select Status</option>
+                    @foreach (var data in AssigneeList.Data)
+                    {
+                        <option value="@data.Id">@data.Name</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => TaskDetails.Status)" />
+            </div>
             <div class="mb-5 flex justify-between gap-4">
                 <div class="flex-1">
                     <label for="priority">Priority</label>
