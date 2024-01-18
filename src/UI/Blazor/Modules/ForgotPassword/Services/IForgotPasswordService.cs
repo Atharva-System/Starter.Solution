@@ -1,8 +1,9 @@
-﻿using Starter.Blazor.Modules.ForgotPassword.Models;
+﻿using Starter.Blazor.Core.Response;
+using Starter.Blazor.Modules.ForgotPassword.Models;
 
 namespace Starter.Blazor.Modules.ForgotPassword.Services;
 
 public interface IForgotPasswordService
 {
-    Task<string> ForgotPasswordAsync(ForgotPasswordDto forgotPassword);
+    Task<ApiResponse<string>> ForgotPasswordAsync(ForgotPasswordDto forgotPassword);
 }
