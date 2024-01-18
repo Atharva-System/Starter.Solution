@@ -27,14 +27,21 @@
         <div class="flex items-center justify-center min-h-screen px-4">
             <div x-transition x-transition.duration.300 class="panel border-0 py-1 px-4 rounded-lg overflow-hidden w-full max-w-sm my-8">
                 <div class="flex items-center justify-between p-5 font-semibold text-lg dark:text-white">
-                    Invite User
+                    @if (isEditing)
+                    {
+                        <span>Update user</span>
+                    }
+                    else
+                    {
+                        <span>Invite user</span>
+                    }
                 </div>
                 <div class="p-5" >
                     <EditForm Model="@inviteUser" OnValidSubmit="InviteUser">
                         <DataAnnotationsValidator />
                         <div class="relative mb-4">
                             <label for="FirstName">First Name</label>
-                            <input id="FirstName" type="text" class="form-input" placeholder="Enter First Name" @bind-value="inviteUser.FirstName" />
+                            <InputText id="FirstName"  class="form-input" placeholder="Enter First Name" @bind-Value="inviteUser.FirstName" />
                             <ValidationMessage For="@(() => inviteUser.FirstName)" />
                         </div>
 
@@ -44,8 +51,8 @@
                             <input id="LastName" type="text" class="form-input" placeholder="Enter Last Name" @bind="inviteUser.LastName" />
                         </div>
                         <div class="relative mb-4">
-                            <label for="LastName">Email</label>
-                            <input id="LastName" type="text" class="form-input" placeholder="Enter email" @bind="inviteUser.Email" />
+                            <label for="Email">Email</label>
+                            <InputText id="Email" class="form-input" placeholder="Enter email" @bind-Value="inviteUser.Email" />
                             <ValidationMessage For="@(() => inviteUser.Email)" />
                         </div>
                         <div class="flex space-x-2 ">
@@ -168,6 +175,7 @@
         }
         else
         {
+           
             showToaster(result.Messages.FirstOrDefault(), "top");
             this.isProcessing = false;
         }
