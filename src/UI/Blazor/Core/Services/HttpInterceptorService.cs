@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Net.Http.Headers;
+using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Components;
+using Starter.Blazor.Core.Constants;
 using Starter.Blazor.Core.Services.IServices;
 using Starter.Blazor.Modules.Login.Services.IServices;
 using Toolbelt.Blazor;
@@ -8,20 +11,17 @@ namespace Starter.Blazor.Core.Services;
 public class HttpInterceptorService : IHttpInterceptorService
 {
     private readonly HttpClientInterceptor _interceptor;
-    private readonly NavigationManager _navManager;
-    private readonly INotificationService _notificationService;
     private readonly IAuthService _authService;
+    private readonly ILocalStorageService _localStorageService;
 
     public HttpInterceptorService(
         HttpClientInterceptor interceptor, 
-        NavigationManager navManager, 
-        INotificationService notificationService,
-        IAuthService authService)
+        IAuthService authService,
+        ILocalStorageService localStorageService)
     {
         _interceptor = interceptor;
-        _navManager = navManager;
-        _notificationService = notificationService;
         _authService = authService;
+        _localStorageService = localStorageService;
     }
 
     public void RegisterEvent() => _interceptor.BeforeSendAsync += InterceptBeforeHttpAsync;
@@ -37,8 +37,10 @@ public class HttpInterceptorService : IHttpInterceptorService
         {
             try
             {
-                _authService.TryRefreshToken();
-                
+                await _authService.TryRefreshToken();
+                var savedToken = await this._localStorageService.GetItemAsync<String>(StorageConstants.Local.AuthToken);
+                e.Request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", savedToken);
+                return;
             }
             catch (Exception ex)
             {

@@ -79,41 +79,48 @@ public class AuthService : IAuthService
         _navManager.NavigateTo("/");
     }
 
-    public async void RefreshToken()
+    public async System.Threading.Tasks.Task RefreshToken()
     {
-        var request = new RefreshTokenRequest
+        var request = new RefreshTokenRequest(await _localStorageService.GetItemAsync<string>(StorageConstants.Local.AuthToken),
+            await _localStorageService.GetItemAsync<string>(StorageConstants.Local.RefreshToken));
+        var response = await this._apiHandler.Post<RefreshTokenResponse,RefreshTokenRequest>(TokenEndpoints.Refresh, request);
+        if (!string.IsNullOrEmpty(response.Token))
         {
-            CurrentToken = await _localStorageService.GetItemAsync<string>(StorageConstants.Local.AuthToken),
-            RefreshToken = await _localStorageService.GetItemAsync<string> (StorageConstants.Local.RefreshToken),
-        };
-        var response = await this._apiHandler.Post<ApiResponse<RefreshTokenResponse>,RefreshTokenRequest>(TokenEndpoints.Refresh, request);
-        if (response.StatusCode == HttpStatusCodes.OK && response.Success == true)
-        {
-            await _notificationService.Success(response.Message);
-            await _localStorageService.SetItemAsync<string>(StorageConstants.Local.AuthToken, response.Data.Token);
-            await _localStorageService.SetItemAsync<string>(StorageConstants.Local.RefreshToken, response.Data.RefreshToken);
+            await _localStorageService.SetItemAsync<string>(StorageConstants.Local.AuthToken, response.Token);
+            await _localStorageService.SetItemAsync<string>(StorageConstants.Local.RefreshToken, response.RefreshToken);
 
             await ((AppStateProvider)this._authenticationStateProvider).StateChangeAsync();
         }
         else
         {
-            await _notificationService.Failure(response.Messages);
-            _navManager.NavigateTo("/login");
+            await _notificationService.Failure(new List<string> { "Token failed" });
+            _navManager.NavigateTo("/");
         }
     }
 
-    public async void TryRefreshToken()
+    public async System.Threading.Tasks.Task TryRefreshToken()
     {
-        var availableToken = await _localStorageService.GetItemAsync<string>(StorageConstants.Local.RefreshToken);
-        if (string.IsNullOrEmpty(availableToken)) _navManager.NavigateTo("/");
-        var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-        var exp = user.FindFirst(c => c.Type.Equals("exp"))?.Value;
-        var expTime = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(exp));
-        var timeUTC = DateTime.UtcNow;
-        var diff = expTime - timeUTC;
+        try
+        {
+            var availableToken = await _localStorageService.GetItemAsync<string>(StorageConstants.Local.RefreshToken);
+            if (string.IsNullOrEmpty(availableToken)) _navManager.NavigateTo("/");
+            var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            var exp = user.FindFirst(c => c.Type.Equals("exp"))?.Value;
+            var expTime = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(exp));
+            var timeUTC = DateTime.UtcNow;
+            var diff = expTime - timeUTC;
 
-        if (diff.TotalMinutes <= 1)
-            RefreshToken();
+            if (diff.TotalMinutes <= 1)
+            {
+                await RefreshToken();
+                return;
+            }
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+            return;
+        }
     }
 }
