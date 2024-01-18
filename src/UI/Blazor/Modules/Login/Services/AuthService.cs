@@ -42,11 +42,11 @@ public class AuthService : IAuthService
             if (response.StatusCode == HttpStatusCodes.OK && response.Success == true)
             {
                 await _notificationService.Success(response.Message);
-                await _localStorageService.SetItemAsync<string>(StorageConstants.Local.AuthToken, response.Data.Token);
-                await _localStorageService.SetItemAsync<string>(StorageConstants.Local.RefreshToken, response.Data.RefreshToken);
-                await _localStorageService.SetItemAsync<string>(StorageConstants.Local.Id, response.Data.Id);
-                await _localStorageService.SetItemAsync<string>(StorageConstants.Local.Username, response.Data.UserName);
-                await _localStorageService.SetItemAsync<string>(StorageConstants.Local.Email, response.Data.Email);
+                await _localStorageService.SetItemAsync(StorageConstants.Local.AuthToken, response.Data.Token);
+                await _localStorageService.SetItemAsync(StorageConstants.Local.RefreshToken, response.Data.RefreshToken);
+                await _localStorageService.SetItemAsync(StorageConstants.Local.Id, response.Data.Id);
+                await _localStorageService.SetItemAsStringAsync(StorageConstants.Local.Username, response.Data.UserName);
+                await _localStorageService.SetItemAsStringAsync(StorageConstants.Local.Email, response.Data.Email);
 
                 await ((AppStateProvider)this._authenticationStateProvider).StateChangeAsync();
 
