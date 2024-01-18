@@ -23,6 +23,7 @@ public class TaskListDto
     public int? Priority { get; set; }
     [Required(ErrorMessage = "Project is required.")]
     public Guid? ProjectId { get; set; }
+    [Required(ErrorMessage = "Assignee is required.")]
     public string AssignedTo { get; set; }
     public DateTime CreatedOn { get; set; }
     public string CreatedBy { get; set; }
