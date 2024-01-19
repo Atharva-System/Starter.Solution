@@ -49,11 +49,11 @@
                         <label class="cursor-pointer">
                             <input type="checkbox" class="form-checkbox" />
                             <span class="text-white-dark">Remember me</span>
+                            <span class="space-between"></span>
+                            <a href="/forgotpassword" class="font-bold text-primary hover:underline">Forgot Password</a>
                         </label>
                     </div>
-                    <p class="text-right">
-                        <a href="/forgotpassword" class="font-bold text-primary hover:underline">Forgot Password</a>
-                    </p>
+                   
                     <button type="submit" class="btn btn-primary w-full">SIGN IN</button>
                 </EditForm>
                 <div class="relative my-7 h-5 text-center before:absolute before:inset-0 before:m-auto before:h-[1px] before:w-full before:bg-[#ebedf2] dark:before:bg-[#253b5c]">
@@ -110,3 +110,8 @@
     //     Interceptor.DisposeEvent();
     // }
 }
+<style>
+    .space-between {
+        margin-right: 155px;
+    }
+</style>
