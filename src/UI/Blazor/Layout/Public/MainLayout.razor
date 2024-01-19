@@ -59,11 +59,6 @@
     protected override async void OnInitialized()
     {
         base.OnInitialized();
-        var user = await appState.GetAuthenticationStateProviderUserAsync();
-        if(user == null || user.Identities == null || !user.Identity.IsAuthenticated)
-        {
-            _navManager.NavigateTo("/");
-        }
     }
     public void HideShowDropdown()
     {

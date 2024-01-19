@@ -4,7 +4,6 @@
 @using System.Text
 @using System.Text.Json
 @using Starter.Blazor.Core
-@using Starter.Blazor.Core.AuthProviders
 @using Starter.Blazor.Modules.Login.Services
 @using Starter.Blazor.Modules.Login.Services.IServices
 @using Starter.Blazor.Shared.Icons
@@ -15,7 +14,6 @@
 @inject ILocalStorageService LocalStorage
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IAuthService AuthService
-@inject UserAuthID UserAuthId
 @inject INotificationService Notification
 
 <div class="main-container min-h-screen text-black dark:text-white-dark">

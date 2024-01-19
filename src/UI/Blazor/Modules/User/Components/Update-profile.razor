@@ -1,6 +1,5 @@
 ﻿@page "/update-profile"
 @using Microsoft.AspNetCore.Authorization
-@using Starter.Blazor.Core.AuthProviders
 @using Starter.Blazor.Core.Constants
 @using Starter.Blazor.Modules.Login.Services
 @using Starter.Blazor.Modules.User.Models
@@ -10,7 +9,6 @@
 @inject NavigationManager navigationManager
 @inject ILocalStorageService LocalStorage
 @inject HttpClient httpClient
-@inject UserAuthID UserAuthId
 @inject IAuthService AuthService
 @attribute [Authorize]
 
@@ -82,7 +80,7 @@
 
     private async Task HandleUpdateProfile()
     {
-        UpdateProfile.Id = UserAuthId.GetUserId();
+        UpdateProfile.Id = await _localStorage.GetItemAsync<string>(StorageConstants.Local.Id);
         var response = await UserService.UpdateUserProfileAsync(UpdateProfile);
 
         if (response != null)

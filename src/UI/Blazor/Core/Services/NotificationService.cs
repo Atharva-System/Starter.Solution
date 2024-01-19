@@ -21,17 +21,17 @@ public class NotificationService : INotificationService
 
     public async Task Failure(List<string> Messages)
     {
-        await this.ShowToaster(String.Join(",",Messages), NotificationType.Error.ToString());
+        await this.ShowToaster(String.Join(",",Messages), NotificationType.Error.ToString().ToLower());
     }
 
     public async Task Message(string Message)
     {
-        await this.ShowToaster(Message, NotificationType.Info.ToString());
+        await this.ShowToaster(Message, NotificationType.Info.ToString().ToLower());
     }
 
     public async Task Success(string Message)
     {
-        await this.ShowToaster(Message, NotificationType.Success.ToString());
+        await this.ShowToaster(Message, NotificationType.Success.ToString().ToLower());
     }
 
     private async Task ShowToaster(string message,string type)

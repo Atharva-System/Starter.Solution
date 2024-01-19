@@ -1,8 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Net.Http.Json;
-using Blazored.LocalStorage;
+﻿using Blazored.LocalStorage;
 using Microsoft.JSInterop;
-using Starter.Blazor.Core.AuthProviders;
 using Starter.Blazor.Core.Constants;
 using Starter.Blazor.Core.Response;
 using Starter.Blazor.Core.Routes;
