@@ -1,6 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @inject AppStateProvider appState
-
+@inject NavigationManager NavigationManager
 
 
 
@@ -59,10 +59,14 @@
     protected override async void OnInitialized()
     {
         base.OnInitialized();
-        var user = await appState.GetAuthenticationStateProviderUserAsync();
-        if(user == null || user.Identities == null || !user.Identity.IsAuthenticated)
+        var uri = new Uri(NavigationManager.Uri);
+        if (!uri.AbsolutePath.Contains("accept-invite"))
         {
-            _navManager.NavigateTo("/");
+            var user = await appState.GetAuthenticationStateProviderUserAsync();
+            if (user == null || user.Identities == null || !user.Identity.IsAuthenticated)
+            {
+                _navManager.NavigateTo("/");
+            }
         }
     }
     public void HideShowDropdown()
