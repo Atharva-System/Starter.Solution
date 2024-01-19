@@ -46,13 +46,13 @@ public class AppStateProvider : AuthenticationStateProvider
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
         var savedToken = await _localStorage.GetItemAsync<String>(StorageConstants.Local.AuthToken);
-        if(string.IsNullOrWhiteSpace(savedToken))
-        {
-            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
-        }
         if (!_httpClient.DefaultRequestHeaders.Contains("request-source"))
         {
             _httpClient.DefaultRequestHeaders.Add("request-source", "blazor");
+        }
+        if (string.IsNullOrWhiteSpace(savedToken))
+        {
+            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
         }
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", savedToken);
         var state = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(GetClaimsFromJWT(savedToken), "jwt")));

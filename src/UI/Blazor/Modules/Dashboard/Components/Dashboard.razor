@@ -3,8 +3,6 @@
 @using Starter.Blazor.Core
 @using Starter.Blazor.Modules.Login.Services;
 @using Starter.Blazor.Modules.Login.Services.IServices
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@inject NavigationManager navigationManager
 @inject IAuthService AuthService
 @attribute [Authorize]
 
@@ -307,11 +305,6 @@
     protected override async Task OnInitializedAsync()
     {
         _httpInterceptor.RegisterEvent();
-        var state = await _stateProvider.GetAuthenticationStateAsync();
-        if (!state.User.Identity.IsAuthenticated)
-        {
-            navigationManager.NavigateTo("/");
-        }
     }
     // public void Dispose()
     // {
