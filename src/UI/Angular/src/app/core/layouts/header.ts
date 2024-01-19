@@ -48,6 +48,7 @@ export class HeaderComponent implements OnInit {
   @Output() openChangePasswordPopup = new EventEmitter();
   menuItems: Array<{ label: string; link: string }> = [];
   profileRoute = '/' + appPaths.profile;
+  chatRoute = '/' + appPaths.chat;
 
   sendReciveNotificationService = inject(SendReciveNotificationService);
   menuService = inject(MenuService);

@@ -13,6 +13,7 @@ import { ProfileComponent } from './modules/user/pages/profile/profile.component
 import { ListProjectsComponent } from './modules/project/pages/list-projects/list-projects.component';
 import { ListTasksComponent } from './modules/task/pages/list-tasks/list-tasks.component';
 import { TaskDetailsComponent } from './modules/task/pages/task-details/task-details.component';
+import { ChatComponent } from './modules/user/pages/chat/chat.component';
 
 export const routes: Routes = [
   {
@@ -48,6 +49,11 @@ export const routes: Routes = [
         path: appPaths.tasksDetails,
         component: TaskDetailsComponent,
         title: pageTitle.tasksDetails,
+      },
+      {
+        path: appPaths.chat,
+        component: ChatComponent,
+        title: pageTitle.chat,
       },
     ],
     canActivate: [AuthGuard],

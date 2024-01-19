@@ -9,6 +9,7 @@ export const pageTitle = {
   projects: 'Projects',
   tasks: 'Tasks',
   tasksDetails: 'Task Details',
+  chat: 'Chat',
 };
 
 export const authPaths = {
@@ -26,4 +27,5 @@ export const appPaths = {
   tasksDetail: 'task-details',
   tasksDetails: 'task-details/:taskId',
   profile: 'profile',
+  chat: 'chat',
 };

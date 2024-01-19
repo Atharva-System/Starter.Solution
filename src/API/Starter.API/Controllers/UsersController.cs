@@ -7,6 +7,7 @@ using Starter.Application.Features.Common;
 using Starter.Application.Features.Users.AcceptInvite;
 using Starter.Application.Features.Users.Invite;
 using Starter.Application.Features.Users.Profile;
+using Starter.Application.Features.Users.SendMessage;
 using Starter.Application.Models.Users;
 using Starter.Identity.Authorizations;
 using Starter.Identity.Authorizations.Permissions;
@@ -46,7 +47,7 @@ public class UsersController(IUsersService userService, IConfiguration configura
                 StatusCode = HttpStatusCodes.BadRequest
             };
         }
-        return await _usersService.UpdateAsync(new UpdateUserRequest() {user = request, Origin = GetOriginFromRequest(_configuration) });
+        return await _usersService.UpdateAsync(new UpdateUserRequest() { user = request, Origin = GetOriginFromRequest(_configuration) });
     }
 
     [HttpDelete("{id}")]
@@ -60,7 +61,7 @@ public class UsersController(IUsersService userService, IConfiguration configura
     [MustHavePermission(Action.Create, Resource.Users)]
     public async Task<ApiResponse<string>> InviteAsync(CreateUserInvitation request)
     {
-            return await Mediator.Send(new CreateUserInvitationRequest() { request = request, Origion = GetOriginFromRequest(_configuration) });
+        return await Mediator.Send(new CreateUserInvitationRequest() { request = request, Origion = GetOriginFromRequest(_configuration) });
     }
 
     [HttpPut("update-profile/{id}")]
@@ -108,5 +109,12 @@ public class UsersController(IUsersService userService, IConfiguration configura
     public async Task<ApiResponse<UserProfileDto>> GetProfileDetailAsync()
     {
         return await _usersService.GetProfileDetailAsync();
+    }
+
+    [HttpPost("send-message")]
+    [MustHavePermission(Action.Create, Resource.Users)]
+    public async Task SendMessage(SendMessageRequest request)
+    {
+        await Mediator.Send(request);
     }
 }

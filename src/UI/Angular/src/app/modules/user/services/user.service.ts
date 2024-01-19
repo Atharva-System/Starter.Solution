@@ -42,4 +42,8 @@ export class UserService {
   setProfileSignal(param: IUserProfileSignal) {
     this.profileSignal.set(param);
   }
+
+  sendMessage(userId: string, message: string) {
+    return this.apiHandlerService.post(APIs.sendMessage, { userId, message });
+  }
 }

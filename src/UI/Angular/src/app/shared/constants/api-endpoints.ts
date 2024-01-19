@@ -38,4 +38,5 @@ export class APIs {
 
   //SignalR
   static getNotifications = 'notifications';
+  static sendMessage = '/Users/send-message';
 }

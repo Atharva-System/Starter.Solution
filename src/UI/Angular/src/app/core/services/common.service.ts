@@ -35,7 +35,7 @@ export class CommonService {
     }
   }
 
-  formatCustomDateTime(apiDate: string): string {
+  formatCustomDateTime(apiDate?: string): string {
     const options: Intl.DateTimeFormatOptions = {
       year: 'numeric',
       month: 'short',
@@ -44,7 +44,18 @@ export class CommonService {
       minute: 'numeric',
       hour12: true,
     };
-    const apiDateTime = new Date(apiDate);
+    const apiDateTime = apiDate ? new Date(apiDate) : new Date();
     return apiDateTime.toLocaleDateString('en-US', options);
+  }
+
+  formatTime(dateStr: string): string {
+    const date = new Date(dateStr);
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const period = hours < 12 ? 'AM' : 'PM';
+    const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
+    const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+
+    return `${formattedHours}:${formattedMinutes} ${period}`;
   }
 }
