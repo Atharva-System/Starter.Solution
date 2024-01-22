@@ -39,6 +39,7 @@ export class ChatComponent {
   profileFromSignal = this.userService.profileSignal;
   contactList = this.sendReciveNotificationService.chatUsers;
   isUserTyping = this.sendReciveNotificationService.isUserTyping;
+  connectedUserIds = this.sendReciveNotificationService.connectedUserIds;
 
   constructor(public storeData: Store<any>) {
     this.initStore();

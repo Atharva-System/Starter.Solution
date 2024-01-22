@@ -147,7 +147,11 @@
       (click)="isShowChatMenu = !isShowChatMenu"
     ></div>
     <div class="panel flex-1 p-0">
-      @if (!isShowUserChat) {
+      @if (
+        selectedUser
+          ? !connectedUserIds().includes(selectedUser.userId)
+          : !isShowUserChat
+      ) {
         <div class="relative flex h-full items-center justify-center p-4">
           <button
             type="button"
@@ -366,7 +370,11 @@
           </div>
         </div>
       }
-      @if (isShowUserChat && selectedUser) {
+      @if (
+        isShowUserChat &&
+        selectedUser &&
+        connectedUserIds().includes(selectedUser.userId)
+      ) {
         <div class="relative h-full pb-[68px]">
           <div class="flex items-center justify-between p-4">
             <div class="flex items-center space-x-2 rtl:space-x-reverse">

@@ -20,6 +20,7 @@ export class SendReciveNotificationService {
   notifications = signal<INotificationMessage[]>([]);
   chatUsers = signal<IChatUser[]>([]);
   isUserTyping = signal<IUserTyping>({ typingBy: '', isTyping: false });
+  connectedUserIds = signal<string[]>([]);
 
   commonService = inject(CommonService);
   alertService = inject(AlertService);
@@ -127,6 +128,9 @@ export class SendReciveNotificationService {
         ),
       );
     }
+    this.connectedUserIds.set(
+      this.chatUsers().map((userDetails) => userDetails.userId),
+    );
   }
 
   setMessage() {
