@@ -23,7 +23,7 @@ const setup = () => {
         async (err: any) => {
             const originalConfig = err.config;
 
-            if (originalConfig.url !== '/auth/signin' && err.response) {
+            if (originalConfig.url !== '/signin' && err.response) {
                 // Access Token was expired
                 if (err.response.status === 401 && !originalConfig._retry) {
                     originalConfig._retry = true;

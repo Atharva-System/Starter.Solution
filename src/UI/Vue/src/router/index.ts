@@ -1,24 +1,31 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
 import { useAppStore } from '@/stores/index';
 import appSetting from '@/app-setting';
+import { home, signin, forgotPassword, resetPassword } from '../common/route-paths';
 
 import HomeView from '../views/index.vue';
 import tokenService from '@/services/token.service';
 
 const routes: RouteRecordRaw[] = [
     // dashboard
-    { path: '/', name: 'home', component: HomeView },
+    { path: home, name: 'home', component: HomeView },
     // authentication
     {
-        path: '/auth/sign-in',
+        path: signin,
         name: 'sign-in',
         component: () => import(/* webpackChunkName: "auth-boxed-signin" */ '../views/auth/sign-in.vue'),
         meta: { layout: 'auth' },
     },
     {
-        path: '/auth/forgot-password',
+        path: forgotPassword,
         name: 'forgot-password',
         component: () => import(/* webpackChunkName: "forgot-password" */ '../views/auth/forgot-password.vue'),
+        meta: { layout: 'auth' },
+    },
+    {
+        path: resetPassword,
+        name: 'reset-password',
+        component: () => import('../views/auth/reset-password.vue'),
         meta: { layout: 'auth' },
     },
 ];
@@ -45,10 +52,9 @@ router.beforeEach((to, from, next) => {
         const token = tokenService.getLocalAccessToken();
         if (token) {
             store.setMainLayout('app');
-        }
-        else{
+        } else {
             store.setMainLayout('auth');
-            next('/auth/sign-in');
+            next('/sign-in');
         }
     }
     next(true);
