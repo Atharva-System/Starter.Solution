@@ -1,37 +1,81 @@
-import type { IUserInfo } from "@/types";
+import { refreshTokenStorageKey, tokenStorageKey, userInfoStorageKey } from '@/common/constants';
+import * as jwtDecode from 'jwt-decode';
+
+export interface TokenClaims {
+    name: string;
+    aud: string;
+    email: string;
+    exp: number;
+    iss: string;
+    jti: string;
+    roles: string;
+    sub: string;
+    uid: string;
+}
 
 class TokenService {
-    getLocalRefreshToken(): string | null {
-        const userString = localStorage.getItem('user');
-        const user = userString ? JSON.parse(userString) : null;
-        return user?.refreshToken ?? null;
+    setToken(token: string): void {
+        localStorage.setItem(tokenStorageKey, token);
+        this.setUser();
     }
 
-    getLocalAccessToken() {
-        const userString = localStorage.getItem('user');
-        const user = userString ? JSON.parse(userString) : null;
-        return user?.token;
+    setUser() {
+        localStorage.setItem(userInfoStorageKey, JSON.stringify(this.decodeToken(this.getToken() ?? '')));
     }
 
-    updateLocalAccessToken(token : any) {
-        const userString = localStorage.getItem('user');
-        const user = userString ? JSON.parse(userString) : null;
-        user.token = token;
-        localStorage.setItem('user', JSON.stringify(user));
+    getToken(): string | null {
+        return localStorage.getItem(tokenStorageKey);
     }
 
-    getUser() {
-        const userString = localStorage.getItem('user');
-        return userString ? JSON.parse(userString) : null;
+    setRefreshToken(refreshToken: string): void {
+        localStorage.setItem(refreshTokenStorageKey, refreshToken);
     }
 
-    setUser(user: IUserInfo) {
-        console.log(JSON.stringify(user));
-        localStorage.setItem('user', JSON.stringify(user));
+    getRefreshToken(): string | null {
+        return localStorage.getItem(refreshTokenStorageKey);
     }
 
-    removeUser() {
-        localStorage.removeItem('user');
+    clearToken(): void {
+        localStorage.removeItem(tokenStorageKey);
+        localStorage.removeItem(refreshTokenStorageKey);
+        localStorage.removeItem(userInfoStorageKey);
+    }
+
+    isAuthenticated(): boolean {
+        const token = this.getToken();
+        return !!token && !this.isTokenExpired(token);
+    }
+
+    isTokenExpired(token: string): boolean {
+        const decodedToken: any = this.decodeToken(token);
+        const expirationTime = decodedToken.exp * 1000;
+        return Date.now() >= expirationTime;
+    }
+
+    decodeToken(token: string): TokenClaims | null {
+        if (!token) return null;
+        const decodedToken: TokenClaims = jwtDecode.jwtDecode(token);
+        return decodedToken;
+    }
+
+    getUser(): TokenClaims | null {
+        return JSON.parse(localStorage.getItem(userInfoStorageKey) ?? '');
+    }
+
+    signOut() {
+        this.clearToken();
+    }
+
+    updateStorageUserInfo(name: string, email: string) {
+        const token = this.getToken();
+        if (token) {
+            const user = this.decodeToken(token);
+            if (user) {
+                user.name = name;
+                user.email = email;
+                localStorage.setItem(userInfoStorageKey, JSON.stringify(user));
+            }
+        }
     }
 }
 

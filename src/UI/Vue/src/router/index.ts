@@ -1,15 +1,12 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
 import { useAppStore } from '@/stores/index';
 import appSetting from '@/app-setting';
-import { home, signin, forgotPassword, resetPassword } from '../common/route-paths';
-
-import HomeView from '../views/index.vue';
+import { home, signin, forgotPassword, resetPassword, users } from '../common/route-paths';
+import UsersView from '../views/apps/user/user-list.vue';
 import tokenService from '@/services/token.service';
 
-const routes: RouteRecordRaw[] = [
-    // dashboard
-    { path: home, name: 'home', component: HomeView },
-    // authentication
+// Auth Layout Pages
+const authLayoutPages: RouteRecordRaw[] = [
     {
         path: signin,
         name: 'sign-in',
@@ -30,6 +27,14 @@ const routes: RouteRecordRaw[] = [
     },
 ];
 
+// App Layout Pages
+const appLayoutPages: RouteRecordRaw[] = [
+    { path: home, name: 'home', component: UsersView },
+    { path: users, name: 'users', component: UsersView },
+];
+
+const routes: RouteRecordRaw[] = [...appLayoutPages, ...authLayoutPages];
+
 const router = createRouter({
     history: createWebHistory(),
     linkExactActiveClass: 'active',
@@ -49,7 +54,7 @@ router.beforeEach((to, from, next) => {
     if (to?.meta?.layout == 'auth') {
         store.setMainLayout('auth');
     } else {
-        const token = tokenService.getLocalAccessToken();
+        const token = tokenService.getToken();
         if (token) {
             store.setMainLayout('app');
         } else {

@@ -1,11 +1,10 @@
-import TokenService from './token.service';
-import axiosInstance from "./api";
+import tokenService from './token.service';
+import axiosInstance from './api';
 
 const setup = () => {
-    
     axiosInstance.interceptors.request.use(
         (config: any) => {
-            const token = TokenService.getLocalAccessToken();
+            const token = tokenService.getToken();
             if (token) {
                 config.headers['Authorization'] = 'Bearer ' + token;
             }
@@ -30,12 +29,13 @@ const setup = () => {
 
                     try {
                         const rs = await axiosInstance.post('/auth/refreshtoken', {
-                            refreshToken: TokenService.getLocalRefreshToken(),
+                            refreshToken: tokenService.getRefreshToken(),
                         });
 
-                        const { accessToken } = rs.data;
+                        const { token, refreshToken } = rs.data;
 
-                        TokenService.updateLocalAccessToken(accessToken);
+                        tokenService.setToken(token);
+                        tokenService.setRefreshToken(refreshToken);
 
                         return axiosInstance(originalConfig);
                     } catch (_error) {

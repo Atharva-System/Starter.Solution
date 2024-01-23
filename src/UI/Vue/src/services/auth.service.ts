@@ -1,6 +1,6 @@
 import type { ILogin } from '@/types';
 import api from './api';
-import TokenService from './token.service';
+import tokenService from './token.service';
 import { signInApi } from '../common/api-paths';
 
 class AuthService {
@@ -10,13 +10,14 @@ class AuthService {
             password,
         });
         if (response.data) {
-            TokenService.setUser(response.data.data);
+            tokenService.setToken(response.data.data.token);
+            tokenService.setRefreshToken(response.data.data.refreshToken);
         }
         return response.data;
     }
 
     logout() {
-        TokenService.removeUser();
+        tokenService.signOut();
     }
 }
 

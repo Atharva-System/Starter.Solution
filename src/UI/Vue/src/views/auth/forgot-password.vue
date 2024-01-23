@@ -23,7 +23,7 @@
                     </div>
                 </div>
                 <p class="text-center">
-                    Back to <router-link to="/sign-in" class="text-primary font-bold hover:underline">Sign
+                    Back to <router-link :to="signinRoute" class="text-primary font-bold hover:underline">Sign
                         In</router-link>
                 </p>
             </form>
@@ -37,7 +37,10 @@ import { required, email } from '@vuelidate/validators'
 import { useMeta } from '@/composables/use-meta';
 import api from '@/services/api';
 import messageService from '@/services/message.service';
+import { signin } from '../../common/route-paths';
+
 useMeta({ title: 'Forgot Password' });
+
 export default {
     setup() {
         return {
@@ -46,6 +49,7 @@ export default {
     },
     data() {
         return {
+            signinRoute: signin,
             isSubmitForm: false,
             email: '',
         }

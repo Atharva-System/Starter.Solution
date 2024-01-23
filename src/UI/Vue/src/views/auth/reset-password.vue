@@ -31,7 +31,7 @@
                     </div>
                 </div>
                 <p class="text-center">
-                    Go to <router-link to="/sign-in" class="text-primary font-bold hover:underline">Sign
+                    Go to <router-link :to="signinRoute" class="text-primary font-bold hover:underline">Sign
                         In</router-link>
                 </p>
             </form>
@@ -49,6 +49,7 @@ import type { IResetPasswordRequest } from '@/types/reset-password';
 import { signin } from '../../common/route-paths';
 
 useMeta({ title: 'Reset Password' });
+
 export default {
     setup() {
         return {
@@ -57,6 +58,7 @@ export default {
     },
     data() {
         return {
+            signinRoute: signin,
             isSubmitForm: false,
             password: '',
             cpassword: '',
@@ -86,7 +88,7 @@ export default {
                 } as IResetPasswordRequest);
             if (response.data) {
                 messageService.showMessage(response.data.data);
-                this.$router.push(signin);
+                this.$router.push(this.signinRoute);
             }
         }
     }

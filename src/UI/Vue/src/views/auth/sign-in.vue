@@ -21,7 +21,7 @@
                     </template>
                 </div>
                 <div>
-                    <router-link to="/forgot-password" class="text-primary font-bold hover:underline">Forgot
+                    <router-link :to="forgotPasswordRoute" class="text-primary font-bold hover:underline">Forgot
                         Password</router-link>
                 </div>
                 <button type="submit" class="btn btn-primary w-full">SIGN IN</button>
@@ -34,7 +34,10 @@ import { useVuelidate } from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
 import authService from '@/services/auth.service';
 import { useMeta } from '@/composables/use-meta';
+import { forgotPassword } from '../../common/route-paths';
+
 useMeta({ title: 'Login' });
+
 export default {
     setup() {
         return {
@@ -43,6 +46,7 @@ export default {
     },
     data() {
         return {
+            forgotPasswordRoute: forgotPassword,
             isSubmitForm: false,
             email: '',
             password: ''
