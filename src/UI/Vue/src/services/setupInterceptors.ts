@@ -1,5 +1,6 @@
 import tokenService from './token.service';
 import axiosInstance from './api';
+import { refreshTokenApi } from '@/common/api-paths';
 
 const setup = () => {
     axiosInstance.interceptors.request.use(
@@ -26,9 +27,8 @@ const setup = () => {
                 // Access Token was expired
                 if (err.response.status === 401 && !originalConfig._retry) {
                     originalConfig._retry = true;
-
                     try {
-                        const rs = await axiosInstance.post('/auth/refreshtoken', {
+                        const rs = await axiosInstance.post(refreshTokenApi, {
                             refreshToken: tokenService.getRefreshToken(),
                         });
 

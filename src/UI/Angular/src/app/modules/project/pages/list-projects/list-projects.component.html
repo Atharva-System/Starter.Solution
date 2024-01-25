@@ -83,11 +83,6 @@
       (changeServer)="changeServer($event)"
       skin="whitespace-nowrap table-hover"
     >
-      <ng-template slot="status" let-value="data">
-        <span class="badge" [ngClass]="getBadgeColor(value.status)">{{
-          value.status
-        }}</span>
-      </ng-template>
       <ng-template slot="action" let-value="data">
         <ul class="flex items-center justify-center gap-2">
           <li>

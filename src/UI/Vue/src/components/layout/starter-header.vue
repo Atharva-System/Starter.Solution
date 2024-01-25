@@ -271,9 +271,11 @@
                         </div>
                     </a>
                     <ul class="sub-menu">
-                        <li>
-                            <router-link to="/users">Users</router-link>
-                        </li>
+                        <template v-for="item in menuItems" :key="item.label">
+                            <li>
+                                <router-link :to="item.link">{{ item.label }}</router-link>
+                            </li>
+                        </template>
                     </ul>
                 </li>
             </ul>
@@ -286,9 +288,11 @@ import { ref, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAppStore } from '@/stores/index';
 import tokenService from '@/services/token.service';
+import menuService from '@/services/menu.service';
 
 const store = useAppStore();
 const route = useRoute();
+const menuItems = menuService.getMenus();
 
 const notifications = ref([
     {

@@ -29,14 +29,14 @@ public class UpdateTaskRequestCommandHandler(ICommandUnitOfWork command) : IRequ
         existingTask.ProjectId = request.ProjectId;
         existingTask.AssignedTo = request.AssignedTo;
 
-        var saveResult = await _commandUnitofWork.SaveAsync(cancellationToken);
+        await _commandUnitofWork.SaveAsync(cancellationToken);
 
         var response = new ApiResponse<string>
         {
-            Success = saveResult > 0,
-            StatusCode = saveResult > 0 ? HttpStatusCodes.OK : HttpStatusCodes.BadRequest,
-            Data = "Task update successfully",
-            Message = saveResult > 0 ? $"Task {ConstantMessages.UpdatedSuccessfully}" : "Failed to update task.",
+            Success = true,
+            StatusCode = HttpStatusCodes.OK,
+            Data = "Task updated successfully",
+            Message = $"Task {ConstantMessages.UpdatedSuccessfully}",
         };
 
         return response;

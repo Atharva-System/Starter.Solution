@@ -132,17 +132,6 @@ export class ListProjectsComponent {
     this.getProject();
   }
 
-  getBadgeColor(status: string): string {
-    switch (status) {
-      case 'Active':
-        return 'badge-outline-success';
-      case 'Inactive':
-        return 'badge-outline-danger';
-      default:
-        return 'badge-outline-info';
-    }
-  }
-
   getSortColumnName(column: string): string {
     switch (column) {
       case 'startDateDisplay':

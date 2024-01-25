@@ -2,25 +2,20 @@
     <div>
         <div class="panel pb-0">
             <div class="flex md:items-center md:flex-row flex-col mb-5 gap-5">
-                <h5 class="font-semibold text-lg dark:text-white-light">Users</h5>
+                <h5 class="font-semibold text-lg dark:text-white-light">Projects</h5>
                 <div class="ltr:ml-auto rtl:mr-auto">
                     <button type="button" class="btn btn-outline-primary btn-sm"
-                        @click="openManageUserModal()">Invite</button>
+                        @click="openManageProjectModal()">Add</button>
                 </div>
             </div>
             <div class="datatable">
                 <vue3-datatable :rows="rows" :columns="cols" :loading="loading" :totalRows="total_rows" :isServerMode="true"
                     :pageSize="params.PageSize" :pageSizeOptions="[10, 15, 30, 50]" paginationInfo="{0} to {1} of {2}"
-                    :sortable="true" :columnFilter="true" @change="changeServer">
-                    <template #status="data">
-                        <span class="badge" :class="[getBadgeColor(data.value.status)]">{{
-                            data.value.status
-                        }}</span>
-                    </template>
+                    :sortable="true" @change="changeServer">
                     <template #action="data">
                         <ul class="flex items-center justify-center gap-2">
                             <li>
-                                <a href="javascript:;" v-tippy:edit @click="openManageUserModal(data.value.id)">
+                                <a href="javascript:;" v-tippy:edit @click="openManageProjectModal(data.value.id)">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                         xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 text-success">
                                         <path
@@ -33,7 +28,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="javascript:;" v-tippy:delete @click="openDeleteUserModal(data.value.id)">
+                                <a href="javascript:;" v-tippy:delete @click="openDeleteProjectModal(data.value.id)">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                         xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-danger">
                                         <path d="M20.5001 6H3.5" stroke="currentColor" stroke-width="1.5"
@@ -55,11 +50,11 @@
                     </template>
                 </vue3-datatable>
                 <TransitionRoot appear :show="isDeleteModal" as="template">
-                    <DeleteModal :title="'Delete User'" :message="'Are you sure you want to delete user?'" @close="onClose"
-                        @delete="onDelete" />
+                    <DeleteModal :title="'Delete Project'" :message="'Are you sure you want to delete project?'"
+                        @close="onClose" @delete="onDelete" />
                 </TransitionRoot>
-                <TransitionRoot appear :show="isManageUserModal" as="template">
-                    <ManageUserModal :userId="editUserId" @close="onClose" @save="onSave" />
+                <TransitionRoot appear :show="isManageProjectModal" as="template">
+                    <ManageProjectModal :projectId="editProjectId" @close="onClose" @save="onSave" />
                 </TransitionRoot>
             </div>
         </div>
@@ -68,31 +63,31 @@
 <script lang="ts">
 import { TransitionRoot } from '@headlessui/vue';
 import Vue3Datatable from '@bhplugin/vue3-datatable';
+import { searchProjectsApi, deleteProjectApi } from '@/common/api-paths';
 import { useMeta } from '@/composables/use-meta';
 import api from '@/services/api';
-import { deleteUserApi, searchUserApi } from '@/common/api-paths';
-import type { PaginationFilter } from '@/types/pagination-filter.interface';
-import filterService from '@/services/filter.service';
-import DeleteModal from '../../components/delete-modal.vue';
-import ManageUserModal from './manage-user-modal.vue';
 import messageService from '@/services/message.service';
+import { PaginationFilter } from '@/types/pagination-filter.interface';
+import DeleteModal from '../../components/delete-modal.vue';
+import ManageProjectModal from './manage-project-modal.vue';
+import filterService from '@/services/filter.service';
 
-useMeta({ title: 'Users' });
+useMeta({ title: 'Projects' });
 
 export default {
     components: {
         Vue3Datatable,
         TransitionRoot,
-        ManageUserModal,
+        ManageProjectModal,
         DeleteModal
     },
     setup() {
         return {
             cols: [
-                { field: 'fullName', title: 'Full Name' },
-                { field: 'email', title: 'Email' },
-                { field: 'status', title: 'Status' },
-                { field: 'role', title: 'Role' },
+                { field: 'projectName', title: 'Project Name' },
+                { field: 'startDateDisplay', title: 'Start Date' },
+                { field: 'endDateDisplay', title: 'End Date' },
+                { field: 'estimatedHours', title: 'Estimated Hours' },
                 {
                     field: 'action',
                     title: 'Action',
@@ -106,24 +101,24 @@ export default {
     data() {
         return {
             isDeleteModal: false,
-            isManageUserModal: false,
+            isManageProjectModal: false,
             loading: true,
             params: {} as PaginationFilter,
             rows: [],
             total_rows: 0,
             timer: null as any,
-            deleteUserId: '',
-            editUserId: '',
+            deleteProjectId: '',
+            editProjectId: '',
         }
     },
     created() {
         this.params = filterService.defaultFilter();
-        this.getUsers();
+        this.getProjects();
     }, methods: {
-        async getUsers() {
+        async getProjects() {
             this.loading = true
             const response = await api
-                .post(searchUserApi, this.params);
+                .post(searchProjectsApi, this.params);
             if (response.data) {
                 this.rows = response.data.data;
                 this.total_rows = response.data.totalCount
@@ -133,62 +128,47 @@ export default {
         changeServer(data: any) {
             this.params.PageNumber = data.current_page;
             this.params.PageSize = data.pagesize;
-            this.params.OrderBy = [data.sort_column + ' ' + data.sort_direction];
-            this.params = filterService.generateFilter(
-                data.column_filters,
-                this.params,
-            );
-            if (data.change_type === 'filter') {
-                this.filterUsers();
-            } else {
-                this.getUsers();
-            }
+            this.params.OrderBy = [
+                this.getSortColumnName(data.sort_column) + ' ' + data.sort_direction,
+            ];
+            this.getProjects();
         },
-        filterUsers() {
-            clearTimeout(this.timer);
-            this.timer = setTimeout(() => {
-                this.getUsers();
-            }, 300);
+        openManageProjectModal(id: string = '') {
+            this.editProjectId = id
+            this.isManageProjectModal = true
         },
-        getBadgeColor(status: string): string {
-            if (!status) return '';
-            switch (status) {
-                case 'Invited':
-                    return 'badge-outline-info';
-                case 'Active':
-                    return 'badge-outline-success';
-                case 'Inactive':
-                    return 'badge-outline-danger';
-                default:
-                    return 'badge-outline-info';
-            }
-        },
-        openManageUserModal(id: string = '') {
-            this.editUserId = id
-            this.isManageUserModal = true
-        },
-        openDeleteUserModal(id: string) {
-            this.deleteUserId = id;
+        openDeleteProjectModal(id: string) {
+            this.deleteProjectId = id;
             this.isDeleteModal = true
         },
         async onSave() {
-            this.isManageUserModal = false
-            this.getUsers();
+            this.isManageProjectModal = false
+            this.getProjects();
         },
         async onDelete() {
             const response = await api
-                .delete(deleteUserApi + this.deleteUserId);
+                .delete(deleteProjectApi + this.deleteProjectId);
             if (response.data) {
-                messageService.showMessage(response.data.data);
+                messageService.showMessage(response.data.message);
                 this.isDeleteModal = false
-                this.getUsers();
+                this.getProjects();
             }
         },
         onClose() {
-            this.isDeleteModal = this.isManageUserModal = false
+            this.isDeleteModal = this.isManageProjectModal = false
             setTimeout(() => {
-                this.deleteUserId = this.editUserId = '';
+                this.deleteProjectId = this.editProjectId = '';
             }, 200);
+        },
+        getSortColumnName(column: string): string {
+            switch (column) {
+                case 'startDateDisplay':
+                    return 'startDate';
+                case 'endDateDisplay':
+                    return 'endDate';
+                default:
+                    return column;
+            }
         }
     }
 }

@@ -2,25 +2,29 @@
     <div>
         <div class="panel pb-0">
             <div class="flex md:items-center md:flex-row flex-col mb-5 gap-5">
-                <h5 class="font-semibold text-lg dark:text-white-light">Users</h5>
+                <h5 class="font-semibold text-lg dark:text-white-light">Tasks</h5>
                 <div class="ltr:ml-auto rtl:mr-auto">
-                    <button type="button" class="btn btn-outline-primary btn-sm"
-                        @click="openManageUserModal()">Invite</button>
+                    <button type="button" class="btn btn-outline-primary btn-sm" @click="openManageTaskModal()">Add</button>
                 </div>
             </div>
             <div class="datatable">
                 <vue3-datatable :rows="rows" :columns="cols" :loading="loading" :totalRows="total_rows" :isServerMode="true"
                     :pageSize="params.PageSize" :pageSizeOptions="[10, 15, 30, 50]" paginationInfo="{0} to {1} of {2}"
-                    :sortable="true" :columnFilter="true" @change="changeServer">
-                    <template #status="data">
-                        <span class="badge" :class="[getBadgeColor(data.value.status)]">{{
-                            data.value.status
+                    :sortable="true" @change="changeServer">
+                    <template #statusDisplay="data">
+                        <span class="badge" :class="[getBadgeColor(data.value.statusDisplay)]">{{
+                            data.value.statusDisplay
+                        }}</span>
+                    </template>
+                    <template #priorityDisplay="data">
+                        <span class="badge" :class="[getBadgeColor(data.value.priorityDisplay)]">{{
+                            data.value.priorityDisplay
                         }}</span>
                     </template>
                     <template #action="data">
                         <ul class="flex items-center justify-center gap-2">
                             <li>
-                                <a href="javascript:;" v-tippy:edit @click="openManageUserModal(data.value.id)">
+                                <a href="javascript:;" v-tippy:edit @click="openManageTaskModal(data.value.id)">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                         xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 text-success">
                                         <path
@@ -33,7 +37,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="javascript:;" v-tippy:delete @click="openDeleteUserModal(data.value.id)">
+                                <a href="javascript:;" v-tippy:delete @click="openDeleteTaskModal(data.value.id)">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                         xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-danger">
                                         <path d="M20.5001 6H3.5" stroke="currentColor" stroke-width="1.5"
@@ -55,11 +59,11 @@
                     </template>
                 </vue3-datatable>
                 <TransitionRoot appear :show="isDeleteModal" as="template">
-                    <DeleteModal :title="'Delete User'" :message="'Are you sure you want to delete user?'" @close="onClose"
+                    <DeleteModal :title="'Delete Task'" :message="'Are you sure you want to delete task?'" @close="onClose"
                         @delete="onDelete" />
                 </TransitionRoot>
-                <TransitionRoot appear :show="isManageUserModal" as="template">
-                    <ManageUserModal :userId="editUserId" @close="onClose" @save="onSave" />
+                <TransitionRoot appear :show="isManageTaskModal" as="template">
+                    <ManageskModal :taskId="editTaskId" @close="onClose" @save="onSave" />
                 </TransitionRoot>
             </div>
         </div>
@@ -68,31 +72,33 @@
 <script lang="ts">
 import { TransitionRoot } from '@headlessui/vue';
 import Vue3Datatable from '@bhplugin/vue3-datatable';
+import { deleteTaskApi, searchTasksApi } from '@/common/api-paths';
 import { useMeta } from '@/composables/use-meta';
 import api from '@/services/api';
-import { deleteUserApi, searchUserApi } from '@/common/api-paths';
-import type { PaginationFilter } from '@/types/pagination-filter.interface';
-import filterService from '@/services/filter.service';
-import DeleteModal from '../../components/delete-modal.vue';
-import ManageUserModal from './manage-user-modal.vue';
 import messageService from '@/services/message.service';
+import { PaginationFilter } from '@/types/pagination-filter.interface';
+import DeleteModal from '../../components/delete-modal.vue';
+import ManageskModal from './manage-task-modal.vue';
+import filterService from '@/services/filter.service';
 
-useMeta({ title: 'Users' });
+useMeta({ title: 'Tasks' });
 
 export default {
     components: {
         Vue3Datatable,
         TransitionRoot,
-        ManageUserModal,
+        ManageskModal,
         DeleteModal
     },
     setup() {
         return {
             cols: [
-                { field: 'fullName', title: 'Full Name' },
-                { field: 'email', title: 'Email' },
-                { field: 'status', title: 'Status' },
-                { field: 'role', title: 'Role' },
+                { field: 'taskName', title: 'Task' },
+                { field: 'projectName', title: 'Project' },
+                { field: 'startDateDisplay', title: 'Start Date' },
+                { field: 'endDateDisplay', title: 'End Date' },
+                { field: 'statusDisplay', title: 'Status' },
+                { field: 'priorityDisplay', title: 'Priority' },
                 {
                     field: 'action',
                     title: 'Action',
@@ -106,24 +112,24 @@ export default {
     data() {
         return {
             isDeleteModal: false,
-            isManageUserModal: false,
+            isManageTaskModal: false,
             loading: true,
             params: {} as PaginationFilter,
             rows: [],
             total_rows: 0,
             timer: null as any,
-            deleteUserId: '',
-            editUserId: '',
+            deleteTaskId: '',
+            editTaskId: '',
         }
     },
     created() {
         this.params = filterService.defaultFilter();
-        this.getUsers();
+        this.getTasks();
     }, methods: {
-        async getUsers() {
+        async getTasks() {
             this.loading = true
             const response = await api
-                .post(searchUserApi, this.params);
+                .post(searchTasksApi, this.params);
             if (response.data) {
                 this.rows = response.data.data;
                 this.total_rows = response.data.totalCount
@@ -133,61 +139,67 @@ export default {
         changeServer(data: any) {
             this.params.PageNumber = data.current_page;
             this.params.PageSize = data.pagesize;
-            this.params.OrderBy = [data.sort_column + ' ' + data.sort_direction];
-            this.params = filterService.generateFilter(
-                data.column_filters,
-                this.params,
-            );
-            if (data.change_type === 'filter') {
-                this.filterUsers();
-            } else {
-                this.getUsers();
-            }
-        },
-        filterUsers() {
-            clearTimeout(this.timer);
-            this.timer = setTimeout(() => {
-                this.getUsers();
-            }, 300);
+            this.params.OrderBy = [
+                this.getSortColumnName(data.sort_column) + ' ' + data.sort_direction,
+            ];
+            this.getTasks();
         },
         getBadgeColor(status: string): string {
-            if (!status) return '';
             switch (status) {
-                case 'Invited':
-                    return 'badge-outline-info';
-                case 'Active':
+                case 'High':
                     return 'badge-outline-success';
-                case 'Inactive':
+                case 'Low':
                     return 'badge-outline-danger';
+                case 'To Do':
+                    return 'bg-secondary';
+                case 'Completed':
+                    return 'bg-success';
+                case 'In Progress':
+                    return 'bg-primary';
                 default:
                     return 'badge-outline-info';
             }
         },
-        openManageUserModal(id: string = '') {
-            this.editUserId = id
-            this.isManageUserModal = true
+
+        getSortColumnName(column: string): string {
+            switch (column) {
+                case 'statusDisplay':
+                    return 'status';
+                case 'priorityDisplay':
+                    return 'priority';
+                case 'startDateDisplay':
+                    return 'startDate';
+                case 'endDateDisplay':
+                    return 'endDate';
+                default:
+                    return column;
+            }
         },
-        openDeleteUserModal(id: string) {
-            this.deleteUserId = id;
+        openManageTaskModal(id: string = '') {
+            this.editTaskId = id
+            this.isManageTaskModal = true
+        },
+        openDeleteTaskModal(id: string) {
+            this.deleteTaskId = id;
             this.isDeleteModal = true
         },
         async onSave() {
-            this.isManageUserModal = false
-            this.getUsers();
+            this.isManageTaskModal = false
+            this.getTasks();
         },
         async onDelete() {
             const response = await api
-                .delete(deleteUserApi + this.deleteUserId);
+                .delete(deleteTaskApi + this.deleteTaskId);
             if (response.data) {
-                messageService.showMessage(response.data.data);
+                messageService.showMessage(response.data.message);
                 this.isDeleteModal = false
-                this.getUsers();
+                this.getTasks();
             }
         },
         onClose() {
-            this.isDeleteModal = this.isManageUserModal = false
+            this.isDeleteModal = this.isManageTaskModal = false
             setTimeout(() => {
-                this.deleteUserId = this.editUserId = '';
+                this.deleteTaskId = this.editTaskId = '';
             }, 200);
         }
     }

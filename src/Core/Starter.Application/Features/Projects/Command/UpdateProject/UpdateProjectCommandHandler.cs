@@ -27,7 +27,7 @@ public class UpdateProjectCommandHandler(ICommandUnitOfWork command) : IRequestH
         existingProject.EndDate = request.EndDate;
         existingProject.EstimatedHours = request.EstimatedHours;
 
-        var saveResult = await _commandUnitofWork.SaveAsync(cancellationToken);
+        await _commandUnitofWork.SaveAsync(cancellationToken);
 
         var response = new ApiResponse<string>
         {

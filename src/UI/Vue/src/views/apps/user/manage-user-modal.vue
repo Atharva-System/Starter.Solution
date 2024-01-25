@@ -31,7 +31,11 @@
                                     <input id="firstName" type="text" placeholder="Enter First Name" class="form-input"
                                         v-model="params.firstName" />
                                     <template v-if="isSubmitForm && v$.params.firstName.$error">
-                                        <p class="text-danger mt-1">This can not be empty</p>
+                                        <p class="text-danger mt-1" v-for="error of v$.params.firstName.$errors"
+                                            :key="error.$uid">
+                                            <span v-if="error.$validator == 'required'">This can not be empty</span>
+                                            <span v-if="error.$validator == 'noSpace'">Invalid First Name</span>
+                                        </p>
                                     </template>
                                 </div>
                                 <div class="flex-1" :class="{ 'has-error': v$.params.lastName.$error }">
@@ -39,7 +43,11 @@
                                     <input id="lastName" type="text" placeholder="Enter Last Name" class="form-input"
                                         v-model="params.lastName" />
                                     <template v-if="isSubmitForm && v$.params.lastName.$error">
-                                        <p class="text-danger mt-1">This can not be empty</p>
+                                        <p class="text-danger mt-1" v-for="error of v$.params.lastName.$errors"
+                                            :key="error.$uid">
+                                            <span v-if="error.$validator == 'required'">This can not be empty</span>
+                                            <span v-if="error.$validator == 'noSpace'">Invalid Last Name</span>
+                                        </p>
                                     </template>
                                 </div>
                             </div>
@@ -69,6 +77,7 @@
 </template>
 <script lang="ts">
 import { getUserApi, inviteUserApi, updateUserApi } from '@/common/api-paths';
+import { noSpaceValidationPattern } from '@/common/constants';
 import api from '@/services/api';
 import messageService from '@/services/message.service';
 import { TransitionChild, Dialog, DialogPanel, DialogOverlay } from '@headlessui/vue';
@@ -109,7 +118,11 @@ export default {
     },
     validations() {
         return {
-            params: { firstName: { required }, lastName: { required }, email: { required, email }, },
+            params: {
+                firstName: { required, noSpace: value => noSpaceValidationPattern.test(value), },
+                lastName: { required, noSpace: value => noSpaceValidationPattern.test(value), },
+                email: { required, email },
+            },
         }
     },
     created() {

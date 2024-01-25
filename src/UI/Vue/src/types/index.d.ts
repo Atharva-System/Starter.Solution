@@ -12,3 +12,8 @@ export interface IUserInfo {
   refreshToken?: string
 }
 
+export interface ISelectItems {
+  value: string;
+  label: string;
+}
+
