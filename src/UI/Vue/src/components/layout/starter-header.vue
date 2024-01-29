@@ -168,12 +168,13 @@
                                                 <img class="rounded-md w-10 h-10 object-cover"
                                                     src="/assets/images/user-profile.jpeg" alt="" />
                                             </div>
-                                            <div class="ltr:pl-4 rtl:pr-4">
-                                                <h4 class="text-base">
-                                                    John Doe
+                                            <div class="truncate ltr:pl-4 rtl:pr-4">
+                                                <h4 class="text-base" :title="userProfile.fullName">
+                                                    {{ userProfile.fullName }}
                                                 </h4>
-                                                <a class="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white"
-                                                    href="javascript:;">johndoe@gmail.com</a>
+                                                <p :title="userProfile.email"
+                                                    class="text-black/60 dark:text-dark-light/60 dark:hover:text-white"> {{
+                                                        userProfile.email }}</p>
                                             </div>
                                         </div>
                                     </li>
@@ -191,7 +192,8 @@
                                         </router-link>
                                     </li>
                                     <li>
-                                        <a class="cursor-pointer dark:hover:text-white" @click="openChangePasswordModal(); close()">
+                                        <a class="cursor-pointer dark:hover:text-white"
+                                            @click="openChangePasswordModal(); close()">
                                             <svg class="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2" width="18" height="18"
                                                 viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path
@@ -288,14 +290,16 @@
 
 <script lang="ts" setup>
 import { TransitionRoot } from '@headlessui/vue';
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAppStore } from '@/stores/index';
 import tokenService from '@/services/token.service';
 import menuService from '@/services/menu.service';
 import ChangePasswordModal from '../../views/apps/user/change-password-modal.vue';
+import { useStore } from 'vuex'
 
 const store = useAppStore();
+const $store = useStore()
 const route = useRoute();
 const menuItems = menuService.getMenus();
 var isChangePasswordModal = ref(false);
@@ -311,6 +315,7 @@ const notifications = ref([
 
 onMounted(() => {
     setActiveDropdown();
+    setUserInfo();
 });
 
 watch(route, (to, from) => {
@@ -353,4 +358,17 @@ const onClose = () => {
 const openChangePasswordModal = () => {
     isChangePasswordModal.value = true
 }
+
+const setUserInfo = () => {
+    var userInfo = tokenService.getUser()
+    if (userInfo)
+        $store.commit('updateProfileInfo', {
+            fullName: userInfo.name,
+            email: userInfo.email,
+        })
+}
+
+const userProfile = computed(() => {
+    return $store.getters.getProfileInfo;
+});
 </script>

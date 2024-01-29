@@ -12,6 +12,8 @@ export const getInviteDetails = '/users/get-invite-details/';
 export const acceptInviteUserApi = '/Users/accept-invite';
 export const getUserApi = '/Users/';
 export const updateUserApi = '/users/';
+export const getProfileDetails = '/users/get-profile-details';
+export const updateProfile = '/users/update-profile/';
 
 //Projects
 export const searchProjectsApi = '/project/search';

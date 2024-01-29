@@ -1,8 +1,9 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
 import { useAppStore } from '@/stores/index';
 import appSetting from '@/app-setting';
-import { home, signin, forgotPassword, resetPassword, users, projects, tasks, acceptInvitation } from '../common/route-paths';
+import { home, signin, forgotPassword, resetPassword, users, projects, tasks, acceptInvitation, profile } from '../common/route-paths';
 import UsersView from '../views/apps/user/user-list.vue';
+import ProfileView from '../views/apps/user/profile.vue';
 import ProjectsView from '../views/apps/project/project-list.vue';
 import TasksView from '../views/apps/task/task-list.vue';
 import tokenService from '@/services/token.service';
@@ -39,6 +40,7 @@ const authLayoutPages: RouteRecordRaw[] = [
 const appLayoutPages: RouteRecordRaw[] = [
     { path: home, name: 'home', component: UsersView },
     { path: users, name: 'users', component: UsersView },
+    { path: profile, name: 'profile', component: ProfileView },
     { path: projects, name: 'projects', component: ProjectsView },
     { path: tasks, name: 'tasks', component: TasksView },
 ];
