@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
 import { useAppStore } from '@/stores/index';
 import appSetting from '@/app-setting';
-import { home, signin, forgotPassword, resetPassword, users, projects, tasks } from '../common/route-paths';
+import { home, signin, forgotPassword, resetPassword, users, projects, tasks, acceptInvitation } from '../common/route-paths';
 import UsersView from '../views/apps/user/user-list.vue';
 import ProjectsView from '../views/apps/project/project-list.vue';
 import TasksView from '../views/apps/task/task-list.vue';
@@ -25,6 +25,12 @@ const authLayoutPages: RouteRecordRaw[] = [
         path: resetPassword,
         name: 'reset-password',
         component: () => import('../views/auth/reset-password.vue'),
+        meta: { layout: 'auth' },
+    },
+    {
+        path: acceptInvitation,
+        name: 'accept-invitation',
+        component: () => import('../views/auth/accept-invitation.vue'),
         meta: { layout: 'auth' },
     },
 ];

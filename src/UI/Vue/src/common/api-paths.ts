@@ -2,11 +2,14 @@ export const signInApi = '/auth/signin';
 export const refreshTokenApi = '/auth/refreshtoken';
 export const forgotPasswordApi = '/Auth/forgotPassword';
 export const resetPasswordApi = '/Auth/resetPassword';
+export const changePasswordApi = '/Auth/changePassword';
 
 //Users
 export const searchUserApi = '/Users/search';
 export const deleteUserApi = '/Users/';
 export const inviteUserApi = '/Users/invite-user';
+export const getInviteDetails = '/users/get-invite-details/';
+export const acceptInviteUserApi = '/Users/accept-invite';
 export const getUserApi = '/Users/';
 export const updateUserApi = '/users/';
 

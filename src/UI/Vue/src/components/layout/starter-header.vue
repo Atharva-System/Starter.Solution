@@ -191,7 +191,7 @@
                                         </router-link>
                                     </li>
                                     <li>
-                                        <router-link to="/chage-password" class="dark:hover:text-white" @click="close()">
+                                        <a class="cursor-pointer dark:hover:text-white" @click="openChangePasswordModal(); close()">
                                             <svg class="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2" width="18" height="18"
                                                 viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path
@@ -202,7 +202,7 @@
                                                     stroke="currentColor" stroke-width="1.5"></path>
                                             </svg>
                                             Change Password
-                                        </router-link>
+                                        </a>
                                     </li>
                                     <li class="border-t border-white-light dark:border-white-light/10">
                                         <router-link to="/sign-in" class="text-danger !py-3" @click="logOut(); close()">
@@ -280,19 +280,25 @@
                 </li>
             </ul>
         </div>
+        <TransitionRoot appear :show="isChangePasswordModal" as="template">
+            <ChangePasswordModal @close="onClose" />
+        </TransitionRoot>
     </header>
 </template>
 
 <script lang="ts" setup>
+import { TransitionRoot } from '@headlessui/vue';
 import { ref, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAppStore } from '@/stores/index';
 import tokenService from '@/services/token.service';
 import menuService from '@/services/menu.service';
+import ChangePasswordModal from '../../views/apps/user/change-password-modal.vue';
 
 const store = useAppStore();
 const route = useRoute();
 const menuItems = menuService.getMenus();
+var isChangePasswordModal = ref(false);
 
 const notifications = ref([
     {
@@ -338,5 +344,13 @@ const removeNotification = (value: number) => {
 
 const logOut = () => {
     tokenService.signOut();
+}
+
+const onClose = () => {
+    isChangePasswordModal.value = false
+}
+
+const openChangePasswordModal = () => {
+    isChangePasswordModal.value = true
 }
 </script>

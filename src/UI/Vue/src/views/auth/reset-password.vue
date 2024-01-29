@@ -4,12 +4,22 @@
         <div class="panel sm:w-[480px] m-6 max-w-lg w-full">
             <h2 class="font-bold text-2xl mb-3">Set New Password</h2>
             <form class="space-y-5" @submit.prevent="submitForm()">
+                <span class="text-white-dark text-xs">Password requirements: At least one uppercase
+                    letter (A-Z), one lowercase
+                    letter (a-z), and one non-alphanumeric character.</span>
                 <div :class="{ 'has-error': v$.password.$error }">
                     <label for="password">New Password</label>
                     <input id="password" type="password" placeholder="Enter New Password" class="form-input"
                         v-model="password" />
                     <template v-if="isSubmitForm && v$.password.$error">
-                        <p class="text-danger mt-1">This can not be empty</p>
+                        <p class="text-danger mt-1" v-for="error of v$.password.$errors" :key="error.$uid">
+                            <span v-if="error.$validator == 'required'">This can not be empty</span>
+                            <span v-if="error.$validator == 'minLength'">Minimum length should be {{
+                                v$.password.minLength.$params.min }} characters</span>
+                            <span v-if="error.$validator == 'passPatern'">Password requirements: At least one uppercase
+                                letter (A-Z), one lowercase
+                                letter (a-z), and one non-alphanumeric character.</span>
+                        </p>
                     </template>
                 </div>
                 <div :class="{ 'has-error': v$.cpassword.$error }">
@@ -18,6 +28,15 @@
                         v-model="cpassword" />
                     <template v-if="isSubmitForm && v$.cpassword.required.$invalid">
                         <p class="text-danger mt-1">This can not be empty</p>
+                    </template>
+                    <template v-if="isSubmitForm && v$.cpassword.minLength.$invalid">
+                        <p class="text-danger mt-1">Minimum length should be {{
+                            v$.cpassword.minLength.$params.min }} characters</p>
+                    </template>
+                    <template v-if="isSubmitForm && v$.cpassword.passPatern.$invalid">
+                        <p class="text-danger mt-1">Password requirements: At least one uppercase
+                            letter (A-Z), one lowercase
+                            letter (a-z), and one non-alphanumeric character.</p>
                     </template>
                     <template v-if="isSubmitForm && v$.cpassword.sameAsPassword.$invalid">
                         <p class="text-danger mt-1">Password do not match</p>
@@ -41,12 +60,13 @@
 <script lang="ts">
 import { resetPasswordApi } from '../../common/api-paths';
 import { useVuelidate } from '@vuelidate/core'
-import { required } from '@vuelidate/validators'
+import { minLength, required } from '@vuelidate/validators'
 import { useMeta } from '@/composables/use-meta';
 import api from '@/services/api';
 import messageService from '@/services/message.service';
 import type { IResetPasswordRequest } from '@/types/reset-password';
 import { signin } from '../../common/route-paths';
+import { passwordValidationPattern } from '@/common/constants';
 
 useMeta({ title: 'Reset Password' });
 
@@ -66,11 +86,11 @@ export default {
     },
     validations() {
         return {
-            password: {
-                required: required,
-            },
+            password: { required, minLength: minLength(6), passPatern: value => passwordValidationPattern.test(value), },
             cpassword: {
                 required: required,
+                minLength: minLength(6),
+                passPatern: value => passwordValidationPattern.test(value),
                 sameAsPassword: (value: any, vm: any) => value === vm.password,
             },
         }
