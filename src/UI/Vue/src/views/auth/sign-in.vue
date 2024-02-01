@@ -4,101 +4,72 @@
         <div class="panel sm:w-[480px] m-6 max-w-lg w-full">
             <h2 class="font-bold text-2xl mb-3">Sign In</h2>
             <p class="mb-7">Enter your email and password to login</p>
-            <form class="space-y-5" @submit.prevent="onSubmit()">
-                <div>
+            <form class="space-y-5" @submit.prevent="submitForm()">
+                <div :class="{ 'has-error': v$.email.$error }">
                     <label for="email">Email</label>
-                    <input id="email" type="email" class="form-input" placeholder="Enter Email" v-model="login.email" @input="v$.login.email.$touch()"/>
-                    <template v-if="isSubmitted && v$.login.email.required.$invalid">
-                        <p class="text-danger mt-1">Please fill the Email</p>
-                    </template>
-                    <template v-if="isSubmitted && v$.login.email.maxLength.$invalid">
-                        <p class="text-danger mt-1">The email must be less than 100 characters.</p>
+                    <input id="email" type="text" placeholder="Enter Email" class="form-input" v-model="email" />
+                    <template v-if="isSubmitForm && v$.email.$error">
+                        <p class="text-danger mt-1">This can not be empty</p>
                     </template>
                 </div>
-                <div>
+                <div :class="{ 'has-error': v$.password.$error }">
                     <label for="password">Password</label>
-                    <input id="password" type="password" class="form-input" placeholder="Enter Password" v-model="login.password"  @input="v$.login.password.$touch()"/>
-                    <template v-if="isSubmitted && v$.login.password.required.$invalid">
-                        <p class="text-danger mt-1">Please fill the Password</p>
+                    <input id="password" type="password" placeholder="Enter Password" class="form-input"
+                        v-model="password" />
+                    <template v-if="isSubmitForm && v$.password.$error">
+                        <p class="text-danger mt-1">This can not be empty</p>
                     </template>
-                    <template v-if="isSubmitted && v$.login.password.minLength.$invalid">
-                        <p class="text-danger mt-1">The password must be longer than 6 characters.</p>
-                    </template>
-
                 </div>
                 <div>
-                    <label class="cursor-pointer">
-                        <p class="text-left">
-                            <router-link to="/auth/forgot-password" class="text-primary font-bold hover:underline">Forgot
-                                Password</router-link>
-                        </p>
-                    </label>
+                    <router-link :to="forgotPasswordRoute" class="text-primary font-bold hover:underline">Forgot
+                        Password</router-link>
                 </div>
                 <button type="submit" class="btn btn-primary w-full">SIGN IN</button>
             </form>
-
         </div>
     </div>
 </template>
 <script lang="ts">
-import { useMeta } from '@/composables/use-meta';
-import { defineComponent } from 'vue';
-import useVuelidate from '@vuelidate/core';
-import type { ILogin } from "@/types";
-import { maxLength, minLength, required } from '@vuelidate/validators';
+import { useVuelidate } from '@vuelidate/core'
+import { required } from '@vuelidate/validators'
 import authService from '@/services/auth.service';
+import { useMeta } from '@/composables/use-meta';
+import { forgotPassword } from '../../common/route-paths';
 
 useMeta({ title: 'Login' });
 
-export default defineComponent({
+export default {
     setup() {
-        return { v$: useVuelidate() };
+        return {
+            v$: useVuelidate()
+        }
     },
     data() {
         return {
-            login: { email: "", password: "" } as ILogin,
-            postError: false,
-            postErrorMessage: "",
-            isSubmitted: false
+            forgotPasswordRoute: forgotPassword,
+            isSubmitForm: false,
+            email: '',
+            password: ''
         }
     },
-    computed: {
-
-    },
-    validations: {
-        login: {
-            email: {
-                required,
-                maxLength: maxLength(100)
-            },
-            password: {
-                required,
-                minLength: minLength(6),
-            }
+    validations() {
+        return {
+            email: { required },
+            password: { required }
         }
-    },
-    methods: {
-        onSubmit() {
-            this.isSubmitted = true;
+    }, methods: {
+        async submitForm() {
+            this.isSubmitForm = true
 
-            if (this.v$.login.$invalid) {
-                return;
-            }
+            const isFormCorrect = await this.v$.$validate()
+            if (!isFormCorrect) return
 
-            const promise = authService.login(this.login);
+            const promise = authService.login({ email: this.email, password: this.password });
 
             promise.then(rs => {
                 this.$router.push("/");
             });
-
-            promise.catch(err => {
-                console.log(err.response.data.Messages[0])
-            })
         }
-    },
-    created() {
-
     }
-});
-
+}
 </script>

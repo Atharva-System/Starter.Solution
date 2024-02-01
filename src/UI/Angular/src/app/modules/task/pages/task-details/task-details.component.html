@@ -1,0 +1,26 @@
+<div class="grid grid-cols-1 gap-6 pt-5 xl:grid-cols-1">
+  <!-- Simple -->
+  <div class="panel">
+    <div class="mb-5 flex items-center justify-between">
+      <h5 class="text-lg font-semibold dark:text-white-light">Task Details</h5>
+    </div>
+    <div class="mb-5">
+      <div class="flex">
+        @if (taskDetails) {
+          <div class="flex-1">
+            <h4 class="mb-2 text-lg font-semibold text-primary">
+              {{ taskDetails.taskName }}
+            </h4>
+            @if (taskDetails.description) {
+              <p class="media-text" [innerHTML]="taskDetails.description"></p>
+            } @else {
+              No description added yet.
+            }
+          </div>
+        } @else {
+          No Details Found
+        }
+      </div>
+    </div>
+  </div>
+</div>

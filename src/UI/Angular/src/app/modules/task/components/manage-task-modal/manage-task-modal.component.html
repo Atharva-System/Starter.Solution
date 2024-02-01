@@ -1,0 +1,119 @@
+<modal
+  #modalComponent
+  class="modal-center animate animate-fade-in"
+  (onCancel)="resetForm()"
+  [closeOnOutsideClick]="false"
+>
+  <ng-template #modalHeader>
+    <div class="!font-medium">{{ taskId ? "Edit Task" : "Add Task" }}</div>
+  </ng-template>
+  <ng-template #modalBody>
+    <form
+      [formGroup]="formCreateTask"
+      class="text-sm"
+      (keydown.enter)="submitForm()"
+    >
+      <div class="mb-5">
+        <label for="taskName">Name</label>
+        <app-input
+          formControlName="taskName"
+          [control]="formCreateTask.controls['taskName']"
+          [isSubmit]="isSubmitFormCreateTask"
+          placeholder="Enter Task Name"
+        ></app-input>
+      </div>
+      <div class="mb-5 flex justify-between gap-4">
+        <div class="flex-1">
+          <label for="status">Project</label>
+          <app-select
+            id="projectId"
+            [options]="projectsOptions"
+            defaultOptions="Select Project"
+            formControlName="projectId"
+            [control]="formCreateTask.controls['projectId']"
+            [isSubmit]="isSubmitFormCreateTask"
+          ></app-select>
+        </div>
+        <div class="flex-1">
+          <label for="assignee">Assignee</label>
+          <app-select
+            id="assignedTo"
+            [options]="assignToUsersOptions"
+            defaultOptions="Select Assignee"
+            formControlName="assignedTo"
+            [control]="formCreateTask.controls['assignedTo']"
+            [isSubmit]="isSubmitFormCreateTask"
+          ></app-select>
+        </div>
+      </div>
+      <div class="mb-5 flex justify-between gap-4">
+        <div class="flex-1">
+          <label for="status">Status</label>
+          <app-select
+            id="status"
+            [options]="statusOptions"
+            defaultOptions="Select Status"
+            formControlName="status"
+            [control]="formCreateTask.controls['status']"
+            [isSubmit]="isSubmitFormCreateTask"
+          ></app-select>
+        </div>
+        <div class="flex-1">
+          <label for="priority">Priority</label>
+          <app-select
+            id="priority"
+            [options]="priorityOptions"
+            defaultOptions="Select Priority"
+            formControlName="priority"
+            [control]="formCreateTask.controls['priority']"
+            [isSubmit]="isSubmitFormCreateTask"
+          ></app-select>
+        </div>
+      </div>
+      <div class="mb-5">
+        <label for="deadline">Deadline</label>
+        <app-date-range-picker
+          formControlName="deadline"
+          [Control]="formCreateTask.controls['deadline']"
+          [isSubmit]="isSubmitFormCreateTask"
+          [placeholder]="'Select Deadline'"
+        ></app-date-range-picker>
+      </div>
+      <div class="mb-5">
+        <label for="description">Description</label>
+        <app-text-editor
+          formControlName="description"
+          [control]="formCreateTask.controls['description']"
+          [isSubmit]="isSubmitFormCreateTask"
+          placeholder="Enter Description"
+        ></app-text-editor>
+      </div>
+    </form>
+  </ng-template>
+  <ng-template #modalFooter>
+    <button
+      type="button"
+      (click)="resetForm(); modalComponent.close()"
+      class="btn btn-outline-danger"
+    >
+      {{ taskId ? "Cancel" : "Discard" }}
+    </button>
+    <app-button
+      [text]="taskId ? 'Save' : 'Create & Close'"
+      type="submit"
+      classes="btn-primary ltr:ml-4 rtl:mr-4"
+      class="d-block"
+      (click)="!(taskId ? !isFormDirty : false) && submitForm()"
+      [disabled]="taskId ? !isFormDirty : false"
+    ></app-button>
+    @if (!taskId) {
+      <app-button
+        [text]="'Create'"
+        type="submit"
+        classes="btn-primary ltr:ml-4 rtl:mr-4"
+        class="d-block"
+        (click)="submitForm(false)"
+      ></app-button>
+    }
+  </ng-template>
+</modal>

@@ -1,5 +1,5 @@
 ﻿@inherits LayoutComponentBase
-@inject NavigationManager NavigationManager
+@inject AppStateProvider appState
 
 
 
@@ -40,28 +40,37 @@
 
 @* <ThemeCustomizer></ThemeCustomizer> *@
 
-<div class="main-container min-h-screen text-black dark:text-white-dark" :class="[$store.app.navbar]">
-    @if (!IsLoginPage()) // Conditionally render based on login page
-    {
-        <NavMenu></NavMenu>
-        <div class="main-content">
-            <Header></Header>
-
-            <div class="animate__animated p-6 [$store.app.animation]">
-                @Body
-                <Footer />
-            </div>
+<div class="main-container min-h-screen text-black dark:text-white-dark" :class="[$store.app.navbar]" @onclick="HideShowDropdown">
+    <NavMenu></NavMenu>
+    <div class="main-content">
+        <Header @ref="childComponentRef"></Header>
+    
+        <div class="animate__animated p-6 [$store.app.animation]">
+            @Body
+            <Footer />
         </div>
-    }
-    else
-    {
-        @Body
-    }
+    </div>
 </div>
 
 
+
 @code {
-    bool IsLoginPage() => NavigationManager.Uri.Contains("login", StringComparison.OrdinalIgnoreCase);
+    private Header childComponentRef;
+    protected override async void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+    public void HideShowDropdown()
+    {
+        if (childComponentRef.IsDropdownOpenEnd)
+        {
+            childComponentRef.ToggleDropdown(!childComponentRef.IsDropdownOpenEnd);
+        }
+        else
+        {
+            childComponentRef.IsDropdownOpenEnd = true;
+        }
+    }
 }
 
 

@@ -13,4 +13,12 @@ services:
   
   starter.blazor:
     environment:
-      - ASPNETCORE_ENVIRONMENT=Docker
+      - apiURL=http://localhost:10001
+
+  starter.vue:
+    environment:
+      - NODE_ENV=docker
+  
+  starter.angular:
+    environment:
+      - NODE_ENV=docker

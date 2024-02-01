@@ -1,17 +1,41 @@
 # Starter.Solution
 
-Starter.Solution is a starter project designed to kickstart your development process with a robust backend API and multiple frontend options. It leverages various technologies and design patterns to provide a scalable and maintainable foundation for your application.
+Starter.Solution is a starter project designed to kickstart your development process with a powerful solution template that exemplifies the principles of [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) and incorporates the robustness of CQRS implementation using ASP.NET Core. It leverages various technologies and design patterns to provide a scalable and maintainable foundation for your application with **multiple frontend options**
+
+![CleanArchitecture](https://user-images.githubusercontent.com/42376112/110762993-a61b1580-8266-11eb-9ac1-438072319971.jpg)
 
 ## Backend (.Net API 8)
 
-### Technologies Used
+## Technologies at Play:
 
-- **.Net API 8:** The backend is built using .Net API 8, taking advantage of its features and performance improvements.
-- **Clean Architecture:** The project follows the clean architecture principles, promoting separation of concerns and maintainability.
-- **Repository Pattern:** Utilizes the repository pattern for data access, enhancing data abstraction and testability.
-- **CQRS Pattern with Mediator:** Implements the CQRS pattern using MediatR library, providing a clear separation of command and query responsibilities.
-- **Caching:** Incorporates caching mechanisms to optimize performance and reduce redundant data fetches.
-- **JWT Authorization:** Ensures secure authentication and authorization using JSON Web Tokens (JWT).
+* ASP.NET Core
+* Entity Framework Core
+* MediatR
+* Swagger
+* Redis (for distributed caching)
+* Jwt Token Authentication
+* Asp.Net Identity
+* Api Versioning
+* FluentValidation
+* Serilog
+* Mapper
+* Docker
+* xUnit
+
+## Championing Best Practices and Design Principles:
+
+* Clean Architecture
+* Clean Code
+* CQRS
+* Authentication and Authorization
+* Distributed caching
+* SOLID Principles
+* DbContext and Repository (with Generic Repository)
+* REST API Naming Conventions
+* Multi-environment Utilization in ASP.NET Core (Development, Docker, etc.)
+* Custom Exceptions
+* Unit Tests
+* PipelineBehavior for Validation and Performance Tracking.
 
 ### Getting Started
 
@@ -56,6 +80,18 @@ Starter.Solution provides multiple frontend options to cater to different prefer
 #### Getting Started
 
 1. Navigate to the Vue folder: `cd Starter.Solution/src/UI/Vue`
+2. Install dependencies: `npm install`
+3. Run the application: `npm run dev`
+
+### 4. React
+
+#### Technologies Used
+
+- **React:** A progressive JavaScript library for building user interfaces.
+
+#### Getting Started
+
+1. Navigate to the React folder: `cd Starter.Solution/src/UI/React`
 2. Install dependencies: `npm install`
 3. Run the application: `npm run dev`
 

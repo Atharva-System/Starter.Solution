@@ -18,10 +18,24 @@ export class APIs {
   static getProfileDetails = '/users/get-profile-details';
   static updateProfile = '/users/update-profile/';
 
-    //Projects
-    static searchProjectsApi = '/project/search';
-    static deleteProjectApi = '/project/';
-    static getProjectApi = '/project/';
-    static updateProjectApi = '/project/';
-    static createProjectApi = '/project/Create';
+  //Projects
+  static searchProjectsApi = '/project/search';
+  static deleteProjectApi = '/project/';
+  static getProjectApi = '/project/';
+  static updateProjectApi = '/project/';
+  static createProjectApi = '/project/Create';
+
+  //Tasks
+  static searchTasksApi = '/Task/search';
+  static deleteTaskApi = '/Task/';
+  static getTaskApi = '/Task/';
+  static updateTaskApi = '/Task/';
+  static createTaskApi = '/Task/Create';
+  static getTaskStatusListApi = '/Task/status-list';
+  static getTaskPriorityListApi = '/Task/priority-list';
+  static getAssigneeListApi = '/Task/assignee-list';
+  static getProjectListApi = '/Task/projects';
+
+  //SignalR
+  static getNotifications = 'notifications';
 }

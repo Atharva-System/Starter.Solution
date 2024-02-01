@@ -3,3 +3,10 @@
 @import '@bhplugin/vue3-datatable/dist/style.css';
 @import 'tailwind.css';
 @import 'sweetalert2.css';
+
+.disabled-textbox {
+    background-color: #f0f0f0;
+    color: #777;
+    border: 1px solid #ccc;
+    cursor: not-allowed;
+}

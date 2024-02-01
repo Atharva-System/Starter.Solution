@@ -22,7 +22,7 @@ export class AuthInterceptor implements HttpInterceptor {
     request = request.clone({
       setHeaders: {
         'Content-Type': 'application/json',
-        'request-source' : 'angular'
+        'request-source': 'angular',
       },
     });
 
@@ -37,8 +37,8 @@ export class AuthInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(
       catchError((error) => {
         if (
-          error.status === HttpStatusCode.Unauthorized &&
-          !this.authenticationService.isAuthenticated()
+          !this.authenticationService.isAuthenticated() &&
+          !this.isRequestUrlAllowAnonymous(request.url)
         ) {
           return this.handleTokenExpired(request, next);
         } else {
@@ -84,6 +84,8 @@ export class AuthInterceptor implements HttpInterceptor {
       APIs.signinApi,
       APIs.signupApi,
       APIs.refreshTokenApi,
+      APIs.forgotPasswordApi,
+      APIs.resetPasswordApi,
     ];
     return anonymousEndpoints.some((endpoint) => url.endsWith(endpoint));
   }

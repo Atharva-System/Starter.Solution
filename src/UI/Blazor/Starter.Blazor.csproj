@@ -1,18 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <ItemGroup>
+    <Compile Remove="Modules\Login\Page\**" />
     <Compile Remove="Modules\Settings\**" />
     <Compile Remove="Modules\Users\**" />
+    <Content Remove="Modules\Login\Page\**" />
     <Content Remove="Modules\Settings\**" />
     <Content Remove="Modules\Users\**" />
+    <EmbeddedResource Remove="Modules\Login\Page\**" />
     <EmbeddedResource Remove="Modules\Settings\**" />
     <EmbeddedResource Remove="Modules\Users\**" />
+    <None Remove="Modules\Login\Page\**" />
     <None Remove="Modules\Settings\**" />
     <None Remove="Modules\Users\**" />
+	
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Modules\User\Pages\User_old.razor" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" />
+    <PackageReference Include="Blazored.Modal" />
+    <PackageReference Include="DataTables.AspNet.Core" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" />
@@ -29,15 +40,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Modules\Login\Page\" />
-    <Folder Include="Modules\Settings\" />
     <Folder Include="Modules\Users\" />
     <Folder Include="Modules\ForgotPassword\" />
-    <Folder Include="Modules\ResetPassword\" />
-    <Folder Include="Modules\Task\" />
+     <Folder Include="Modules\ResetPassword\" />
     <Folder Include="Shared\Components\Button\" />
     <Folder Include="Shared\Components\Grid\" />
     <Folder Include="Shared\Utility\" />
   </ItemGroup>
+  <PropertyGroup>
+    <BlazorLinkOnBuild>false</BlazorLinkOnBuild>
+  </PropertyGroup>
 
 </Project>

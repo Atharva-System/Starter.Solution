@@ -1,0 +1,179 @@
+﻿@page "/task-list"
+@using Microsoft.AspNetCore.Authorization
+@using Starter.Blazor.Core.Response
+@using Starter.Blazor.Modules.Common
+@using Starter.Blazor.Modules.Login.Services
+@using Starter.Blazor.Modules.Login.Services.IServices
+@using Starter.Blazor.Modules.Task.Model
+@using Starter.Blazor.Modules.Task.Services;
+@using DataTables.AspNet;
+@using Blazored.Modal
+@using Blazored.Modal.Services
+@using System.Collections.Generic;
+@using Starter.Blazor.Shared.CustomGrid
+@using Starter.Blazor.Shared.Response
+@inject IJSRuntime JSRuntime
+@inject NavigationManager navigationManager
+@inject IAuthService AuthService
+@inject ITaskService TaskService
+@inject IModalService TaskModal
+@attribute [Authorize]
+@inject IJSRuntime JSRuntime
+@inject IModalService ModalService
+<style>
+    .bm-title{
+        font-weight: 600 !important;
+        font-size: 1.125rem !important;
+    }
+</style>
+<div class="panel h-full w-full">
+    <div class="mb-5 flex items-center justify-between">
+        <h5 class="text-lg font-semibold dark:text-white-light">Tasks</h5>
+        <button type="button" class="btn btn-primary" @onclick="AddTask">Add Task</button>
+    </div>
+    <div class="table-responsive">
+        <ReusableGrid @ref="gridRef" TItem="TaskListDto" HeaderData="@headerInfo" PageSizeChange="LoadData" PageNumberChange="LoadData" ColumnSortingChange="LoadData" DeleteRecord="DeleteRecord" EditRecord="EditRecord" />
+    </div>
+</div>
+
+@code {
+    [CascadingParameter] public IModalService Modal { get; set; } = default;
+
+    private bool isAuthenticated;
+    public Guid EditTaskID;
+    public bool IsEditMode;
+    public bool Save = false;
+
+    private ReusableGrid<TaskListDto> gridRef;
+
+    private List<Dictionary<string, string>> headerInfo = new List<Dictionary<string, string>>
+    {
+        new Dictionary<string, string> { {"Name", "Task Name"}, {"Key","TaskName"}, {"CssClass", ""}, {"ShowSorting", "true"}, {"SorderOrder","asc" }, {"ShowFilter", "false"},{"SpanTd","" } },
+        new Dictionary<string, string> { { "Name", "Start Date" }, { "Key", "StartDateDisplay" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" } },
+        new Dictionary<string, string> { { "Name", "End Date" }, { "Key", "EndDateDisplay" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" }},
+        new Dictionary<string, string> { { "Name", "Status" }, { "Key", "StatusDisplay" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" }},
+        new Dictionary<string, string> { { "Name", "Priority" }, { "Key", "PriorityDisplay" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" }},
+        new Dictionary<string, string> { { "Name", "Project" }, { "Key", "ProjectName" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" }},
+        new Dictionary<string, string> { { "Name", "Action" }, { "Key", "Edit,Delete" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" },{ "IsActionButton","true"} }    };
+
+
+    private async System.Threading.Tasks.Task LoadData(int PageNumber, int PageSize, string[] OrderBy)
+    {
+        var paginationRequest = new PaginationRequest
+            {
+                PageSize = PageSize,
+                PageNumber = PageNumber,
+                OrderBy = OrderBy
+            };
+
+        Tasks = await TaskService.GetTasklistsAsync(paginationRequest);
+
+        if (gridRef != null)
+        {
+            await gridRef.Refresh(Tasks.Data, Tasks.TotalPages, Tasks.TotalCount, paginationRequest.PageSize, paginationRequest.PageNumber);
+        }
+    }
+
+    private readonly string toastScriptConstant = @"
+        const toast = window.Swal.mixin({
+            toast: true,
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            showCloseButton: true,
+        });";
+
+    private PagedDataResponse<List<TaskListDto>> Tasks = new PagedDataResponse<List<TaskListDto>>();
+
+    private PaginationRequest param = new PaginationRequest { PageNumber = 0, PageSize = 10, OrderBy = new[] { "TaskName" } };
+
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
+    {
+        var authState = await _stateProvider.GetAuthenticationStateProviderUserAsync();
+
+        if (!authState.Identity.IsAuthenticated)
+        {
+            navigationManager.NavigateTo("/");
+        }
+
+        await System.Threading.Tasks.Task.WhenAll(LoadData(1, 5, null));
+
+    }
+
+    private async System.Threading.Tasks.Task PageSizeChanged(int pageNumber, int pageSize, string[] OrderBy)
+    {
+        await LoadData(pageSize, pageNumber, OrderBy);
+    }
+
+    private async void AddTask()
+    {
+        var projectList = await TaskService.GetProjectlistsAsync();
+        var StatusList = await TaskService.GetStatuslistsAsync();
+        var PriorityList = await TaskService.GetPrioritylistsAsync();
+        var AssigneeList = await TaskService.GetAssigneeListAsync();
+
+        Modal.Show<CreateTaskModel>("Add New Task", new ModalParameters
+        {
+            { nameof(CreateTaskModel.projectList), projectList },
+            { nameof(CreateTaskModel.StatusList), StatusList },
+            { nameof(CreateTaskModel.PriorityList), PriorityList },
+            { nameof(CreateTaskModel.AssigneeList), AssigneeList },
+            { nameof(CreateTaskModel.TaskDetails), new TaskListDto(){ Id = Guid.Empty,StartDate = DateTime.UtcNow,EndDate = DateTime.UtcNow.AddDays(2) } },
+            { nameof(CreateTaskModel.OnTaskSaved), EventCallback.Factory.Create(this, (TaskListDto task) => OnTaskSavedHandler(task)) }
+        });
+
+        //await System.Threading.Tasks.Task.WhenAll(LoadData(1, 5, null));
+    }
+
+    private async void OnTaskSavedHandler(TaskListDto savedTaskDetails)
+    {
+        await LoadData(1, 5, null);
+    }
+    private async void EditRecord(string Id)
+    {
+        var TaskDetails = await TaskService.GetTaskDetails(Id);
+        var projectList = await TaskService.GetProjectlistsAsync();
+        var StatusList = await TaskService.GetStatuslistsAsync();
+        var PriorityList = await TaskService.GetPrioritylistsAsync();
+        var AssigneeList = await TaskService.GetAssigneeListAsync();
+        if (TaskDetails.Success == true)
+        {
+            Modal.Show<CreateTaskModel>("Edit Task", new ModalParameters
+            {
+                { nameof(CreateTaskModel.projectList), projectList },
+                { nameof(CreateTaskModel.StatusList), StatusList },
+                { nameof(CreateTaskModel.PriorityList), PriorityList },
+                { nameof(CreateTaskModel.AssigneeList), AssigneeList },
+                { nameof(CreateTaskModel.TaskDetails), TaskDetails.Data },
+                { nameof(CreateTaskModel.OnTaskSaved), EventCallback.Factory.Create<TaskListDto>(this, OnTaskSavedHandler) }
+            });
+        }
+        else
+        {
+
+        }
+    }
+
+    private async System.Threading.Tasks.Task DeleteRecord(string id)
+    {
+        var result = await TaskService.DeleteTaskAsync(id);
+
+        if (result.Success)
+        {
+            showToaster(result.Message, "top");
+            await LoadData(1, 5, null);
+        }
+        else
+        {
+            showToaster(result.Messages.FirstOrDefault(), "top");
+        }
+    }
+
+    private void showToaster(string msg, string position)
+    {
+        string toastScript = $"{toastScriptConstant} toast.fire({{ title: '{msg}' }});";
+        JSRuntime.InvokeVoidAsync("eval", toastScript);
+    }
+
+    
+}

@@ -8,7 +8,6 @@ export interface IDropdownItems {
   selected?: boolean;
   hide?: boolean;
   disable?: boolean;
-  type?: any;
 }
 
 @Component({

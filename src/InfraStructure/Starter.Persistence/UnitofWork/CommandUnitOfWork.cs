@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using MediatR;
 using Starter.Application.Contracts.Persistence.Repositoris.Base;
 using Starter.Application.UnitOfWork;
 using Starter.Domain.Common;
@@ -10,9 +11,7 @@ namespace Starter.Persistence.UnitofWork;
 public class CommandUnitOfWork : ICommandUnitOfWork
 {
     private readonly AppDbContext _appDbContext;
-
     private Hashtable _repositories;
-
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     public CommandUnitOfWork(AppDbContext appDbContext)
@@ -27,7 +26,8 @@ public class CommandUnitOfWork : ICommandUnitOfWork
 
     public async Task<int> SaveAsync(CancellationToken cancellationToken)
     {
-        return await _appDbContext.SaveChangesAsync(cancellationToken);
+        var result = await _appDbContext.SaveChangesAsync(cancellationToken);
+        return result;
     }
 
     public ICommandRepository<TEntity> CommandRepository<TEntity>() where TEntity : BaseEntity, new()

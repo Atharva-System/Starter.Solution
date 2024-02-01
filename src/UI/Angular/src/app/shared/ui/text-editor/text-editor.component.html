@@ -1,0 +1,34 @@
+<div [ngClass]="isSubmit ? (control.errors ? 'has-error' : '') : ''">
+  <quill-editor
+    style="width: -webkit-fill-available; height: 150px"
+    [modules]="editorOptions"
+    [placeholder]="placeholder"
+    [formControl]="control"
+    [(ngModel)]="value"
+  ></quill-editor>
+  @if (isSubmit && control.errors?.["required"]) {
+    <p class="mt-1 text-danger">This can not be empty</p>
+  }
+  @if (isSubmit && control.errors?.["minlength"]) {
+    <p class="mt-1 text-danger">
+      Minimum length should be
+      {{ this.control.errors.minlength.requiredLength }} characters
+    </p>
+  }
+  @if (isSubmit && control.errors?.["maxlength"]) {
+    <p class="mt-1 text-danger">
+      Maximum length should be
+      {{ control.errors["maxlength"].requiredLength }} characters
+    </p>
+  }
+  @if (isSubmit && control.errors?.["min"]) {
+    <p class="mt-1 text-danger">
+      Minimum value is {{ control.errors["min"].min }}
+    </p>
+  }
+  @if (isSubmit && control.errors?.["max"]) {
+    <p class="mt-1 text-danger">
+      Maximum value is {{ control.errors["max"].max }}
+    </p>
+  }
+</div>

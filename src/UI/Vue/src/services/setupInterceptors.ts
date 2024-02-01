@@ -1,11 +1,11 @@
-import TokenService from './token.service';
-import axiosInstance from "./api";
+import tokenService from './token.service';
+import axiosInstance from './api';
+import { refreshTokenApi } from '@/common/api-paths';
 
 const setup = () => {
-    
     axiosInstance.interceptors.request.use(
         (config: any) => {
-            const token = TokenService.getLocalAccessToken();
+            const token = tokenService.getToken();
             if (token) {
                 config.headers['Authorization'] = 'Bearer ' + token;
             }
@@ -23,19 +23,19 @@ const setup = () => {
         async (err: any) => {
             const originalConfig = err.config;
 
-            if (originalConfig.url !== '/auth/signin' && err.response) {
+            if (originalConfig.url !== '/signin' && err.response) {
                 // Access Token was expired
                 if (err.response.status === 401 && !originalConfig._retry) {
                     originalConfig._retry = true;
-
                     try {
-                        const rs = await axiosInstance.post('/auth/refreshtoken', {
-                            refreshToken: TokenService.getLocalRefreshToken(),
+                        const rs = await axiosInstance.post(refreshTokenApi, {
+                            refreshToken: tokenService.getRefreshToken(),
                         });
 
-                        const { accessToken } = rs.data;
+                        const { token, refreshToken } = rs.data;
 
-                        TokenService.updateLocalAccessToken(accessToken);
+                        tokenService.setToken(token);
+                        tokenService.setRefreshToken(refreshToken);
 
                         return axiosInstance(originalConfig);
                     } catch (_error) {

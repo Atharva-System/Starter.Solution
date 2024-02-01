@@ -1,12 +1,12 @@
 ﻿@page "/dashboard"
 @using Microsoft.AspNetCore.Authorization
-@using Starter.Blazor.Modules.Login.Services
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@inject NavigationManager navigationManager
+@using Starter.Blazor.Core
+@using Starter.Blazor.Modules.Login.Services;
+@using Starter.Blazor.Modules.Login.Services.IServices
 @inject IAuthService AuthService
 @attribute [Authorize]
 
-<div x-data="sales">
+<div>
     <ul class="flex space-x-2 rtl:space-x-reverse">
         <li>
             <a href="javascript:;" class="text-primary hover:underline">Dashboard</a>
@@ -302,14 +302,12 @@
 </div>
 @code {
 
-    bool isAuthenticated = false;
-
     protected override async Task OnInitializedAsync()
     {
-        isAuthenticated = await AuthService.IsUserAuthenticated();
-        if (!isAuthenticated)
-        {
-            navigationManager.NavigateTo("/");
-        }
+        _httpInterceptor.RegisterEvent();
     }
+    // public void Dispose()
+    // {
+    //     Interceptor.DisposeEvent();
+    // }
 }

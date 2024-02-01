@@ -135,6 +135,8 @@ export class ListUsersComponent {
   }
 
   onCancel() {
-    this.deleteUserId = this.editUserId = '';
+    setTimeout(() => {
+      this.deleteUserId = this.editUserId = '';
+    }, 200);
   }
 }

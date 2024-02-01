@@ -1,5 +1,288 @@
-﻿<h3>Project</h3>
+﻿@page "/projectlist"
+@using Starter.Blazor.Modules.Common
+@using Starter.Blazor.Modules.Projects.Models
+@using Starter.Blazor.Modules.Projects.Services
+@using Starter.Blazor.Shared.CustomGrid
+@using Starter.Blazor.Shared.Response
+@inject IJSRuntime JSRuntime
+@inject IProjectService ProjectService
+
+
+<div x-data="modal">
+    
+    <div class="panel h-full w-full">
+        <div class="mb-5 flex items-center justify-between">
+            <h5 class="text-lg font-semibold dark:text-white-light">Projects</h5>
+            <button type="button" class="btn btn-primary" @onclick="ToggleModal">Add Project</button>
+        </div>
+
+        <div class="table-responsive">
+            <ReusableGrid @ref="gridRef" TItem="ProjectDto" HeaderData="@headerInfo" PageSizeChange="LoadData" PageNumberChange="LoadData" ColumnSortingChange="LoadData" DeleteRecord="DeleteRecord" EditRecord="EditRecord" />
+        </div>
+    </div>
+
+
+    <!-- modal -->
+    <div id="projectPopup" class="fixed inset-0 bg-[black]/60 z-[999] hidden overflow-y-auto" style="display: none;">
+        <div class="flex items-center justify-center min-h-screen px-4">
+            <div x-transition x-transition.duration.300 class="panel border-0 py-1 px-4 rounded-lg overflow-hidden w-full max-w-sm my-8">
+                <div class="flex items-center justify-between p-5 font-semibold text-lg dark:text-white">
+                    @if (isEditing)
+                    {
+                        <span>Update Project</span>
+                    }
+                    else
+                    {
+                        <span>Add Project</span>
+                    }
+                </div>
+                <!-- form -->
+                <div class="p-5">
+                    <EditForm class="space-y-5" Model="@addProject" OnValidSubmit="AddProject">
+                        <DataAnnotationsValidator />
+                        <div>
+                            <label for="projectName">Project Name</label>
+                            <input id="projectName" type="text" class="form-input" placeholder="Enter Project Name" @bind="addProject.ProjectName" />
+                            <ValidationMessage For="@(() => addProject.ProjectName)" />
+                        </div>
+                        <div>
+                            <label for="desc">Description</label>
+                            <textarea id="desc"
+                                      rows="3"
+                                      class="form-textarea min-h-[130px] "
+                                      placeholder="Enter Description"
+                                      @bind="addProject.Description">
+                            </textarea>
+                        </div>
+                        <div>
+                            <label for="EstHour">Estimated Hours</label>
+                            <input id="EstHour" type="number" step="0.01" class="form-input" placeholder="Enter Estimated Hours" @bind-value="addProject.EstimatedHours" />
+                            <ValidationMessage For="@(() => addProject.EstimatedHours)" />
+                        </div>
+                        <div class="flex space-x-2">
+                            <div>
+                                <label for="startDate">Start Date</label>
+                                <input id="startDate"
+                                       type="date"
+                                       name="inv-date"
+                                       class="form-input"
+                                       @bind-value="addProject.StartDate" />
+                                <ValidationMessage For="@(() => addProject.StartDate)" />
+                            </div>
+                            <div>
+                                <label for="endDate">End Date</label>
+                                <input id="endDate"
+                                       type="date"
+                                       name="inv-date"
+                                       class="form-input"
+                                       @bind-value="addProject.EndDate" />
+                                <ValidationMessage For="@(() => addProject.EndDate)" />
+                            </div>
+                        </div>
+                        <div class="flex space-x-2 ">
+                            <button  class="btn btn-danger w-full" @onclick="CloseModal">Close</button>
+                            <button type="submit" class="btn btn-primary w-full">
+                                @if (isEditing)
+                                {
+                                    <span>Update</span>
+                                }
+                                else
+                                {
+                                    <span>Create</span>
+                                }
+                            </button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    window.showProjectModal = function () {
+        document.getElementById('projectPopup').style.display = 'block';
+    };
+
+    window.hideProjectModal = function () {
+        document.getElementById('projectPopup').style.display = 'none';
+    };
+</script>
 
 @code {
+    private bool IsModalOpen = false;
+    private bool isEditing = false;
 
+    private ReusableGrid<ProjectDto> gridRef;
+    private PagedDataResponse<List<ProjectDto>> DisplayedData = new PagedDataResponse<List<ProjectDto>>();
+
+
+    private List<Dictionary<string, string>> headerInfo = new List<Dictionary<string, string>>
+    {
+        new Dictionary<string, string> { {"Name", "Name"}, {"Key","ProjectName"}, {"CssClass", ""}, {"ShowSorting", "true"}, {"SorderOrder","asc" }, {"ShowFilter", "false"},{"SpanTd","" } },
+        //new Dictionary<string, string> { { "Name", "Description" }, { "Key", "Description" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" } },
+        new Dictionary<string, string> { { "Name", "Start Date" }, { "Key", "StartDateDisplay" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" } },
+        new Dictionary<string, string> { { "Name", "End Date" }, { "Key", "EndDateDisplay" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" }},
+        new Dictionary<string, string> { { "Name", "Hours" }, { "Key", "EstimatedHours" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" }},
+        new Dictionary<string, string> { { "Name", "Action" }, { "Key", "Edit,Delete" }, { "CssClass", "" }, { "ShowSorting", "false" }, { "SorderOrder", "asc" }, { "ShowFilter", "false" },{"SpanTd","" },{ "IsActionButton","true"} }    };
+
+    private List<ProjectDto> projects = new List<ProjectDto>();
+    private AddEditProject addProject = new AddEditProject();
+    private ProjectDetailsDto projectDetailsdto = new ProjectDetailsDto();
+    private readonly string toastScriptConstant = @"
+        const toast = window.Swal.mixin({
+            toast: true,
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            showCloseButton: true,
+        });";
+
+    protected override void OnInitialized()
+    {
+        _httpInterceptor.RegisterEvent();
+        Task.WhenAll(LoadData(1, 5, null));
+    }
+    private async Task PageSizeChanged(int pageNumber, int pageSize, string[] OrderBy)
+    {
+        await LoadData(pageSize, pageNumber, OrderBy);
+    }
+
+    private async Task AddProject()
+    {
+        if (!isEditing)
+        {
+            addProject.Id = "";
+            var result = await ProjectService.AddProjectAsync(addProject);
+            if (result.Success)
+            {
+                showToaster(result.Message, "top");
+                addProject = new AddEditProject();
+                addProject.Id = string.Empty;
+                isEditing = false;
+
+                await ToggleModal();
+                await LoadData(1, 5, null);
+            }
+            else
+            {
+                showToaster(result.Message, "top");
+            }
+        }
+        else 
+        {
+            UpdateProject();
+        }
+    }
+
+    private void showToaster(string msg, string position)
+    {
+        string toastScript = $"{toastScriptConstant} toast.fire({{ title: '{msg}' }});";
+        JSRuntime.InvokeVoidAsync("eval", toastScript);
+    }
+
+    private async Task ToggleModal()
+    {
+        IsModalOpen = !IsModalOpen;
+
+        if (IsModalOpen)
+        {
+            await JSRuntime.InvokeVoidAsync("showProjectModal");
+        }
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("hideProjectModal");
+        }
+    }
+
+    private async Task CloseModal()
+    {
+        addProject = new AddEditProject();
+        await ToggleModal();
+        isEditing = false;
+    }
+
+    private async Task LoadData(int PageNumber, int PageSize, string[] OrderBy)
+    {
+        var paginationRequest = new PaginationRequest
+        {
+            PageSize = PageSize,
+            PageNumber = PageNumber,
+            OrderBy = OrderBy
+        };
+
+        DisplayedData = await ProjectService.GetProjectlistsAsync(paginationRequest);
+
+        if (gridRef != null)
+        {
+            await gridRef.Refresh(DisplayedData.Data, DisplayedData.TotalPages, DisplayedData.TotalCount, paginationRequest.PageSize, paginationRequest.PageNumber);
+        }
+    }
+
+    private async Task DeleteRecord(string id)
+    {
+        var result = await ProjectService.DeleteProject(id);
+
+        if (result.Success)
+        {
+            showToaster(result.Message, "top");
+            await LoadData(1, 5, null);
+        }
+        else
+        {
+            showToaster(result.Messages.FirstOrDefault(), "top");
+        }
+    }
+
+    private async Task EditRecord(string id)
+    {
+        var result = await ProjectService.GetProjectDetails(id);
+
+        if (result.Success)
+        {
+            isEditing = true;
+            addProject.ProjectName = result.Data.ProjectName;
+            addProject.Description = result.Data.Description;
+            addProject.StartDate = result.Data.StartDate;
+            addProject.EndDate = result.Data.EndDate;
+            addProject.EstimatedHours = result.Data.EstimatedHours;
+            addProject.Id = result.Data.Id;
+            await ToggleModal();
+        }
+        else
+        {
+            showToaster(result.Messages.FirstOrDefault(), "top");
+        }
+    }
+
+    private async Task UpdateProject()
+    {
+        ProjectDto projectDto = new ProjectDto();
+        projectDto.ProjectName = addProject.ProjectName;
+        projectDto.Description = addProject.Description;
+        projectDto.StartDate = addProject.StartDate;
+        projectDto.EndDate = addProject.EndDate;
+        projectDto.EstimatedHours = addProject.EstimatedHours;
+        projectDto.Id = addProject.Id;
+
+        var result = await ProjectService.EditProject(projectDto);
+
+        if (result.Success)
+        {
+            showToaster(result.Data, "top");
+            addProject.ProjectName = string.Empty;
+            addProject.Description = string.Empty;
+            addProject.StartDate = DateTime.UtcNow;
+            addProject.EndDate = DateTime.UtcNow;
+            addProject.EstimatedHours = 0;
+            isEditing = false;
+            await ToggleModal();
+            await LoadData(1, 5, null);
+        }
+        else
+        {
+            showToaster(result.Message, "top");
+        }
+    }
 }

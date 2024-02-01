@@ -4,9 +4,16 @@
   (onCancel)="resetForm()"
   [closeOnOutsideClick]="false"
 >
-  <ng-template #modalHeader> <div>Create Project</div> </ng-template>
+  <ng-template #modalHeader>
+    <div>{{ projectId ? "Edit Project" : "Create Project" }}</div>
+  </ng-template>
   <ng-template #modalBody>
-    <form class="space-y-5" [formGroup]="formCreateProject" novalidate (keydown.enter)="submitForm()">
+    <form
+      class="space-y-5"
+      [formGroup]="formCreateProject"
+      novalidate
+      (keydown.enter)="submitForm()"
+    >
       <div>
         <label for="projectName">Name</label>
         <app-input
@@ -18,13 +25,12 @@
       </div>
       <div>
         <label for="description">Description</label>
-        <quill-editor
-          style="width: -webkit-fill-available; height: 150px"
-          [modules]="quillModules"
-          placeholder="Enter Description"
+        <app-text-editor
           formControlName="description"
-          [(ngModel)]="quillValue"
-        ></quill-editor>
+          [control]="formCreateProject.controls['description']"
+          [isSubmit]="isSubmitFormCreateProject"
+          placeholder="Enter Description"
+        ></app-text-editor>
       </div>
       <div>
         <label for="deadline">Deadline</label>
@@ -42,6 +48,7 @@
           [control]="formCreateProject.controls['estimatedHours']"
           [isSubmit]="isSubmitFormCreateProject"
           placeholder="Enter Estimated Hours"
+          type="number"
         ></app-input>
       </div>
     </form>
@@ -52,14 +59,24 @@
       (click)="resetForm(); modalComponent.close()"
       class="btn btn-outline-danger"
     >
-      Discard
+      {{ projectId ? "Cancel" : "Discard" }}
     </button>
     <app-button
-      [text]="projectId ? 'Save' : 'Create'"
+      [text]="projectId ? 'Save' : 'Create & Close'"
       type="submit"
       classes="btn-primary ltr:ml-4 rtl:mr-4"
       class="d-block"
-      (click)="submitForm()"
+      (click)="!(projectId ? !isFormDirty : false) && submitForm()"
+      [disabled]="projectId ? !isFormDirty : false"
     ></app-button>
+    @if (!projectId) {
+      <app-button
+        [text]="'Create'"
+        type="submit"
+        classes="btn-primary ltr:ml-4 rtl:mr-4"
+        class="d-block"
+        (click)="submitForm(false)"
+      ></app-button>
+    }
   </ng-template>
 </modal>

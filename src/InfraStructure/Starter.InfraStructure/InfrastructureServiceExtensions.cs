@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Starter.Application.Contracts.Application;
@@ -6,6 +7,7 @@ using Starter.Application.Interfaces;
 using Starter.InfraStructure.BackgroundJobs;
 using Starter.InfraStructure.Caching;
 using Starter.InfraStructure.Cors;
+using Starter.InfraStructure.Hub;
 using Starter.InfraStructure.Mailing;
 using Starter.InfraStructure.Services;
 
@@ -18,10 +20,9 @@ public static class InfrastructureServiceExtensions
         services
        .AddServices()
        .AddMailing(configuration)
-       .AddCorsPolicy(configuration)
        .AddBackgroundJobs(configuration)
-       .AddCaching(configuration);
-        services.AddScoped<IDateTimeService, DateTimeService>();
+       .AddCaching(configuration)
+       .AddScoped<IDateTimeService, DateTimeService>();
     }
 
     internal static IServiceCollection AddServices(this IServiceCollection services) =>
@@ -62,7 +63,13 @@ public static class InfrastructureServiceExtensions
         _ => throw new ArgumentException("Invalid lifeTime", nameof(lifetime))
     };
 
-    public static IApplicationBuilder UseInfrastructureService(this IApplicationBuilder builder)
+    public static void AddCorsService(this IServiceCollection services, IConfiguration configuration)
+    {
+        services
+            .AddCorsPolicy(configuration);
+    }
+
+    public static IApplicationBuilder UseCorsService(this IApplicationBuilder builder)
     {
         return builder
             .UseCorsPolicy();
@@ -72,5 +79,21 @@ public static class InfrastructureServiceExtensions
     {
         return builder
             .UseHangfireDashboard(config);
+    }
+
+    public static IEndpointRouteBuilder UseInfraEndpoints(this IEndpointRouteBuilder builder)
+    {
+        builder.MapNotifications();
+        return builder;
+    }
+
+    internal static IEndpointRouteBuilder MapNotifications(this IEndpointRouteBuilder endpoints)
+    {
+        endpoints.MapHub<NotificationHub>("/notifications", options =>
+        {
+            options.CloseOnAuthenticationExpiration = true;
+        });
+
+        return endpoints;
     }
 }

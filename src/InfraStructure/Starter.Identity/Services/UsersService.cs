@@ -98,26 +98,31 @@ public partial class UsersService(UserManager<ApplicationUser> userManager,
         return new PagedApiResponse<UserListDto>(count, filter.PageNumber, filter.PageSize) { Data = users };
     }
 
-    public async Task<ApiResponse<string>> UpdateAsync(UpdateUserDto request)
+    public async Task<ApiResponse<string>> UpdateAsync(UpdateUserRequest request)
     {
-        var user = await _userManager.FindByIdAsync(request.Id);
+        var user = await _userManager.FindByIdAsync(request.user.Id);
 
-        _ = user ?? throw new NotFoundException("UserId ", request.Id);
+        _ = user ?? throw new NotFoundException("UserId ", request.user.Id);
 
-        var existingEmail = await _userManager.FindByEmailAsync(request.Email!);
+        var existingEmail = await _userManager.FindByEmailAsync(request.user.Email!);
 
-        if (existingEmail != null && existingEmail.Id != request.Id)
+        if (existingEmail != null && existingEmail.Id != request.user.Id)
         {
-            throw new Exception($"Email '{request.Email}' already exists.");
+            throw new Exception($"Email {request.user.Email} already exists.");
         }
 
-        user.FirstName = request.FirstName;
-        user.LastName = request.LastName;
+        user.FirstName = request.user.FirstName;
+        user.LastName = request.user.LastName;
 
-        if (request.Email != user.Email)
+        if (request.user.Email != user.Email)
         {
-            user.UserName = user.Email = request.Email;
-            user.NormalizedUserName = user.NormalizedEmail = request.Email!.ToUpper();
+            user.UserName = user.Email = request.user.Email;
+            user.NormalizedUserName = user.NormalizedEmail = request.user.Email!.ToUpper();
+
+            if(user.IsInvitationAccepted == false)
+            {
+                await UserInvitationEmailSend(request.Origin, user);
+            }
         }
 
         //var newRole = await _roleManager.FindByIdAsync(request.RoleId) ?? throw new NotFoundException("RoleId ", request.RoleId);

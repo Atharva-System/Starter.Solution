@@ -1,0 +1,163 @@
+﻿@using Starter.Blazor.Core
+@using Starter.Blazor.Core.Response
+@using Starter.Blazor.Modules.Common
+@using Starter.Blazor.Modules.Task.Model
+@using Starter.Blazor.Modules.Task.Services
+@using Microsoft.AspNetCore.Authorization
+@using Starter.Blazor.Modules.Login.Services
+@using DataTables.AspNet;
+@using Blazored.Modal
+@using Blazored.Modal.Services
+@inject ITaskService TaskService
+@inject IModalService Modal
+
+<CascadingBlazoredModal DisableBackgroundCancel="true" HideCloseButton="true">
+    @if (TaskDetails != null)
+    {
+        <EditForm Model="@TaskDetails" OnValidSubmit="@(SaveTask)">
+            <DataAnnotationsValidator />
+            <div class="mb-5">
+                <label for="title">Title</label>
+                <InputText id="title" type="text" placeholder="Enter Task Title" class="form-input" @bind-Value="TaskDetails.TaskName" />
+                <ValidationMessage For="@(() => TaskDetails.TaskName)" />
+            </div>
+            <div class="mb-5">
+                <label for="Assignee">Assignee</label>
+                <InputSelect id="Assignee" placeholder="Select Assignee" class="form-select" @bind-Value="TaskDetails.AssignedTo">
+                    <option value="0">Select Assignee</option>
+                    @foreach (var data in AssigneeList.Data)
+                    {
+                        <option value="@data.Id">@data.Name</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => TaskDetails.AssignedTo)" />
+            </div>
+            <div class="mb-5 flex justify-between gap-4">
+                <div class="flex-1">
+                    <label for="priority">Priority</label>
+                    <InputSelect id="priority" class="form-select" placeholder="Select Priority" @bind-Value="TaskDetails.Priority">
+                        <option value="0">Select Priority</option>
+                        @foreach (var Priority in PriorityList.Data)
+                        {
+                            <option value="@Priority.Id">@Priority.DisplayName</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="@(() => TaskDetails.Priority)" />
+                </div>
+            </div>
+            <div class="mb-5">
+                <label for="startDate">Start Date</label>
+                <InputDate id="startDate" class="form-input" @bind-Value="TaskDetails.StartDate" />
+                <ValidationMessage For="@(() => TaskDetails.StartDate)" />
+            </div>
+
+            <div class="mb-5">
+                <label for="endDate">End Date</label>
+                <InputDate id="endDate" class="form-input" @bind-Value="TaskDetails.EndDate" />
+                <ValidationMessage For="@(() => TaskDetails.EndDate)" />
+            </div>
+            <div class="mb-5">
+                <label for="status">Status</label>
+                <InputSelect id="status" placeholder="Select Status" class="form-select" @bind-Value="TaskDetails.Status">
+                    <option value="0">Select Status</option>
+                    @foreach (var Status in StatusList.Data)
+                    {
+                        <option value="@Status.Id">@Status.DisplayName</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => TaskDetails.Status)" />
+            </div>
+            <div class="mb-5">
+                <label for="projectId">Project</label>
+                <InputSelect id="projectId" class="form-select" @bind-Value="projectIdString">
+                    <option value="">Select Project</option>
+                    @foreach (var project in projectList.Data)
+                    {
+                        <option value="@project.Id">@project.ProjectName</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => TaskDetails.ProjectId)" />
+            </div>
+            <div class="mb-5">
+                <label>Description</label>
+                <InputText class="form-input" @bind-Value="TaskDetails.Description" Placeholder="Enter Description here" />
+                <ValidationMessage For="@(() => TaskDetails.Description)" />
+            </div>
+            <div class="flex space-x-2 ">
+                <button type="button" class="btn btn-danger w-full" @onclick="Cancel">Close</button>
+                <button type="submit" class="btn btn-primary w-full"><span>@buttonText</span></button>
+            </div>
+        </EditForm>
+    }
+</CascadingBlazoredModal>
+
+@code {
+
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
+    [Parameter] public Guid EditTaskID { get; set; }
+    private string buttonText;
+
+    [Parameter] public ApiResponse<List<ProjectListDto>> projectList { get; set; }
+    [Parameter] public ApiResponse<List<EnumTypeViewDto>> StatusList { get; set; }
+    [Parameter] public ApiResponse<List<EnumTypeViewDto>> PriorityList { get; set; }
+    [Parameter] public ApiResponse<List<TaskAssigneeDto>> AssigneeList { get; set; }
+    [Parameter] public TaskListDto TaskDetails { get; set; }
+
+    [Parameter] public EventCallback<TaskListDto> OnTaskSaved { get; set; }
+
+    protected override async void OnInitialized()
+    {
+        if (TaskDetails.Id == Guid.Empty)
+        {
+            buttonText = "Create";
+        }
+        else
+        {
+            buttonText = "Update";
+        }
+    }
+
+    private async void SaveTask()
+    {
+        try
+        {
+            if (TaskDetails.Id == Guid.Empty)
+            {
+                var response = await TaskService.CreateTaskAsync(TaskDetails);
+            }
+            else
+            {
+                var response = await TaskService.UpdateTaskAsync(TaskDetails.Id, TaskDetails);
+            }
+
+            await BlazoredModal.CloseAsync();
+            await OnTaskSaved.InvokeAsync(TaskDetails);
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+
+    private async void Cancel()
+    {
+        await BlazoredModal.CloseAsync();
+    }
+
+    private string projectIdString
+    {
+        get => TaskDetails.ProjectId.ToString() ?? "";
+        set
+        {
+            if (Guid.TryParse(value, out var result))
+            {
+                TaskDetails.ProjectId = result;
+            }
+            else
+            {
+                Console.WriteLine("Invalid Guid format");
+            }
+        }
+    }
+}

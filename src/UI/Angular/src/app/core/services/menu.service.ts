@@ -16,6 +16,11 @@ export class MenuService {
       label: 'Projects',
       link: '/' + appPaths.projects,
     });
+
+    menuItems.push({
+      label: 'Tasks',
+      link: '/' + appPaths.tasks,
+    });
     return menuItems;
   }
 }

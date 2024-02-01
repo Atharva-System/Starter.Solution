@@ -17,7 +17,7 @@ public static class StartupExtensions
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
         AddSwagger(builder.Services);
-
+        builder.Services.AddSignalR();
         builder.Services.AddApplicationServices();
         builder.Services.AddInfrastructureSharedServices(builder.Configuration);
         builder.Services.AddPersistenceServices(builder.Configuration);
@@ -39,6 +39,8 @@ public static class StartupExtensions
 
         //builder.Services.AddSwaggerGen();
 
+        builder.Services.AddCorsService(builder.Configuration);
+
         return builder.Build();
 
     }
@@ -58,17 +60,19 @@ public static class StartupExtensions
 
         // app.UseHttpsRedirection();
 
-        //app.UseRouting();
+        app.UseRouting();
+
+        app.UseInfraEndpoints();
 
         app.UseAuthentication();
 
         app.UseCustomExceptionHandler();
 
-        app.UseInfrastructureService();
-
         app.UseAuthorization();
 
         app.MapControllers();
+
+        app.UseCorsService();
 
         return app;
 

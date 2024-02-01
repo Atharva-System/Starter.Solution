@@ -28,6 +28,10 @@ public class BaseApiController : ControllerBase
             {
                 return corsSettings.Blazor;
             }
+            else if (corsSettings.Vue is not null && requestSource == "vue")
+            {
+                return corsSettings.Vue;
+            }
         }
         return $"{Request.Scheme}://{Request.Host.Value}{Request.PathBase.Value}";
     }

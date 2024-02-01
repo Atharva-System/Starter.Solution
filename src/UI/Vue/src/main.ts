@@ -1,7 +1,7 @@
 import './assets/css/app.css';
 
-import { createApp } from 'vue'
-import App from './App.vue'
+import { createApp } from 'vue';
+import App from './App.vue';
 
 const app = createApp(App);
 
@@ -9,6 +9,9 @@ const app = createApp(App);
 import { createPinia } from 'pinia';
 const pinia = createPinia();
 app.use(pinia);
+
+import storeService from './services/store.service';
+app.use(storeService);
 
 import router from '@/router';
 app.use(router);

@@ -4,9 +4,16 @@
   (onCancel)="resetForm()"
   [closeOnOutsideClick]="false"
 >
-  <ng-template #modalHeader> <div>Invite User</div> </ng-template>
+  <ng-template #modalHeader>
+    <div>{{ userId ? "Edit User" : "Invite User" }}</div>
+  </ng-template>
   <ng-template #modalBody>
-    <form class="space-y-5" [formGroup]="formInviteUser" novalidate (keydown.enter)="submitForm()">
+    <form
+      class="space-y-5"
+      [formGroup]="formInviteUser"
+      novalidate
+      (keydown.enter)="submitForm()"
+    >
       <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
         <div>
           <label for="firstName">First Name</label>
@@ -44,14 +51,15 @@
       (click)="resetForm(); modalComponent.close()"
       class="btn btn-outline-danger"
     >
-      Discard
+      {{ userId ? "Cancel" : "Discard" }}
     </button>
     <app-button
       [text]="userId ? 'Save' : 'Invite'"
       type="submit"
       classes="btn-primary ltr:ml-4 rtl:mr-4"
       class="d-block"
-      (click)="submitForm()"
+      (click)="!(userId ? !isFormDirty : false) && submitForm()"
+      [disabled]="userId ? !isFormDirty : false"
     ></app-button>
   </ng-template>
 </modal>

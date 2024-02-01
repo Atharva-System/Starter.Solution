@@ -8,6 +8,6 @@ public class UserRegisterDto
 
     [Required(ErrorMessage = "Password is required")]
     [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{6,}$",
-    ErrorMessage = "Password must meet requirements")]
+    ErrorMessage = "Minimum length should be 6 characters.\r\nPassword requirements: At least one uppercase letter (A-Z), one lowercase letter (a-z), and one non-alphanumeric character.")]
     public string Password { get; set; }
 }
