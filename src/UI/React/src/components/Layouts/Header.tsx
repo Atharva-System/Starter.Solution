@@ -72,7 +72,7 @@ const Header = () => {
                 alt="logo"
               />
               <span className="text-2xl ltr:ml-1.5 rtl:mr-1.5  font-semibold  align-middle hidden md:inline dark:text-white-light transition-all duration-300">
-                VRISTO
+                STARTER
               </span>
             </Link>
             <button
