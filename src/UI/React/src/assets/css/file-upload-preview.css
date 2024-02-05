@@ -1,0 +1,22 @@
+.custom-file-container__image-preview {
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    border-radius: 4px;
+    height: auto;
+    overflow: auto;
+    padding: 4px;
+    transition: background 0.2s ease-in-out;
+    width: 100%;
+    margin-top: 0;
+    margin-bottom: 0;
+    background-color: transparent;
+}
+
+.custom-file-container__image-preview img {
+    max-height: 300px;
+}
+
+.custom-file-container__custom-file__custom-file-control {
+    @apply ltr:text-left rtl:text-right top-9;
+}
