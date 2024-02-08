@@ -1,12 +1,13 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
-import { setPageTitle } from "../../store/themeConfigSlice";
+import { setPageTitle } from "../../../store/themeConfigSlice";
+import { authPaths, pageTitle } from "../../../utils/common/route-paths";
 
 const RecoverIdBox = () => {
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(setPageTitle("Forgot Password"));
+    dispatch(setPageTitle(pageTitle.forgotPassword));
   });
   const navigate = useNavigate();
 
@@ -41,7 +42,7 @@ const RecoverIdBox = () => {
         <p className="text-center">
           Back To
           <Link
-            to="/sign-in"
+            to={"/" + authPaths.signin}
             className="font-bold text-primary hover:underline ltr:ml-1 rtl:mr-1"
           >
             Sign In

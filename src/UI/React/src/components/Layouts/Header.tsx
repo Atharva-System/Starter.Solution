@@ -5,6 +5,8 @@ import { IRootState } from "../../store";
 import { toggleTheme } from "../../store/themeConfigSlice";
 import { toggleSidebar } from "../../store/themeConfigSlice";
 import Dropdown from "../Dropdown";
+import { authPaths } from "../../utils/common/route-paths";
+import authService from "../../pages/auth/utils/auth.service";
 
 const Header = () => {
   const location = useLocation();
@@ -49,11 +51,15 @@ const Header = () => {
       message:
         '<strong class="text-sm mr-1">John Doe</strong>invite you to <strong>Prototyping</strong>',
       time: "45 min ago",
-    }
+    },
   ]);
 
   const removeNotification = (value: number) => {
     setNotifications(notifications.filter((user) => user.id !== value));
+  };
+
+  const signOut = () => {
+    authService.logout();
   };
 
   return (
@@ -474,32 +480,6 @@ const Header = () => {
                     </Link>
                   </li>
                   <li>
-                    <Link to="/apps/mailbox" className="dark:hover:text-white">
-                      <svg
-                        className="ltr:mr-2 rtl:ml-2"
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          opacity="0.5"
-                          d="M2 12C2 8.22876 2 6.34315 3.17157 5.17157C4.34315 4 6.22876 4 10 4H14C17.7712 4 19.6569 4 20.8284 5.17157C22 6.34315 22 8.22876 22 12C22 15.7712 22 17.6569 20.8284 18.8284C19.6569 20 17.7712 20 14 20H10C6.22876 20 4.34315 20 3.17157 18.8284C2 17.6569 2 15.7712 2 12Z"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                        />
-                        <path
-                          d="M6 8L8.1589 9.79908C9.99553 11.3296 10.9139 12.0949 12 12.0949C13.0861 12.0949 14.0045 11.3296 15.8411 9.79908L18 8"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                        />
-                      </svg>
-                      Inbox
-                    </Link>
-                  </li>
-                  <li>
                     <Link
                       to="/auth/boxed-lockscreen"
                       className="dark:hover:text-white"
@@ -543,7 +523,11 @@ const Header = () => {
                     </Link>
                   </li>
                   <li className="border-t border-white-light dark:border-white-light/10">
-                    <Link to="/auth/boxed-signin" className="text-danger !py-3">
+                    <Link
+                      to={"/" + authPaths.signin}
+                      onClick={signOut}
+                      className="text-danger !py-3"
+                    >
                       <svg
                         className="ltr:mr-2 rtl:ml-2 rotate-90"
                         width="18"

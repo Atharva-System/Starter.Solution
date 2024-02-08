@@ -1,7 +1,10 @@
 import { lazy } from "react";
-const Users = lazy(() => import("../pages/user/list-user"));
-const SignIn = lazy(() => import("../pages/auth/sign-in"));
-const ForgotPassword = lazy(() => import("../pages/auth/forgot-password"));
+import { appPaths, authPaths } from "../utils/common/route-paths";
+const Users = lazy(() => import("../pages/user/pages/list-user"));
+const SignIn = lazy(() => import("../pages/auth/pages/sign-in"));
+const ForgotPassword = lazy(
+  () => import("../pages/auth/pages/forgot-password")
+);
 
 const routes = [
   // dashboard
@@ -11,17 +14,17 @@ const routes = [
     layout: "",
   },
   {
-    path: "/users",
+    path: "/" + appPaths.users,
     element: <Users />,
     layout: "",
   },
   {
-    path: "/sign-in",
+    path: "/" + authPaths.signin,
     element: <SignIn />,
     layout: "blank",
   },
   {
-    path: "/forgot-password",
+    path: "/" + authPaths.forgotPassword,
     element: <ForgotPassword />,
     layout: "blank",
   },
