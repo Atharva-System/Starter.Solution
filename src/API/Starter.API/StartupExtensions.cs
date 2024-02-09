@@ -59,6 +59,8 @@ public static class StartupExtensions
 
 
         // app.UseHttpsRedirection();
+        
+        app.UseCorsService();
 
         app.UseRouting();
 
@@ -72,7 +74,6 @@ public static class StartupExtensions
 
         app.MapControllers();
 
-        app.UseCorsService();
 
         return app;
 

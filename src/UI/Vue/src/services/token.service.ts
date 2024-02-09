@@ -59,7 +59,9 @@ class TokenService {
     }
 
     getUser(): TokenClaims | null {
-        return JSON.parse(localStorage.getItem(userInfoStorageKey) ?? '');
+        const userInfo = localStorage.getItem(userInfoStorageKey);
+        if (!userInfo) return null;
+        return JSON.parse(userInfo);
     }
 
     signOut() {
