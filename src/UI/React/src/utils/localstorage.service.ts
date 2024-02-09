@@ -1,7 +1,7 @@
-interface TokenData {
-  token: string;
-  refreshToken: string;
-}
+import * as jwtDecode from "jwt-decode";
+import { StorageKey } from "./common/constants";
+import { TokenData } from "./types/token.data";
+import { TokenClaims } from "./types/token.claims";
 
 class LocalStorageService {
   private static instance: LocalStorageService;
@@ -16,11 +16,11 @@ class LocalStorageService {
   }
 
   public setToken(tokenData: TokenData): void {
-    localStorage.setItem("token", JSON.stringify(tokenData));
+    localStorage.setItem(StorageKey.token, JSON.stringify(tokenData));
   }
 
   public getAccessToken(): string | null {
-    const tokenDataString = localStorage.getItem("token");
+    const tokenDataString = localStorage.getItem(StorageKey.token);
     if (tokenDataString) {
       const tokenData: TokenData = JSON.parse(tokenDataString);
       return tokenData.token;
@@ -29,7 +29,7 @@ class LocalStorageService {
   }
 
   public getRefreshToken(): string | null {
-    const tokenDataString = localStorage.getItem("token");
+    const tokenDataString = localStorage.getItem(StorageKey.token);
     if (tokenDataString) {
       const tokenData: TokenData = JSON.parse(tokenDataString);
       return tokenData.refreshToken;
@@ -38,7 +38,30 @@ class LocalStorageService {
   }
 
   public clearToken(): void {
-    localStorage.removeItem("token");
+    localStorage.removeItem(StorageKey.token);
+  }
+
+  isAuthenticated(): boolean {
+    const token = this.getAccessToken();
+    return !!token && !this.isTokenExpired(token);
+  }
+
+  isTokenExpired(token: string): boolean {
+    const decodedToken: any = this.decodeToken(token);
+    const expirationTime = decodedToken.exp * 1000;
+    return Date.now() >= expirationTime;
+  }
+
+  decodeToken(token: string): TokenClaims | null {
+    if (!token) return null;
+    const decodedToken: TokenClaims = jwtDecode.jwtDecode(token);
+    return decodedToken;
+  }
+
+  getUser(): TokenClaims | null {
+    const userInfo = localStorage.getItem(StorageKey.userInfo);
+    if (!userInfo) return null;
+    return JSON.parse(userInfo);
   }
 }
 

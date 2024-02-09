@@ -1,7 +1,6 @@
 import axios from "axios";
 import getApiUrl from "../envirenment/environment";
 import LocalStorageService from "./localstorage.service";
-import { useNavigate } from "react-router-dom";
 import { authPaths } from "./common/route-paths";
 import authService from "../pages/auth/utils/auth.service";
 import messageService from "./message.service";
@@ -21,9 +20,14 @@ const axiosInstance = axios.create({
 // Request interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorageService.getAccessToken();
-    if (token && !isRequestUrlAllowAnonymous(config.url ?? "")) {
-      config.headers["Authorization"] = "Bearer " + token;
+    if (!isRequestUrlAllowAnonymous(config?.url ?? "")) {
+      if (!localStorageService.getAccessToken()) {
+        window.location.href = "/" + authPaths.signin;
+      }
+      if (localStorageService.isAuthenticated()) {
+        config.headers["Authorization"] =
+          "Bearer " + localStorageService.getAccessToken();
+      }
     }
     return config;
   },
@@ -41,27 +45,33 @@ axiosInstance.interceptors.response.use(
     const originalRequest = error.config;
 
     if (
-      error.response.status === 401 &&
-      originalRequest.url === `${apiUrl}/${APIs.refreshTokenApi}`
+      !localStorageService.isAuthenticated() &&
+      originalRequest.url === APIs.refreshTokenApi
     ) {
-      const navigate = useNavigate();
-      navigate(authPaths.signin);
+      window.location.href = "/" + authPaths.signin;
       return Promise.reject(error);
     }
 
-    if (error.response.status === 401 && !originalRequest._retry) {
+    if (
+      !localStorageService.isAuthenticated() &&
+      !isRequestUrlAllowAnonymous(originalRequest.url) &&
+      !originalRequest._retry
+    ) {
       originalRequest._retry = true;
+      const token = localStorageService.getAccessToken();
       const refreshToken = localStorageService.getRefreshToken();
+      
       return axiosInstance
-        .post(`${apiUrl}/${APIs.refreshTokenApi}`, {
-          refresh_token: refreshToken,
+        .post(`${apiUrl}${APIs.refreshTokenApi}`, {
+          token: token,
+          refreshToken: refreshToken,
         })
         .then((res) => {
-          if (res.status === 201) {
+          if (res.status === 200) {
             localStorageService.setToken(res.data);
             axiosInstance.defaults.headers.common["Authorization"] =
               "Bearer " + localStorageService.getAccessToken();
-            return axios(originalRequest);
+            return axiosInstance(originalRequest);
           }
         });
     }
@@ -96,6 +106,8 @@ function handleResponseError(response: any) {
       response.data?.Message ||
       "Something went wrong, please try again!";
     messageService.showMessage(errorMessage, "error");
+    if (!localStorageService.getAccessToken())
+      window.location.href = "/" + authPaths.signin;
   }
 }
 

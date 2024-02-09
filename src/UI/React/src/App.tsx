@@ -16,7 +16,7 @@ function App({ children }: PropsWithChildren) {
         dispatch(toggleAnimation(localStorage.getItem('animation') || themeConfig.animation));
         dispatch(toggleNavbar(localStorage.getItem('navbar') || themeConfig.navbar));
         dispatch(toggleSemidark(localStorage.getItem('semidark') || themeConfig.semidark));
-    }, [dispatch, themeConfig.theme, themeConfig.menu, themeConfig.layout, themeConfig.rtlClass, themeConfig.animation, themeConfig.navbar, themeConfig.locale, themeConfig.semidark]);
+    }, [dispatch, themeConfig.theme, themeConfig.menu, themeConfig.layout, themeConfig.rtlClass, themeConfig.animation, themeConfig.navbar, themeConfig.semidark]);
 
     return (
         <div

@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import BlankLayout from "../components/Layouts/BlankLayout";
 import DefaultLayout from "../components/Layouts/DefaultLayout";
 import { routes } from "./routes";
+import AuthGuard from "./auth-guard";
 
 const finalRoutes = routes.map((route) => {
   return {
@@ -10,7 +11,9 @@ const finalRoutes = routes.map((route) => {
       route.layout === "blank" ? (
         <BlankLayout>{route.element}</BlankLayout>
       ) : (
-        <DefaultLayout>{route.element}</DefaultLayout>
+        <AuthGuard>
+          <DefaultLayout>{route.element}</DefaultLayout>
+        </AuthGuard>
       ),
   };
 });
