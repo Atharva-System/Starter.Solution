@@ -8,4 +8,6 @@ public class CorsSettings
     public string? Blazor { get; set; }
 
     public string? Vue { get; set; }
+
+    public string? React { get; set; }
 }

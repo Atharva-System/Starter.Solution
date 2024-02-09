@@ -32,6 +32,10 @@ public class BaseApiController : ControllerBase
             {
                 return corsSettings.Vue;
             }
+            else if (corsSettings.React is not null && requestSource == "react")
+            {
+                return corsSettings.React;
+            }
         }
         return $"{Request.Scheme}://{Request.Host.Value}{Request.PathBase.Value}";
     }
