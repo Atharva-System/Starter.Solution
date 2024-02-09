@@ -4,6 +4,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import { toggleSidebar } from "../../store/themeConfigSlice";
 import { IRootState } from "../../store";
 import { useEffect } from "react";
+import menuService from "../../utils/menu.service";
 
 const Sidebar = () => {
   const themeConfig = useSelector((state: IRootState) => state.themeConfig);
@@ -12,6 +13,7 @@ const Sidebar = () => {
   );
   const location = useLocation();
   const dispatch = useDispatch();
+  const menuItems = menuService.getMenus();
 
   useEffect(() => {
     const selector = document.querySelector(
@@ -109,35 +111,106 @@ const Sidebar = () => {
               </h2>
               <li className="nav-item">
                 <ul>
-                  <li className="nav-item">
-                    <NavLink to="/users" className="group">
-                      <div className="flex items-center">
-                        <svg
-                          className="group-hover:!text-primary"
-                          width="20"
-                          height="20"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            opacity="0.5"
-                            d="M3 10C3 6.22876 3 4.34315 4.17157 3.17157C5.34315 2 7.22876 2 11 2H13C16.7712 2 18.6569 2 19.8284 3.17157C21 4.34315 21 6.22876 21 10V14C21 17.7712 21 19.6569 19.8284 20.8284C18.6569 22 16.7712 22 13 22H11C7.22876 22 5.34315 22 4.17157 20.8284C3 19.6569 3 17.7712 3 14V10Z"
-                            fill="currentColor"
-                          />
-                          <path
-                            fillRule="evenodd"
-                            clipRule="evenodd"
-                            d="M12 5.25C12.4142 5.25 12.75 5.58579 12.75 6V7.25H14C14.4142 7.25 14.75 7.58579 14.75 8C14.75 8.41421 14.4142 8.75 14 8.75L12.75 8.75L12.75 10C12.75 10.4142 12.4142 10.75 12 10.75C11.5858 10.75 11.25 10.4142 11.25 10L11.25 8.75H9.99997C9.58575 8.75 9.24997 8.41421 9.24997 8C9.24997 7.58579 9.58575 7.25 9.99997 7.25H11.25L11.25 6C11.25 5.58579 11.5858 5.25 12 5.25ZM7.25 14C7.25 13.5858 7.58579 13.25 8 13.25H16C16.4142 13.25 16.75 13.5858 16.75 14C16.75 14.4142 16.4142 14.75 16 14.75H8C7.58579 14.75 7.25 14.4142 7.25 14ZM8.25 18C8.25 17.5858 8.58579 17.25 9 17.25H15C15.4142 17.25 15.75 17.5858 15.75 18C15.75 18.4142 15.4142 18.75 15 18.75H9C8.58579 18.75 8.25 18.4142 8.25 18Z"
-                            fill="currentColor"
-                          />
-                        </svg>
-                        <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
-                          Users
-                        </span>
-                      </div>
-                    </NavLink>
-                  </li>
+                  {menuItems.map((menu) => {
+                    return (
+                      <li  key={menu.label} className="nav-item">
+                        <NavLink to={menu.link} className="group">
+                          <div className="flex items-center">
+                            {menu.label == "Users" && (
+                              <svg
+                                className="group-hover:!text-primary"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <circle
+                                  opacity="0.5"
+                                  cx="15"
+                                  cy="6"
+                                  r="3"
+                                  fill="currentColor"
+                                />
+                                <ellipse
+                                  opacity="0.5"
+                                  cx="16"
+                                  cy="17"
+                                  rx="5"
+                                  ry="3"
+                                  fill="currentColor"
+                                />
+                                <circle
+                                  cx="9.00098"
+                                  cy="6"
+                                  r="4"
+                                  fill="currentColor"
+                                />
+                                <ellipse
+                                  cx="9.00098"
+                                  cy="17.001"
+                                  rx="7"
+                                  ry="4"
+                                  fill="currentColor"
+                                />
+                              </svg>
+                            )}
+                            {menu.label == "Projects" && (
+                              <svg
+                                className="group-hover:!text-primary"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  opacity="0.5"
+                                  d="M21 15.9983V9.99826C21 7.16983 21 5.75562 20.1213 4.87694C19.3529 4.10856 18.175 4.01211 16 4H8C5.82497 4.01211 4.64706 4.10856 3.87868 4.87694C3 5.75562 3 7.16983 3 9.99826V15.9983C3 18.8267 3 20.2409 3.87868 21.1196C4.75736 21.9983 6.17157 21.9983 9 21.9983H15C17.8284 21.9983 19.2426 21.9983 20.1213 21.1196C21 20.2409 21 18.8267 21 15.9983Z"
+                                  fill="currentColor"
+                                />
+                                <path
+                                  d="M8 3.5C8 2.67157 8.67157 2 9.5 2H14.5C15.3284 2 16 2.67157 16 3.5V4.5C16 5.32843 15.3284 6 14.5 6H9.5C8.67157 6 8 5.32843 8 4.5V3.5Z"
+                                  fill="currentColor"
+                                />
+                                <path
+                                  fillRule="evenodd"
+                                  clipRule="evenodd"
+                                  d="M12 9.25C12.4142 9.25 12.75 9.58579 12.75 10V12.25L15 12.25C15.4142 12.25 15.75 12.5858 15.75 13C15.75 13.4142 15.4142 13.75 15 13.75L12.75 13.75L12.75 16C12.75 16.4142 12.4142 16.75 12 16.75C11.5858 16.75 11.25 16.4142 11.25 16L11.25 13.75H9C8.58579 13.75 8.25 13.4142 8.25 13C8.25 12.5858 8.58579 12.25 9 12.25L11.25 12.25L11.25 10C11.25 9.58579 11.5858 9.25 12 9.25Z"
+                                  fill="currentColor"
+                                />
+                              </svg>
+                            )}
+                            {menu.label == "Tasks" && (
+                              <svg
+                                className="group-hover:!text-primary"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  opacity="0.5"
+                                  d="M3 10C3 6.22876 3 4.34315 4.17157 3.17157C5.34315 2 7.22876 2 11 2H13C16.7712 2 18.6569 2 19.8284 3.17157C21 4.34315 21 6.22876 21 10V14C21 17.7712 21 19.6569 19.8284 20.8284C18.6569 22 16.7712 22 13 22H11C7.22876 22 5.34315 22 4.17157 20.8284C3 19.6569 3 17.7712 3 14V10Z"
+                                  fill="currentColor"
+                                />
+                                <path
+                                  fillRule="evenodd"
+                                  clipRule="evenodd"
+                                  d="M12 5.25C12.4142 5.25 12.75 5.58579 12.75 6V7.25H14C14.4142 7.25 14.75 7.58579 14.75 8C14.75 8.41421 14.4142 8.75 14 8.75L12.75 8.75L12.75 10C12.75 10.4142 12.4142 10.75 12 10.75C11.5858 10.75 11.25 10.4142 11.25 10L11.25 8.75H9.99997C9.58575 8.75 9.24997 8.41421 9.24997 8C9.24997 7.58579 9.58575 7.25 9.99997 7.25H11.25L11.25 6C11.25 5.58579 11.5858 5.25 12 5.25ZM7.25 14C7.25 13.5858 7.58579 13.25 8 13.25H16C16.4142 13.25 16.75 13.5858 16.75 14C16.75 14.4142 16.4142 14.75 16 14.75H8C7.58579 14.75 7.25 14.4142 7.25 14ZM8.25 18C8.25 17.5858 8.58579 17.25 9 17.25H15C15.4142 17.25 15.75 17.5858 15.75 18C15.75 18.4142 15.4142 18.75 15 18.75H9C8.58579 18.75 8.25 18.4142 8.25 18Z"
+                                  fill="currentColor"
+                                />
+                              </svg>
+                            )}
+                            <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
+                              {menu.label}
+                            </span>
+                          </div>
+                        </NavLink>
+                      </li>
+                    );
+                  })}
                 </ul>
               </li>
             </ul>

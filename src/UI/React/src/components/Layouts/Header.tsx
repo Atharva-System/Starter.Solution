@@ -7,6 +7,9 @@ import { toggleSidebar } from "../../store/themeConfigSlice";
 import Dropdown from "../Dropdown";
 import { authPaths } from "../../utils/common/route-paths";
 import authService from "../../pages/auth/utils/auth.service";
+import menuService from "../../utils/menu.service";
+
+const menuItems = menuService.getMenus();
 
 const Header = () => {
   const location = useLocation();
@@ -629,9 +632,13 @@ const Header = () => {
               </div>
             </button>
             <ul className="sub-menu">
-              <li>
-                <NavLink to="/users">Users</NavLink>
-              </li>
+              {menuItems.map((menu) => {
+                return (
+                  <li key={menu.label}>
+                    <NavLink to={menu.link}>{menu.label}</NavLink>
+                  </li>
+                );
+              })}
             </ul>
           </li>
         </ul>

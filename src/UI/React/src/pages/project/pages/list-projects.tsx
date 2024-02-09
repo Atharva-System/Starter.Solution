@@ -11,10 +11,10 @@ import filterService from "../../../utils/filter.service";
 import { dataTableProps } from "../../../utils/common/constants";
 import { pageTitle } from "../../../utils/common/route-paths";
 
-const Users = () => {
+const Projects = () => {
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(setPageTitle(pageTitle.users));
+    dispatch(setPageTitle(pageTitle.projects));
   });
 
   const PAGE_SIZES = dataTableProps.PAGE_SIZES;
@@ -23,7 +23,7 @@ const Users = () => {
   const [recordsData, setRecordsData] = useState({ data: [], all_counts: 0 });
   const [params, setParams] = useState(filterService.defaultFilter());
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
-    columnAccessor: "fullName",
+    columnAccessor: "projectName",
     direction: "asc",
   });
 
@@ -31,16 +31,20 @@ const Users = () => {
     setParams({
       PageNumber: page,
       PageSize: pageSize,
-      OrderBy: [sortStatus.columnAccessor + " " + sortStatus.direction],
+      OrderBy: [
+        getSortColumnName(sortStatus.columnAccessor) +
+          " " +
+          sortStatus.direction,
+      ],
     });
   }, [sortStatus, page, pageSize]);
 
   useEffect(() => {
-    bindUsers(params);
+    bindProjects(params);
   }, [params]);
 
-  const bindUsers = async (params: PaginationFilter) => {
-    const response = await axiosInstance.post(APIs.searchUserApi, params);
+  const bindProjects = async (params: PaginationFilter) => {
+    const response = await axiosInstance.post(APIs.searchProjectsApi, params);
     if (response.data) {
       setRecordsData({
         data: response.data.data,
@@ -49,24 +53,23 @@ const Users = () => {
     }
   };
 
-  const getBadgeColor = (status: string) => {
-    if (!status) return "";
-    switch (status) {
-      case "Invited":
-        return "badge-outline-info";
-      case "Active":
-        return "badge-outline-success";
-      case "Inactive":
-        return "badge-outline-danger";
+  const getSortColumnName = (column: string) => {
+    switch (column) {
+      case "startDateDisplay":
+        return "startDate";
+      case "endDateDisplay":
+        return "endDate";
       default:
-        return "badge-outline-info";
+        return column;
     }
   };
 
   return (
     <div className="panel">
       <div className="flex md:items-center md:flex-row flex-col mb-5 gap-5">
-        <h5 className="font-semibold text-lg dark:text-white-light">Users</h5>
+        <h5 className="font-semibold text-lg dark:text-white-light">
+          Projects
+        </h5>
         <div className="ltr:ml-auto rtl:mr-auto"></div>
       </div>
       <div className="datatables">
@@ -75,19 +78,18 @@ const Users = () => {
           className="whitespace-nowrap table-hover"
           records={recordsData.data}
           columns={[
-            { accessor: "fullName", title: "Full Name", sortable: true },
-            { accessor: "email", title: "Email", sortable: true },
+            { accessor: "projectName", title: "Project Name", sortable: true },
             {
-              accessor: "status",
-              title: "Status",
+              accessor: "startDateDisplay",
+              title: "Start Date",
               sortable: true,
-              render: ({ status }) => (
-                <span className={`badge ${getBadgeColor(status)} `}>
-                  {status}
-                </span>
-              ),
             },
-            { accessor: "role", title: "Role", sortable: true },
+            { accessor: "endDateDisplay", title: "End Date", sortable: true },
+            {
+              accessor: "estimatedHours",
+              title: "Estimated Hours",
+              sortable: true,
+            },
             {
               accessor: "action",
               title: "Action",
@@ -189,4 +191,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default Projects;
