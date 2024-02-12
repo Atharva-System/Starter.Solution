@@ -10,6 +10,8 @@ import { PaginationFilter } from "../../../utils/types/pagination-filter.interfa
 import filterService from "../../../utils/filter.service";
 import { dataTableProps } from "../../../utils/common/constants";
 import { pageTitle } from "../../../utils/common/route-paths";
+import DeleteTaskModal from "../../../components/Shared/delete-modal";
+import messageService from "../../../utils/message.service";
 
 const Tasks = () => {
   const dispatch = useDispatch();
@@ -26,6 +28,8 @@ const Tasks = () => {
     columnAccessor: "taskName",
     direction: "asc",
   });
+  const [isdeleteTaskModal, setIsDeleteTaskModal] = useState<any>(false);
+  const [deletedTaskId, setdeletedTaskId] = useState<string>("");
 
   useEffect(() => {
     setParams({
@@ -50,6 +54,22 @@ const Tasks = () => {
         data: response.data.data,
         all_counts: response.data.totalCount,
       });
+    }
+  };
+
+  const deleteTaskConfirm = (id: string) => {
+    setdeletedTaskId(id);
+    setIsDeleteTaskModal(true);
+  };
+
+  const deleteTask = async () => {
+    const response = await axiosInstance.delete(
+      APIs.deleteTaskApi + deletedTaskId
+    );
+    if (response.data) {
+      messageService.showMessage(response.data.message);
+      bindTasks(params);
+      setIsDeleteTaskModal(false);
     }
   };
 
@@ -130,7 +150,7 @@ const Tasks = () => {
               accessor: "action",
               title: "Action",
               titleClassName: "!text-center",
-              render: () => (
+              render: ({ id }) => (
                 <div className="flex items-center w-max mx-auto gap-2">
                   <Tippy content="Edit">
                     <button type="button">
@@ -157,7 +177,7 @@ const Tasks = () => {
                     </button>
                   </Tippy>
                   <Tippy content="Delete">
-                    <button type="button">
+                    <button type="button" onClick={() => deleteTaskConfirm(id)}>
                       <svg
                         className="text-danger"
                         width="20"
@@ -223,6 +243,13 @@ const Tasks = () => {
           }
         />
       </div>
+      <DeleteTaskModal
+        title="Delete Task"
+        message="Are you sure you want to delete this task?"
+        isOpen={isdeleteTaskModal}
+        onClose={() => setIsDeleteTaskModal(false)}
+        onDelete={deleteTask}
+      />
     </div>
   );
 };

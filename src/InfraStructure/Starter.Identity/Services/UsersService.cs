@@ -172,7 +172,7 @@ public partial class UsersService(UserManager<ApplicationUser> userManager,
         return new ApiResponse<string>
         {
             Success = result.Succeeded,
-            Data = "User deleted successfully.",
+            Data = "User has been deleted successfully.",
             StatusCode = result.Succeeded ? HttpStatusCodes.OK : HttpStatusCodes.BadRequest,
             Message = result.Succeeded ? $"User {ConstantMessages.DeletedSuccessfully}" : $"{ConstantMessages.FailedToCreate} user."
         };

@@ -10,6 +10,8 @@ import { PaginationFilter } from "../../../utils/types/pagination-filter.interfa
 import filterService from "../../../utils/filter.service";
 import { dataTableProps } from "../../../utils/common/constants";
 import { pageTitle } from "../../../utils/common/route-paths";
+import DeleteProjectModal from "../../../components/Shared/delete-modal";
+import messageService from "../../../utils/message.service";
 
 const Projects = () => {
   const dispatch = useDispatch();
@@ -26,6 +28,8 @@ const Projects = () => {
     columnAccessor: "projectName",
     direction: "asc",
   });
+  const [isdeleteProjectModal, setIsDeleteProjectModal] = useState<any>(false);
+  const [deletedProjectId, setdeletedProjectId] = useState<string>("");
 
   useEffect(() => {
     setParams({
@@ -50,6 +54,22 @@ const Projects = () => {
         data: response.data.data,
         all_counts: response.data.totalCount,
       });
+    }
+  };
+
+  const deleteProjectConfirm = (id: string) => {
+    setdeletedProjectId(id);
+    setIsDeleteProjectModal(true);
+  };
+
+  const deleteProject = async () => {
+    const response = await axiosInstance.delete(
+      APIs.deleteProjectApi + deletedProjectId
+    );
+    if (response.data) {
+      messageService.showMessage(response.data.message);
+      bindProjects(params);
+      setIsDeleteProjectModal(false);
     }
   };
 
@@ -94,7 +114,7 @@ const Projects = () => {
               accessor: "action",
               title: "Action",
               titleClassName: "!text-center",
-              render: () => (
+              render: ({ id }) => (
                 <div className="flex items-center w-max mx-auto gap-2">
                   <Tippy content="Edit">
                     <button type="button">
@@ -121,7 +141,10 @@ const Projects = () => {
                     </button>
                   </Tippy>
                   <Tippy content="Delete">
-                    <button type="button">
+                    <button
+                      type="button"
+                      onClick={() => deleteProjectConfirm(id)}
+                    >
                       <svg
                         className="text-danger"
                         width="20"
@@ -187,6 +210,13 @@ const Projects = () => {
           }
         />
       </div>
+      <DeleteProjectModal
+        title="Delete Project"
+        message="Are you sure you want to delete this project?"
+        isOpen={isdeleteProjectModal}
+        onClose={() => setIsDeleteProjectModal(false)}
+        onDelete={deleteProject}
+      />
     </div>
   );
 };

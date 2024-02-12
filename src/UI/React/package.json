@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.18",
     "@mantine/core": "^5.10.5",
     "@mantine/hooks": "^5.10.5",
     "@reduxjs/toolkit": "^2.1.0",

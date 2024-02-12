@@ -10,6 +10,8 @@ import { PaginationFilter } from "../../../utils/types/pagination-filter.interfa
 import filterService from "../../../utils/filter.service";
 import { dataTableProps } from "../../../utils/common/constants";
 import { pageTitle } from "../../../utils/common/route-paths";
+import messageService from "../../../utils/message.service";
+import DeleteUserModal from "../../../components/Shared/delete-modal";
 
 const Users = () => {
   const dispatch = useDispatch();
@@ -26,6 +28,8 @@ const Users = () => {
     columnAccessor: "fullName",
     direction: "asc",
   });
+  const [isdeleteUserModal, setIsDeleteUserModal] = useState<any>(false);
+  const [deletedUserId, setdeletedUserId] = useState<string>("");
 
   useEffect(() => {
     setParams({
@@ -46,6 +50,22 @@ const Users = () => {
         data: response.data.data,
         all_counts: response.data.totalCount,
       });
+    }
+  };
+
+  const deleteUserConfirm = (id: string) => {
+    setdeletedUserId(id);
+    setIsDeleteUserModal(true);
+  };
+
+  const deleteUser = async () => {
+    const response = await axiosInstance.delete(
+      APIs.deleteUserApi + deletedUserId
+    );
+    if (response.data) {
+      messageService.showMessage(response.data.data);
+      bindUsers(params);
+      setIsDeleteUserModal(false);
     }
   };
 
@@ -92,7 +112,7 @@ const Users = () => {
               accessor: "action",
               title: "Action",
               titleClassName: "!text-center",
-              render: () => (
+              render: ({ id }) => (
                 <div className="flex items-center w-max mx-auto gap-2">
                   <Tippy content="Edit">
                     <button type="button">
@@ -119,7 +139,7 @@ const Users = () => {
                     </button>
                   </Tippy>
                   <Tippy content="Delete">
-                    <button type="button">
+                    <button type="button" onClick={() => deleteUserConfirm(id)}>
                       <svg
                         className="text-danger"
                         width="20"
@@ -185,6 +205,13 @@ const Users = () => {
           }
         />
       </div>
+      <DeleteUserModal
+        title="Delete User"
+        message="Are you sure you want to delete this user?"
+        isOpen={isdeleteUserModal}
+        onClose={() => setIsDeleteUserModal(false)}
+        onDelete={deleteUser}
+      />
     </div>
   );
 };
