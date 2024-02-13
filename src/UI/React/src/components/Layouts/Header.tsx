@@ -427,21 +427,27 @@ const Header = () => {
                 placement={`${isRtl ? "bottom-start" : "bottom-end"}`}
                 btnClassName="relative group block"
                 button={
-                  <img
-                    className="w-9 h-9 rounded-full object-cover saturate-50 group-hover:saturate-100"
-                    src="/assets/images/user-profile.jpeg"
-                    alt="userProfile"
-                  />
+                  <span className="flex justify-center items-center w-10 h-10 text-center rounded-full object-cover bg-gray-300 text-base">
+                    {userInfo.fullName.charAt(0) +
+                      "" +
+                      userInfo.fullName?.charAt(
+                        (userInfo.fullName?.indexOf(" ") ?? 0) + 1
+                      )}
+                  </span>
                 }
               >
                 <ul className="text-dark dark:text-white-dark !py-0 w-[230px] font-semibold dark:text-white-light/90">
                   <li>
                     <div className="flex items-center px-4 py-4">
-                      <img
-                        className="rounded-md w-10 h-10 object-cover"
-                        src="/assets/images/user-profile.jpeg"
-                        alt="userProfile"
-                      />
+                      <div className="flex-none">
+                        <span className="flex justify-center items-center w-10 h-10 text-center rounded-full object-cover bg-gray-300 text-base">
+                          {userInfo.fullName.charAt(0) +
+                            "" +
+                            userInfo.fullName?.charAt(
+                              (userInfo.fullName?.indexOf(" ") ?? 0) + 1
+                            )}
+                        </span>
+                      </div>
                       <div className="truncate ltr:pl-4 rtl:pr-4">
                         <h4 className="text-base" title={userInfo.fullName}>
                           {userInfo.fullName}
