@@ -8,6 +8,7 @@ import Dropdown from "../Dropdown";
 import { appPaths, authPaths } from "../../utils/common/route-paths";
 import authService from "../../pages/auth/utils/auth.service";
 import menuService from "../../utils/menu.service";
+import ChangePasswordModal from "../../pages/user/components/change-password";
 
 const menuItems = menuService.getMenus();
 const profileRoute = "/" + appPaths.profile;
@@ -67,6 +68,9 @@ const Header = () => {
   const signOut = () => {
     authService.logout();
   };
+
+  const [isChangePasswordModal, setIsChangePasswordModal] =
+    useState<any>(false);
 
   return (
     <header
@@ -489,9 +493,9 @@ const Header = () => {
                     </Link>
                   </li>
                   <li>
-                    <Link
-                      to="/auth/boxed-lockscreen"
-                      className="dark:hover:text-white"
+                    <a
+                      onClick={() => setIsChangePasswordModal(true)}
+                      className="cursor-pointer dark:hover:text-white"
                     >
                       <svg
                         className="ltr:mr-2 rtl:ml-2"
@@ -502,34 +506,20 @@ const Header = () => {
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
-                          d="M2 16C2 13.1716 2 11.7574 2.87868 10.8787C3.75736 10 5.17157 10 8 10H16C18.8284 10 20.2426 10 21.1213 10.8787C22 11.7574 22 13.1716 22 16C22 18.8284 22 20.2426 21.1213 21.1213C20.2426 22 18.8284 22 16 22H8C5.17157 22 3.75736 22 2.87868 21.1213C2 20.2426 2 18.8284 2 16Z"
+                          d="M15.6807 14.5869C19.1708 14.5869 22 11.7692 22 8.29344C22 4.81767 19.1708 2 15.6807 2C12.1907 2 9.3615 4.81767 9.3615 8.29344C9.3615 9.90338 10.0963 11.0743 10.0963 11.0743L2.45441 18.6849C2.1115 19.0264 1.63143 19.9143 2.45441 20.7339L3.33616 21.6121C3.67905 21.9048 4.54119 22.3146 5.2466 21.6121L6.27531 20.5876C7.30403 21.6121 8.4797 21.0267 8.92058 20.4412C9.65538 19.4167 8.77362 18.3922 8.77362 18.3922L9.06754 18.0995C10.4783 19.5045 11.7128 18.6849 12.1537 18.0995C12.8885 17.075 12.1537 16.0505 12.1537 16.0505C11.8598 15.465 11.272 15.465 12.0067 14.7333L12.8885 13.8551C13.5939 14.4405 15.0439 14.5869 15.6807 14.5869Z"
                           stroke="currentColor"
-                          strokeWidth="1.5"
-                        />
+                          stroke-width="1.5"
+                          stroke-linejoin="round"
+                        ></path>
                         <path
                           opacity="0.5"
-                          d="M6 10V8C6 4.68629 8.68629 2 12 2C15.3137 2 18 4.68629 18 8V10"
+                          d="M17.8853 8.29353C17.8853 9.50601 16.8984 10.4889 15.681 10.4889C14.4635 10.4889 13.4766 9.50601 13.4766 8.29353C13.4766 7.08105 14.4635 6.09814 15.681 6.09814C16.8984 6.09814 17.8853 7.08105 17.8853 8.29353Z"
                           stroke="currentColor"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                        />
-                        <g opacity="0.5">
-                          <path
-                            d="M9 16C9 16.5523 8.55228 17 8 17C7.44772 17 7 16.5523 7 16C7 15.4477 7.44772 15 8 15C8.55228 15 9 15.4477 9 16Z"
-                            fill="currentColor"
-                          />
-                          <path
-                            d="M13 16C13 16.5523 12.5523 17 12 17C11.4477 17 11 16.5523 11 16C11 15.4477 11.4477 15 12 15C12.5523 15 13 15.4477 13 16Z"
-                            fill="currentColor"
-                          />
-                          <path
-                            d="M17 16C17 16.5523 16.5523 17 16 17C15.4477 17 15 16.5523 15 16C15 15.4477 15.4477 15 16 15C16.5523 15 17 15.4477 17 16Z"
-                            fill="currentColor"
-                          />
-                        </g>
+                          stroke-width="1.5"
+                        ></path>
                       </svg>
-                      Lock Screen
-                    </Link>
+                      Change Password
+                    </a>
                   </li>
                   <li className="border-t border-white-light dark:border-white-light/10">
                     <Link
@@ -649,6 +639,10 @@ const Header = () => {
           </li>
         </ul>
       </div>
+      <ChangePasswordModal
+        isOpen={isChangePasswordModal}
+        onClose={() => setIsChangePasswordModal(false)}
+      />
     </header>
   );
 };
