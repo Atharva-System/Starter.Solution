@@ -8,6 +8,7 @@ const SignIn = lazy(() => import("../pages/auth/pages/sign-in"));
 const ForgotPassword = lazy(
   () => import("../pages/auth/pages/forgot-password")
 );
+const ResetPassword = lazy(() => import("../pages/auth/pages/reset-password"));
 import Error404 from "../components/Error404";
 
 const authRoutes = [
@@ -19,6 +20,11 @@ const authRoutes = [
   {
     path: "/" + authPaths.forgotPassword,
     element: <ForgotPassword />,
+    layout: "blank",
+  },
+  {
+    path: "/" + authPaths.resetPassword,
+    element: <ResetPassword />,
     layout: "blank",
   },
 ];

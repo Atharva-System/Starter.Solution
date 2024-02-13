@@ -60,7 +60,7 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true;
       const token = localStorageService.getAccessToken();
       const refreshToken = localStorageService.getRefreshToken();
-      
+
       return axiosInstance
         .post(`${apiUrl}${APIs.refreshTokenApi}`, {
           token: token,
@@ -106,8 +106,6 @@ function handleResponseError(response: any) {
       response.data?.Message ||
       "Something went wrong, please try again!";
     messageService.showMessage(errorMessage, "error");
-    if (!localStorageService.getAccessToken())
-      window.location.href = "/" + authPaths.signin;
   }
 }
 

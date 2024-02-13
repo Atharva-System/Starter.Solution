@@ -9,7 +9,7 @@ import { APIs } from "../../../utils/common/api-paths";
 import messageService from "../../../utils/message.service";
 import axiosInstance from "../../../utils/api.service";
 
-const RecoverIdBox = () => {
+const ForgotPassword = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(setPageTitle(pageTitle.forgotPassword));
@@ -105,4 +105,4 @@ const RecoverIdBox = () => {
   );
 };
 
-export default RecoverIdBox;
+export default ForgotPassword;
