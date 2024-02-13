@@ -5,11 +5,12 @@ import { IRootState } from "../../store";
 import { toggleTheme } from "../../store/themeConfigSlice";
 import { toggleSidebar } from "../../store/themeConfigSlice";
 import Dropdown from "../Dropdown";
-import { authPaths } from "../../utils/common/route-paths";
+import { appPaths, authPaths } from "../../utils/common/route-paths";
 import authService from "../../pages/auth/utils/auth.service";
 import menuService from "../../utils/menu.service";
 
 const menuItems = menuService.getMenus();
+const profileRoute = "/" + appPaths.profile;
 
 const Header = () => {
   const location = useLocation();
@@ -456,7 +457,7 @@ const Header = () => {
                     </div>
                   </li>
                   <li>
-                    <Link to="/users/profile" className="dark:hover:text-white">
+                    <Link to={profileRoute} className="dark:hover:text-white">
                       <svg
                         className="ltr:mr-2 rtl:ml-2"
                         width="18"

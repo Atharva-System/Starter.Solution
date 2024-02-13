@@ -1,6 +1,7 @@
 import { lazy } from "react";
 import { appPaths, authPaths } from "../utils/common/route-paths";
 const Users = lazy(() => import("../pages/user/pages/list-user"));
+const Profile = lazy(() => import("../pages/user/pages/profile"));
 const Projects = lazy(() => import("../pages/project/pages/list-projects"));
 const Tasks = lazy(() => import("../pages/task/pages/list-tasks"));
 const SignIn = lazy(() => import("../pages/auth/pages/sign-in"));
@@ -41,6 +42,11 @@ const appRoutes = [
   {
     path: "/" + appPaths.tasks,
     element: <Tasks />,
+    layout: "",
+  },
+  {
+    path: "/" + appPaths.profile,
+    element: <Profile />,
     layout: "",
   },
 ];

@@ -12,6 +12,7 @@ import { dataTableProps } from "../../../utils/common/constants";
 import { pageTitle } from "../../../utils/common/route-paths";
 import messageService from "../../../utils/message.service";
 import DeleteUserModal from "../../../components/Shared/delete-modal";
+import ManageUserModal from "../components/manage-user";
 
 const Users = () => {
   const dispatch = useDispatch();
@@ -30,6 +31,8 @@ const Users = () => {
   });
   const [isdeleteUserModal, setIsDeleteUserModal] = useState<any>(false);
   const [deletedUserId, setdeletedUserId] = useState<string>("");
+  const [isManageUserModal, setIsManageUserModal] = useState<any>(false);
+  const [managedUserId, setManagedUserId] = useState<string>("");
 
   useEffect(() => {
     setParams({
@@ -69,6 +72,24 @@ const Users = () => {
     }
   };
 
+  const manageUserConfirm = (id: string) => {
+    setManagedUserId(id);
+    setTimeout(() => {
+      setIsManageUserModal(true);
+    }, 100);
+  };
+
+  const onSaveManageUser = async () => {
+    setManagedUserId("");
+    bindUsers(params);
+    setIsManageUserModal(false);
+  };
+
+  const onCloseManageUser = async () => {
+    setManagedUserId("");
+    setIsManageUserModal(false);
+  };
+
   const getBadgeColor = (status: string) => {
     if (!status) return "";
     switch (status) {
@@ -87,7 +108,15 @@ const Users = () => {
     <div className="panel">
       <div className="flex md:items-center md:flex-row flex-col mb-5 gap-5">
         <h5 className="font-semibold text-lg dark:text-white-light">Users</h5>
-        <div className="ltr:ml-auto rtl:mr-auto"></div>
+        <div className="ltr:ml-auto rtl:mr-auto">
+          <button
+            type="button"
+            className="btn btn-outline-info btn-sm"
+            onClick={() => setIsManageUserModal(true)}
+          >
+            Invite
+          </button>
+        </div>
       </div>
       <div className="datatables">
         <DataTable
@@ -115,7 +144,7 @@ const Users = () => {
               render: ({ id }) => (
                 <div className="flex items-center w-max mx-auto gap-2">
                   <Tippy content="Edit">
-                    <button type="button">
+                    <button type="button" onClick={() => manageUserConfirm(id)}>
                       <svg
                         width="24"
                         height="24"
@@ -211,6 +240,12 @@ const Users = () => {
         isOpen={isdeleteUserModal}
         onClose={() => setIsDeleteUserModal(false)}
         onDelete={deleteUser}
+      />
+      <ManageUserModal
+        manageUserId={managedUserId}
+        isOpen={isManageUserModal}
+        onClose={onCloseManageUser}
+        onSave={onSaveManageUser}
       />
     </div>
   );
