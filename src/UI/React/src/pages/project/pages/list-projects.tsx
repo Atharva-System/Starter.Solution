@@ -12,6 +12,7 @@ import { dataTableProps } from "../../../utils/common/constants";
 import { pageTitle } from "../../../utils/common/route-paths";
 import DeleteProjectModal from "../../../components/Shared/delete-modal";
 import messageService from "../../../utils/message.service";
+import ManageProjectModal from "../components/manage-project";
 
 const Projects = () => {
   const dispatch = useDispatch();
@@ -30,6 +31,8 @@ const Projects = () => {
   });
   const [isdeleteProjectModal, setIsDeleteProjectModal] = useState<any>(false);
   const [deletedProjectId, setdeletedProjectId] = useState<string>("");
+  const [isManageProjectModal, setIsManageProjectModal] = useState<any>(false);
+  const [managedProjectId, setManagedProjectId] = useState<string>("");
 
   useEffect(() => {
     setParams({
@@ -73,6 +76,24 @@ const Projects = () => {
     }
   };
 
+  const manageProjectConfirm = (id: string) => {
+    setManagedProjectId(id);
+    setTimeout(() => {
+      setIsManageProjectModal(true);
+    }, 100);
+  };
+
+  const onSaveManageProject = async () => {
+    setManagedProjectId("");
+    bindProjects(params);
+    setIsManageProjectModal(false);
+  };
+
+  const onCloseManageProject = async () => {
+    setManagedProjectId("");
+    setIsManageProjectModal(false);
+  };
+
   const getSortColumnName = (column: string) => {
     switch (column) {
       case "startDateDisplay":
@@ -90,7 +111,15 @@ const Projects = () => {
         <h5 className="font-semibold text-lg dark:text-white-light">
           Projects
         </h5>
-        <div className="ltr:ml-auto rtl:mr-auto"></div>
+        <div className="ltr:ml-auto rtl:mr-auto">
+          <button
+            type="button"
+            className="btn btn-outline-info btn-sm"
+            onClick={() => setIsManageProjectModal(true)}
+          >
+            Add
+          </button>
+        </div>
       </div>
       <div className="datatables">
         <DataTable
@@ -117,7 +146,10 @@ const Projects = () => {
               render: ({ id }) => (
                 <div className="flex items-center w-max mx-auto gap-2">
                   <Tippy content="Edit">
-                    <button type="button">
+                    <button
+                      type="button"
+                      onClick={() => manageProjectConfirm(id)}
+                    >
                       <svg
                         width="24"
                         height="24"
@@ -216,6 +248,12 @@ const Projects = () => {
         isOpen={isdeleteProjectModal}
         onClose={() => setIsDeleteProjectModal(false)}
         onDelete={deleteProject}
+      />
+      <ManageProjectModal
+        ManageProjectId={managedProjectId}
+        isOpen={isManageProjectModal}
+        onClose={onCloseManageProject}
+        onSave={onSaveManageProject}
       />
     </div>
   );
