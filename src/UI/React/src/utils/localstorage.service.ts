@@ -17,6 +17,7 @@ class LocalStorageService {
 
   public setToken(tokenData: TokenData): void {
     localStorage.setItem(StorageKey.token, JSON.stringify(tokenData));
+    this.setUser();
   }
 
   public getAccessToken(): string | null {
@@ -39,6 +40,7 @@ class LocalStorageService {
 
   public clearToken(): void {
     localStorage.removeItem(StorageKey.token);
+    localStorage.removeItem(StorageKey.userInfo);
   }
 
   isAuthenticated(): boolean {
@@ -58,10 +60,29 @@ class LocalStorageService {
     return decodedToken;
   }
 
+  setUser() {
+    localStorage.setItem(
+      StorageKey.userInfo,
+      JSON.stringify(this.decodeToken(this.getAccessToken() ?? ""))
+    );
+  }
+
   getUser(): TokenClaims | null {
     const userInfo = localStorage.getItem(StorageKey.userInfo);
     if (!userInfo) return null;
     return JSON.parse(userInfo);
+  }
+
+  updateStorageUserInfo(name: string, email: string) {
+    const token = this.getAccessToken();
+    if (token) {
+      const user = this.decodeToken(token);
+      if (user) {
+        user.name = name;
+        user.email = email;
+        localStorage.setItem(StorageKey.userInfo, JSON.stringify(user));
+      }
+    }
   }
 }
 

@@ -14,6 +14,8 @@ const profileRoute = "/" + appPaths.profile;
 
 const Header = () => {
   const location = useLocation();
+  const userInfo = useSelector((state: IRootState) => state.userInfo);
+
   useEffect(() => {
     const selector = document.querySelector(
       'ul.horizontal-menu a[href="' + window.location.pathname + '"]'
@@ -440,19 +442,16 @@ const Header = () => {
                         src="/assets/images/user-profile.jpeg"
                         alt="userProfile"
                       />
-                      <div className="ltr:pl-4 rtl:pr-4">
-                        <h4 className="text-base">
-                          John Doe
-                          <span className="text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">
-                            Pro
-                          </span>
+                      <div className="truncate ltr:pl-4 rtl:pr-4">
+                        <h4 className="text-base" title={userInfo.fullName}>
+                          {userInfo.fullName}
                         </h4>
-                        <button
-                          type="button"
-                          className="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white"
+                        <p
+                          title={userInfo.email}
+                          className="text-black/60 dark:text-dark-light/60"
                         >
-                          johndoe@gmail.com
-                        </button>
+                          {userInfo.email}
+                        </p>
                       </div>
                     </div>
                   </li>
