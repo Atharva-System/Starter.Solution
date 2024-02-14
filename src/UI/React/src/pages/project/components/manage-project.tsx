@@ -164,7 +164,6 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
                 </div>
                 <div className="p-5">
                   <Formik
-                    enableReinitialize={true}
                     initialValues={{
                       projectName: projectDetails.projectName,
                       description: projectDetails.description,
@@ -174,7 +173,13 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
                     validationSchema={SubmittedForm}
                     onSubmit={() => {}}
                   >
-                    {({ errors, submitCount, touched, values }) => (
+                    {({
+                      errors,
+                      submitCount,
+                      touched,
+                      values,
+                      setFieldValue,
+                    }) => (
                       <Form className="space-y-5">
                         <div
                           className={
@@ -242,10 +247,7 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
                             value={projectDetails.deadline}
                             className="form-input"
                             onChange={(date: any, event: any) => {
-                              values.deadline = event;
-                              setProjectDetails({
-                                ...values,
-                              });
+                              setFieldValue("deadline", event);
                             }}
                           />
                           {submitCount ? (

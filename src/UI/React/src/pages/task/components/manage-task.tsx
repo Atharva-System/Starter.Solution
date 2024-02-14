@@ -249,7 +249,6 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
                 </div>
                 <div className="p-5">
                   <Formik
-                    enableReinitialize={true}
                     initialValues={{
                       taskName: taskDetails.taskName,
                       projectId: taskDetails.projectId,
@@ -262,7 +261,13 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
                     validationSchema={SubmittedForm}
                     onSubmit={() => {}}
                   >
-                    {({ errors, submitCount, touched, values }) => (
+                    {({
+                      errors,
+                      submitCount,
+                      touched,
+                      values,
+                      setFieldValue,
+                    }) => (
                       <Form className="space-y-5">
                         <div
                           className={
@@ -312,7 +317,10 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
                               <option value="">Select Project</option>
                               {projectsOptions.map((projectsOption) => {
                                 return (
-                                  <option value={projectsOption.value}>
+                                  <option
+                                    key={projectsOption.value}
+                                    value={projectsOption.value}
+                                  >
                                     {projectsOption.label}
                                   </option>
                                 );
@@ -349,7 +357,10 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
                               {assignToUsersOptions.map(
                                 (assignToUsersOption) => {
                                   return (
-                                    <option value={assignToUsersOption.value}>
+                                    <option
+                                      key={assignToUsersOption.value}
+                                      value={assignToUsersOption.value}
+                                    >
                                       {assignToUsersOption.label}
                                     </option>
                                   );
@@ -388,7 +399,10 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
                               <option value="">Select Status</option>
                               {statusOptions.map((statusOption) => {
                                 return (
-                                  <option value={statusOption.value}>
+                                  <option
+                                    key={statusOption.value}
+                                    value={statusOption.value}
+                                  >
                                     {statusOption.label}
                                   </option>
                                 );
@@ -424,7 +438,10 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
                               <option value="">Select Priority</option>
                               {priorityOptions.map((priorityOption) => {
                                 return (
-                                  <option value={priorityOption.value}>
+                                  <option
+                                    key={priorityOption.value}
+                                    value={priorityOption.value}
+                                  >
                                     {priorityOption.label}
                                   </option>
                                 );
@@ -465,10 +482,7 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
                             value={taskDetails.deadline}
                             className="form-input"
                             onChange={(date: any, event: any) => {
-                              values.deadline = event;
-                              settaskDetails({
-                                ...values,
-                              });
+                              setFieldValue("deadline", event);
                             }}
                           />
                           {submitCount ? (
