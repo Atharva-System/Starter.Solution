@@ -12,6 +12,7 @@ import { dataTableProps } from "../../../utils/common/constants";
 import { pageTitle } from "../../../utils/common/route-paths";
 import DeleteTaskModal from "../../../components/Shared/delete-modal";
 import messageService from "../../../utils/message.service";
+import ManageTaskModal from "../components/manage-task";
 
 const Tasks = () => {
   const dispatch = useDispatch();
@@ -30,6 +31,8 @@ const Tasks = () => {
   });
   const [isdeleteTaskModal, setIsDeleteTaskModal] = useState<any>(false);
   const [deletedTaskId, setdeletedTaskId] = useState<string>("");
+  const [isManageTaskModal, setIsManageTaskModal] = useState<any>(false);
+  const [managedTaskId, setManagedTaskId] = useState<string>("");
 
   useEffect(() => {
     setParams({
@@ -73,6 +76,24 @@ const Tasks = () => {
     }
   };
 
+  const manageTaskConfirm = (id: string) => {
+    setManagedTaskId(id);
+    setTimeout(() => {
+      setIsManageTaskModal(true);
+    }, 100);
+  };
+
+  const onSaveManageTask = async () => {
+    setManagedTaskId("");
+    bindTasks(params);
+    setIsManageTaskModal(false);
+  };
+
+  const onCloseManageTask = async () => {
+    setManagedTaskId("");
+    setIsManageTaskModal(false);
+  };
+
   const getSortColumnName = (column: string) => {
     switch (column) {
       case "statusDisplay":
@@ -110,7 +131,15 @@ const Tasks = () => {
     <div className="panel">
       <div className="flex md:items-center md:flex-row flex-col mb-5 gap-5">
         <h5 className="font-semibold text-lg dark:text-white-light">Tasks</h5>
-        <div className="ltr:ml-auto rtl:mr-auto"></div>
+        <div className="ltr:ml-auto rtl:mr-auto">
+          <button
+            type="button"
+            className="btn btn-outline-info btn-sm"
+            onClick={() => setIsManageTaskModal(true)}
+          >
+            Add
+          </button>
+        </div>
       </div>
       <div className="datatables">
         <DataTable
@@ -153,7 +182,7 @@ const Tasks = () => {
               render: ({ id }) => (
                 <div className="flex items-center w-max mx-auto gap-2">
                   <Tippy content="Edit">
-                    <button type="button">
+                    <button type="button" onClick={() => manageTaskConfirm(id)}>
                       <svg
                         width="24"
                         height="24"
@@ -249,6 +278,12 @@ const Tasks = () => {
         isOpen={isdeleteTaskModal}
         onClose={() => setIsDeleteTaskModal(false)}
         onDelete={deleteTask}
+      />
+      <ManageTaskModal
+        manageTaskId={managedTaskId}
+        isOpen={isManageTaskModal}
+        onClose={onCloseManageTask}
+        onSave={onSaveManageTask}
       />
     </div>
   );

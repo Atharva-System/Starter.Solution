@@ -14,14 +14,14 @@ import { useSelector } from "react-redux";
 import commonService from "../../../utils/common.service";
 
 interface ManageProjectModalProps {
-  ManageProjectId: string;
+  manageProjectId: string;
   isOpen: boolean;
   onClose: () => void;
   onSave: () => void;
 }
 
 const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
-  ManageProjectId,
+  manageProjectId,
   isOpen,
   onClose,
   onSave,
@@ -45,7 +45,7 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
   useEffect(() => {
     const fetchProjectDetails = async () => {
       const response = await axiosInstance.get(
-        APIs.getProjectApi + ManageProjectId
+        APIs.getProjectApi + manageProjectId
       );
       if (response.data)
         setProjectDetails({
@@ -57,10 +57,10 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
         });
     };
 
-    if (ManageProjectId) {
+    if (manageProjectId) {
       fetchProjectDetails();
     }
-  }, [ManageProjectId]);
+  }, [manageProjectId]);
 
   const resetForm = () => {
     setProjectDetails({
@@ -72,15 +72,15 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
   };
 
   const resetAndClose = () => {
-    if (ManageProjectId) resetForm();
+    if (manageProjectId) resetForm();
     onClose();
   };
 
   const submitForm = async (values: any) => {
     const dates = commonService.parseDateRange(values.deadline);
-    const response = ManageProjectId
-      ? await axiosInstance.put(APIs.updateProjectApi + ManageProjectId, {
-          id: ManageProjectId,
+    const response = manageProjectId
+      ? await axiosInstance.put(APIs.updateProjectApi + manageProjectId, {
+          id: manageProjectId,
           projectName: values.projectName,
           description: values.description,
           startDate: dates.startDate,
@@ -160,7 +160,7 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
                   </svg>
                 </button>
                 <div className="text-lg font-medium bg-[#fbfbfb] dark:bg-[#121c2c] ltr:pl-5 rtl:pr-5 py-3 ltr:pr-[50px] rtl:pl-[50px]">
-                  {ManageProjectId ? "Edit Project" : "Add Project"}
+                  {manageProjectId ? "Edit Project" : "Add Project"}
                 </div>
                 <div className="p-5">
                   <Formik
@@ -304,7 +304,7 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
                             className="btn btn-primary ltr:ml-4 rtl:mr-4"
                             onClick={() => {
                               if (
-                                (ManageProjectId ||
+                                (manageProjectId ||
                                   Object.keys(touched).length !== 0) &&
                                 Object.keys(errors).length === 0
                               ) {
@@ -312,7 +312,7 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
                               }
                             }}
                           >
-                            {ManageProjectId ? "Update" : "Create"}
+                            {manageProjectId ? "Update" : "Create"}
                           </button>
                         </div>
                       </Form>

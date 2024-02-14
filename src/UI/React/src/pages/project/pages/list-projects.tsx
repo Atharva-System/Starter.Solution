@@ -250,7 +250,7 @@ const Projects = () => {
         onDelete={deleteProject}
       />
       <ManageProjectModal
-        ManageProjectId={managedProjectId}
+        manageProjectId={managedProjectId}
         isOpen={isManageProjectModal}
         onClose={onCloseManageProject}
         onSave={onSaveManageProject}

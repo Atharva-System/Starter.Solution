@@ -1,0 +1,538 @@
+import { Fragment, useEffect, useState } from "react";
+import { Transition, Dialog } from "@headlessui/react";
+import { Field, Form, Formik } from "formik";
+import * as Yup from "yup";
+import messageService from "../../../utils/message.service";
+import { APIs } from "../../../utils/common/api-paths";
+import axiosInstance from "../../../utils/api.service";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import Flatpickr from "react-flatpickr";
+import "flatpickr/dist/flatpickr.css";
+import { IRootState } from "../../../store";
+import { useDispatch, useSelector } from "react-redux";
+import commonService from "../../../utils/common.service";
+import { ISelectItems } from "../../../utils/types";
+
+interface ManageTaskModalProps {
+  manageTaskId: string;
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: () => void;
+}
+
+const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
+  manageTaskId,
+  isOpen,
+  onClose,
+  onSave,
+}) => {
+  const dispatch = useDispatch();
+
+  const [taskDetails, settaskDetails] = useState<{
+    taskName: string;
+    projectId: string;
+    assignedTo: string;
+    status: string;
+    priority: string;
+    deadline: string;
+    description: string;
+  }>({
+    taskName: "",
+    projectId: "",
+    assignedTo: "",
+    status: "",
+    priority: "",
+    deadline: "",
+    description: "",
+  });
+  const isRtl =
+    useSelector((state: IRootState) => state.themeConfig.rtlClass) === "rtl"
+      ? true
+      : false;
+  const [projectsOptions, setProjectsOptions] = useState<ISelectItems[]>([]);
+  const [assignToUsersOptions, setAssignToUsersOptions] = useState<
+    ISelectItems[]
+  >([]);
+  const [statusOptions, setStatusOptions] = useState<ISelectItems[]>([]);
+  const [priorityOptions, setPriorityOptions] = useState<ISelectItems[]>([]);
+
+  useEffect(() => {
+    const bindProjectDdl = async () => {
+      const response = await axiosInstance.get(APIs.getProjectListApi);
+
+      if (response.data) {
+        setProjectsOptions(
+          response.data.data.map(
+            ({ id, projectName }: { id: any; projectName: string }) => ({
+              value: `${id}`,
+              label: projectName,
+            })
+          )
+        );
+      }
+    };
+    const bindAssignToUserDdl = async () => {
+      const response = await axiosInstance.get(APIs.getAssigneeListApi);
+
+      if (response.data) {
+        setAssignToUsersOptions(
+          response.data.data.map(({ id, name }: { id: any; name: string }) => ({
+            value: `${id}`,
+            label: name,
+          }))
+        );
+      }
+    };
+    const bindStatusDdl = async () => {
+      const response = await axiosInstance.get(APIs.getTaskStatusListApi);
+
+      if (response.data) {
+        setStatusOptions(
+          response.data.data.map(({ id, name }: { id: any; name: string }) => ({
+            value: `${id}`,
+            label: name,
+          }))
+        );
+      }
+    };
+    const bindPriorityDdl = async () => {
+      const response = await axiosInstance.get(APIs.getTaskPriorityListApi);
+
+      if (response.data) {
+        setPriorityOptions(
+          response.data.data.map(({ id, name }: { id: any; name: string }) => ({
+            value: `${id}`,
+            label: name,
+          }))
+        );
+      }
+    };
+    bindProjectDdl();
+    bindAssignToUserDdl();
+    bindStatusDdl();
+    bindPriorityDdl();
+  }, [dispatch]);
+
+  useEffect(() => {
+    const fetchtaskDetails = async () => {
+      const response = await axiosInstance.get(APIs.getTaskApi + manageTaskId);
+      if (response.data)
+        settaskDetails({
+          taskName: response.data.data.taskName,
+          projectId: response.data.data.projectId,
+          assignedTo: response.data.data.assignedTo,
+          status: response.data.data.status,
+          priority: response.data.data.priority,
+          deadline:
+            response.data.data.startDate + " to " + response.data.data.endDate,
+          description: response.data.data.description,
+        });
+    };
+
+    if (manageTaskId) {
+      fetchtaskDetails();
+    }
+  }, [manageTaskId]);
+
+  const resetForm = () => {
+    settaskDetails({
+      taskName: "",
+      projectId: "",
+      assignedTo: "",
+      status: "",
+      priority: "",
+      deadline: "",
+      description: "",
+    });
+  };
+
+  const resetAndClose = () => {
+    if (manageTaskId) resetForm();
+    onClose();
+  };
+
+  const submitForm = async (values: any) => {
+    const dates = commonService.parseDateRange(values.deadline);
+    const response = manageTaskId
+      ? await axiosInstance.put(APIs.updateTaskApi + manageTaskId, {
+          id: manageTaskId,
+          taskName: values.taskName,
+          projectId: values.projectId,
+          assignedTo: values.assignedTo,
+          status: values.status,
+          priority: values.priority,
+          startDate: dates.startDate,
+          endDate: dates.endDate,
+          description: values.description,
+        })
+      : await axiosInstance.post(APIs.createTaskApi, {
+          taskName: values.taskName,
+          projectId: values.projectId,
+          assignedTo: values.assignedTo,
+          status: values.status,
+          priority: values.priority,
+          startDate: dates.startDate,
+          endDate: dates.endDate,
+          description: values.description,
+        });
+
+    if (response.data) {
+      messageService.showMessage(response.data.message);
+      resetForm();
+      onSave();
+    }
+  };
+
+  const SubmittedForm = Yup.object().shape({
+    taskName: Yup.string().required("This can not be empty"),
+    projectId: Yup.string().required("This can not be empty"),
+    assignedTo: Yup.string().required("This can not be empty"),
+    status: Yup.string().required("This can not be empty"),
+    priority: Yup.string().required("This can not be empty"),
+    deadline: Yup.string().required("This can not be empty"),
+  });
+
+  return (
+    <Transition appear show={isOpen} as={Fragment}>
+      <Dialog
+        as="div"
+        open={isOpen}
+        onClose={() => (isOpen = true)}
+        className="relative z-50"
+      >
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-[black]/60" />
+        </Transition.Child>
+        <div className="fixed inset-0 z-[999] px-4 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <Dialog.Panel className="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-lg text-black dark:text-white-dark">
+                <button
+                  type="button"
+                  onClick={resetAndClose}
+                  className="absolute top-4 ltr:right-4 rtl:left-4 text-gray-400 hover:text-gray-800 dark:hover:text-gray-600 outline-none"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+                <div className="text-lg font-medium bg-[#fbfbfb] dark:bg-[#121c2c] ltr:pl-5 rtl:pr-5 py-3 ltr:pr-[50px] rtl:pl-[50px]">
+                  {manageTaskId ? "Edit Task" : "Add Task"}
+                </div>
+                <div className="p-5">
+                  <Formik
+                    enableReinitialize={true}
+                    initialValues={{
+                      taskName: taskDetails.taskName,
+                      projectId: taskDetails.projectId,
+                      assignedTo: taskDetails.assignedTo,
+                      status: taskDetails.status,
+                      priority: taskDetails.priority,
+                      deadline: taskDetails.deadline,
+                      description: taskDetails.description,
+                    }}
+                    validationSchema={SubmittedForm}
+                    onSubmit={() => {}}
+                  >
+                    {({ errors, submitCount, touched, values }) => (
+                      <Form className="space-y-5">
+                        <div
+                          className={
+                            submitCount
+                              ? errors.taskName
+                                ? "has-error"
+                                : ""
+                              : ""
+                          }
+                        >
+                          <label htmlFor="taskName">Task Name</label>
+                          <Field
+                            name="taskName"
+                            type="text"
+                            id="taskName"
+                            placeholder="Enter Task Name"
+                            className="form-input"
+                          />
+                          {submitCount ? (
+                            errors.taskName ? (
+                              <div className="text-danger mt-1">
+                                {errors.taskName}
+                              </div>
+                            ) : (
+                              ""
+                            )
+                          ) : (
+                            ""
+                          )}
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div
+                            className={
+                              submitCount
+                                ? errors.projectId
+                                  ? "has-error"
+                                  : ""
+                                : ""
+                            }
+                          >
+                            <label htmlFor="projectId">Project</label>
+                            <Field
+                              as="select"
+                              name="projectId"
+                              className="form-select"
+                            >
+                              <option value="">Select Project</option>
+                              {projectsOptions.map((projectsOption) => {
+                                return (
+                                  <option value={projectsOption.value}>
+                                    {projectsOption.label}
+                                  </option>
+                                );
+                              })}
+                            </Field>
+                            {submitCount ? (
+                              errors.projectId ? (
+                                <div className=" text-danger mt-1">
+                                  {errors.projectId}
+                                </div>
+                              ) : (
+                                ""
+                              )
+                            ) : (
+                              ""
+                            )}
+                          </div>
+                          <div
+                            className={
+                              submitCount
+                                ? errors.assignedTo
+                                  ? "has-error"
+                                  : ""
+                                : ""
+                            }
+                          >
+                            <label htmlFor="assignedTo">Assignee</label>
+                            <Field
+                              as="select"
+                              name="assignedTo"
+                              className="form-select"
+                            >
+                              <option value="">Select Assignee</option>
+                              {assignToUsersOptions.map(
+                                (assignToUsersOption) => {
+                                  return (
+                                    <option value={assignToUsersOption.value}>
+                                      {assignToUsersOption.label}
+                                    </option>
+                                  );
+                                }
+                              )}
+                            </Field>
+                            {submitCount ? (
+                              errors.assignedTo ? (
+                                <div className=" text-danger mt-1">
+                                  {errors.assignedTo}
+                                </div>
+                              ) : (
+                                ""
+                              )
+                            ) : (
+                              ""
+                            )}
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div
+                            className={
+                              submitCount
+                                ? errors.status
+                                  ? "has-error"
+                                  : ""
+                                : ""
+                            }
+                          >
+                            <label htmlFor="status">Status</label>
+                            <Field
+                              as="select"
+                              name="status"
+                              className="form-select"
+                            >
+                              <option value="">Select Status</option>
+                              {statusOptions.map((statusOption) => {
+                                return (
+                                  <option value={statusOption.value}>
+                                    {statusOption.label}
+                                  </option>
+                                );
+                              })}
+                            </Field>
+                            {submitCount ? (
+                              errors.status ? (
+                                <div className=" text-danger mt-1">
+                                  {errors.status}
+                                </div>
+                              ) : (
+                                ""
+                              )
+                            ) : (
+                              ""
+                            )}
+                          </div>
+                          <div
+                            className={
+                              submitCount
+                                ? errors.priority
+                                  ? "has-error"
+                                  : ""
+                                : ""
+                            }
+                          >
+                            <label htmlFor="priority">Priority</label>
+                            <Field
+                              as="select"
+                              name="priority"
+                              className="form-select"
+                            >
+                              <option value="">Select Priority</option>
+                              {priorityOptions.map((priorityOption) => {
+                                return (
+                                  <option value={priorityOption.value}>
+                                    {priorityOption.label}
+                                  </option>
+                                );
+                              })}
+                            </Field>
+                            {submitCount ? (
+                              errors.priority ? (
+                                <div className=" text-danger mt-1">
+                                  {errors.priority}
+                                </div>
+                              ) : (
+                                ""
+                              )
+                            ) : (
+                              ""
+                            )}
+                          </div>
+                        </div>
+                        <div
+                          className={
+                            submitCount
+                              ? errors.deadline
+                                ? "has-error"
+                                : ""
+                              : ""
+                          }
+                        >
+                          <label htmlFor="deadline">Deadline</label>
+                          <Flatpickr
+                            id="deadline"
+                            name="deadline"
+                            placeholder="Enter Deadline"
+                            options={{
+                              mode: "range",
+                              dateFormat: "Y-m-d",
+                              position: isRtl ? "auto right" : "auto left",
+                            }}
+                            value={taskDetails.deadline}
+                            className="form-input"
+                            onChange={(date: any, event: any) => {
+                              values.deadline = event;
+                              settaskDetails({
+                                ...values,
+                              });
+                            }}
+                          />
+                          {submitCount ? (
+                            errors.deadline ? (
+                              <div className="text-danger mt-1">
+                                {errors.deadline}
+                              </div>
+                            ) : (
+                              ""
+                            )
+                          ) : (
+                            ""
+                          )}
+                        </div>
+                        <div>
+                          <label htmlFor="description">Description</label>
+                          <ReactQuill
+                            theme="snow"
+                            value={taskDetails.description}
+                            defaultValue={taskDetails.description}
+                            onChange={(content) => {
+                              values.description = content;
+                              settaskDetails({
+                                ...values,
+                              });
+                            }}
+                            style={{ minHeight: "150px" }}
+                          />
+                        </div>
+                        <div className="flex justify-end items-center mt-8">
+                          <button
+                            type="button"
+                            className="btn btn-outline-danger"
+                            onClick={resetAndClose}
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="submit"
+                            className="btn btn-primary ltr:ml-4 rtl:mr-4"
+                            onClick={() => {
+                              if (
+                                (manageTaskId ||
+                                  Object.keys(touched).length !== 0) &&
+                                Object.keys(errors).length === 0
+                              ) {
+                                submitForm(values);
+                              }
+                            }}
+                          >
+                            {manageTaskId ? "Update" : "Create"}
+                          </button>
+                        </div>
+                      </Form>
+                    )}
+                  </Formik>
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
+      </Dialog>
+    </Transition>
+  );
+};
+
+export default ManageTaskModal;
