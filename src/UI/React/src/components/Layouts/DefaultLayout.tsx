@@ -10,6 +10,7 @@ import Sidebar from "./Sidebar";
 import Portals from "../../components/Portals";
 import LocalStorageService from "../../utils/localstorage.service";
 import { updateUserInfo } from "../../store/userInfoSlice";
+import { MantineProvider } from "@mantine/core";
 
 const localStorageService = LocalStorageService.getService();
 
@@ -151,7 +152,9 @@ const DefaultLayout = ({ children }: PropsWithChildren) => {
             {/* END TOP NAVBAR */}
             <Suspense>
               <div className={`${themeConfig.animation} p-6 animate__animated`}>
-                {children}
+                <MantineProvider defaultColorScheme="auto">
+                  {children}
+                </MantineProvider>
 
                 {/* BEGIN FOOTER */}
                 <Footer />

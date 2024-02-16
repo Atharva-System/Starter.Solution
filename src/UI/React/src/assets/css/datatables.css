@@ -76,7 +76,7 @@ table tr .mantine-Checkbox-root {
 .datatables .mantine-Group-root[role='navigation'] {
     @apply flex-auto justify-end gap-1;
 }
-.mantine-Menu-dropdown {
+.mantine-Menu-dropdown,.mantine-Popover-dropdown {
     @apply dark:!border-[#191e3a] dark:!bg-[#1a2941] dark:text-white-dark;
 }
 
@@ -96,10 +96,10 @@ table tr .mantine-Checkbox-root {
 .mantine-3xbgk5 .mantine-qo1k2 {
     @apply p-2 text-sm;
 }
-.mantine-Pagination-item {
+.mantine-Pagination-item,.mantine-Pagination-control {
     @apply h-9 w-9 rounded-full border-white-light !bg-white-light font-nunito text-sm !text-[#3b3f5c] hover:!bg-primary hover:!text-white dark:border-[#191e3a] dark:!bg-[#191e3a] dark:!text-white;
 }
-.mantine-Pagination-item[data-active] {
+ .mantine-Pagination-item[data-active],.mantine-Pagination-control[data-active] {
     @apply !bg-primary !text-white;
 }
 .mantine-Menu-item .mantine-Text-root {
@@ -116,4 +116,45 @@ table tr .mantine-Checkbox-root {
 }
 .mantine-ScrollArea-viewport > div:first-child > div {
     @apply bg-none;
+}
+
+.m-8fb7ebe7 {
+    -webkit-tap-highlight-color: transparent;
+    appearance: none;
+    background-color: var(--_input-bg);
+    border: calc(0.0625rem*var(--mantine-scale)) solid var(--_input-bd);
+    border-radius: var(--_input-radius);
+    color: var(--_input-color);
+    cursor: var(--_input-cursor);
+    display: block;
+    font-family: var(--_input-font-family, var(--mantine-font-family));
+    font-size: var(--_input-fz, var(--input-fz, var(--mantine-font-size-sm)));
+    height: var(--_input-size);
+    line-height: var(--_input-line-height);
+    min-height: var(--_input-height);
+    overflow: var(--_input-overflow);
+    padding: var(--input-padding-y, 0) var(--_input-padding-right) var(--input-padding-y, 0) var(--_input-padding-left);
+    resize: var(--input-resize, none);
+    text-align: var(--_input-text-align);
+    transition: border-color .1s ease;
+    width: 100%;
+}
+
+.mantine-Pagination-control[disabled] {
+    @apply cursor-not-allowed opacity-60;
+}
+
+.mantine-TextInput-input,.mantine-Select-input
+ {
+    @apply w-full rounded-md border border-white-light bg-white  text-black !outline-none focus:border-primary focus:ring-transparent dark:border-[#17263c] dark:bg-[#121e32] dark:text-white-dark dark:focus:border-primary;
+}
+.mantine-Button-root{
+    border-width:1px;
+}
+
+.mantine-datatable {
+    all: unset;
+}
+.m-390b5f4:hover:not([data-combobox-selected],[data-combobox-disabled]) {
+    @apply dark:bg-[#121e32] dark:text-white-dark;
 }

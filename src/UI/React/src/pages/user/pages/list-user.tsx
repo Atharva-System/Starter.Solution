@@ -1,5 +1,5 @@
 import { DataTable, DataTableSortStatus } from "mantine-datatable";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
 import { useDispatch } from "react-redux";
@@ -13,6 +13,10 @@ import { pageTitle } from "../../../utils/common/route-paths";
 import messageService from "../../../utils/message.service";
 import DeleteUserModal from "../../../components/Shared/delete-modal";
 import ManageUserModal from "../components/manage-user";
+import { ActionIcon, TextInput, Select } from "@mantine/core";
+import { useDebouncedValue } from "@mantine/hooks";
+import SearchIcon from "../../../components/Shared/Icons/search-icon";
+import CloseIcon from "../../../components/Shared/Icons/close-icon";
 
 const Users = () => {
   const dispatch = useDispatch();
@@ -33,14 +37,60 @@ const Users = () => {
   const [deletedUserId, setdeletedUserId] = useState<string>("");
   const [isManageUserModal, setIsManageUserModal] = useState<any>(false);
   const [managedUserId, setManagedUserId] = useState<string>("");
+  const [fullNameFilter, setFullNameFilter] = useState("");
+  const [emailFilter, setEmailFilter] = useState("");
+  const [debouncedFullNameFilter] = useDebouncedValue(fullNameFilter, 500);
+  const [debouncedEmailFilter] = useDebouncedValue(emailFilter, 500);
+  const [selectedStatus, setSelectedStatus] = useState("");
+
+  const status: any = useMemo(() => {
+    const status = ["Active", "Invited"];
+    return [...status];
+  }, []);
 
   useEffect(() => {
+    const filterarray: any[] = [];
+    if (debouncedFullNameFilter) {
+      filterarray.push({
+        Field: "fullName",
+        Value: debouncedFullNameFilter,
+        Operator: "contain",
+      });
+    }
+    if (debouncedEmailFilter) {
+      filterarray.push({
+        Field: "email",
+        Value: debouncedEmailFilter,
+        Operator: "contain",
+      });
+    }
+    if (selectedStatus) {
+      filterarray.push({
+        Field: "status",
+        Value: selectedStatus,
+        Operator: "contain",
+      });
+    }
     setParams({
       PageNumber: page,
       PageSize: pageSize,
       OrderBy: [sortStatus.columnAccessor + " " + sortStatus.direction],
+      AdvancedFilter:
+        filterarray.length == 0
+          ? null
+          : {
+              Logic: "and",
+              Filters: filterarray,
+            },
     });
-  }, [sortStatus, page, pageSize]);
+  }, [
+    sortStatus,
+    page,
+    pageSize,
+    debouncedFullNameFilter,
+    debouncedEmailFilter,
+    selectedStatus,
+  ]);
 
   useEffect(() => {
     bindUsers(params);
@@ -124,17 +174,81 @@ const Users = () => {
           className="whitespace-nowrap table-hover"
           records={recordsData.data}
           columns={[
-            { accessor: "fullName", title: "Full Name", sortable: true },
-            { accessor: "email", title: "Email", sortable: true },
+            {
+              accessor: "fullName",
+              title: "Full Name",
+              filter: (
+                <TextInput
+                  label="Full Name"
+                  description="Show users whose names include the specified text"
+                  placeholder="Search full name..."
+                  leftSection={<SearchIcon />}
+                  rightSection={
+                    <ActionIcon
+                      size="sm"
+                      variant="transparent"
+                      c="dimmed"
+                      onClick={() => setFullNameFilter("")}
+                    >
+                      <CloseIcon />
+                    </ActionIcon>
+                  }
+                  value={fullNameFilter}
+                  onChange={(e) => setFullNameFilter(e.currentTarget.value)}
+                />
+              ),
+              filtering: fullNameFilter !== "",
+              sortable: true,
+            },
+            {
+              accessor: "email",
+              title: "Email",
+              filter: (
+                <TextInput
+                  label="Email"
+                  description="Show users whose email include the specified text"
+                  placeholder="Search email..."
+                  leftSection={<SearchIcon />}
+                  rightSection={
+                    <ActionIcon
+                      size="sm"
+                      variant="transparent"
+                      c="dimmed"
+                      onClick={() => setEmailFilter("")}
+                    >
+                      <CloseIcon />
+                    </ActionIcon>
+                  }
+                  value={emailFilter}
+                  onChange={(e) => setEmailFilter(e.currentTarget.value)}
+                />
+              ),
+              filtering: emailFilter !== "",
+              sortable: true,
+            },
             {
               accessor: "status",
               title: "Status",
               sortable: true,
               render: ({ status }) => (
-                <span className={`badge ${getBadgeColor(status)} `}>
-                  {status}
+                <span className={`badge ${getBadgeColor(`${status}`)} `}>
+                  {`${status}`}
                 </span>
               ),
+              filter: (
+                <Select
+                  label="Status"
+                  description="Show all users who has the selected status"
+                  data={status}
+                  value={selectedStatus}
+                  placeholder="Search status"
+                  onChange={(e) => setSelectedStatus(e ?? "")}
+                  leftSection={<SearchIcon />}
+                  clearable
+                  searchable
+                />
+              ),
+              filtering: selectedStatus.length > 0,
             },
             { accessor: "role", title: "Role", sortable: true },
             {
@@ -144,7 +258,10 @@ const Users = () => {
               render: ({ id }) => (
                 <div className="flex items-center w-max mx-auto gap-2">
                   <Tippy content="Edit">
-                    <button type="button" onClick={() => manageUserConfirm(id)}>
+                    <button
+                      type="button"
+                      onClick={() => manageUserConfirm(`${id}`)}
+                    >
                       <svg
                         width="24"
                         height="24"
@@ -168,7 +285,10 @@ const Users = () => {
                     </button>
                   </Tippy>
                   <Tippy content="Delete">
-                    <button type="button" onClick={() => deleteUserConfirm(id)}>
+                    <button
+                      type="button"
+                      onClick={() => deleteUserConfirm(`${id}`)}
+                    >
                       <svg
                         className="text-danger"
                         width="20"
