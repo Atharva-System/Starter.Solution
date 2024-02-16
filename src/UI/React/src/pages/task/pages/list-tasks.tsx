@@ -21,6 +21,7 @@ import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/flatpickr.css";
 import commonService from "../../../utils/common.service";
 import { ISelectItems } from "../../../utils/types";
+import Select from "../../../components/Shared/Select";
 
 const Tasks = () => {
   const dispatch = useDispatch();
@@ -310,84 +311,68 @@ const Tasks = () => {
               </div>
             </div>
           </div>
-          {filterDrodown.value == "status" && (
-            <div className="relative">
-              <select
-                className="form-select text-white-dark"
-                style={{ minWidth: "242px" }}
-                onChange={(e) => setSearch(e.target.value)}
-              >
-                <option value="">Select Status</option>
-                {statusDS.map((status) => {
-                  return (
-                    <option key={status.value} value={status.value}>
-                      {status.label}
-                    </option>
-                  );
-                })}
-              </select>
-            </div>
-          )}
-          {filterDrodown.value == "priority" && (
-            <div className="relative">
-              <select
-                className="form-select text-white-dark"
-                style={{ minWidth: "242px" }}
-                onChange={(e) => setSearch(e.target.value)}
-              >
-                <option value="">Select Priority</option>
-                {priorityDS.map((priority) => {
-                  return (
-                    <option key={priority.value} value={priority.value}>
-                      {priority.label}
-                    </option>
-                  );
-                })}
-              </select>
-            </div>
-          )}
-          {filterDrodown.value != "status" &&
-            filterDrodown.value != "priority" && (
-              <div className="relative">
-                {searchTextboxType != "date" && (
-                  <input
-                    style={{ minWidth: "242px" }}
-                    type={searchTextboxType}
-                    placeholder="Search.."
-                    className="form-input py-2 ltr:pr-11 rtl:pl-11 peer"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                  />
-                )}
-                {searchTextboxType == "date" && (
-                  <Flatpickr
-                    style={{ minWidth: "242px" }}
-                    id="dateRange"
-                    name="dateRange"
-                    placeholder="Search.."
-                    value={search}
-                    options={{
-                      mode: "range",
-                      dateFormat: "Y-m-d",
-                      position: isRtl ? "auto right" : "auto left",
-                    }}
-                    className="form-input py-2 ltr:pr-11 rtl:pl-11 peer"
-                    onChange={(date: any, event: any) => {
-                      setSearch(event);
-                    }}
-                  />
-                )}
-                {search && (
-                  <button
-                    type="button"
-                    className="absolute ltr:right-[11px] rtl:left-[11px] top-1/2 -translate-y-1/2 peer-focus:text-primary"
-                    onClick={() => setSearch("")}
-                  >
-                    <CloseIcon size={16} />
-                  </button>
-                )}
-              </div>
+          <div className="relative">
+            {filterDrodown.value == "status" && (
+              <Select
+                options={statusDS}
+                onChange={(value) => setSearch(value)}
+                style={{
+                  minWidth: "242px",
+                }}
+              />
             )}
+            {filterDrodown.value == "priority" && (
+              <Select
+                options={priorityDS}
+                onChange={(value) => setSearch(value)}
+                style={{
+                  minWidth: "242px",
+                }}
+              />
+            )}
+            {filterDrodown.value != "status" &&
+              filterDrodown.value != "priority" && (
+                <>
+                  {searchTextboxType != "date" && (
+                    <input
+                      style={{ minWidth: "242px" }}
+                      type={searchTextboxType}
+                      placeholder="Search.."
+                      className="form-input py-2 ltr:pr-11 rtl:pl-11 peer"
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                    />
+                  )}
+                  {searchTextboxType == "date" && (
+                    <Flatpickr
+                      style={{ minWidth: "242px" }}
+                      id="dateRange"
+                      name="dateRange"
+                      placeholder="Search.."
+                      value={search}
+                      options={{
+                        mode: "range",
+                        dateFormat: "Y-m-d",
+                        position: isRtl ? "auto right" : "auto left",
+                      }}
+                      className="form-input py-2 ltr:pr-11 rtl:pl-11 peer"
+                      onChange={(date: any, event: any) => {
+                        setSearch(event);
+                      }}
+                    />
+                  )}
+                  {search && (
+                    <button
+                      type="button"
+                      className="absolute ltr:right-[11px] rtl:left-[11px] top-1/2 -translate-y-1/2 peer-focus:text-primary"
+                      onClick={() => setSearch("")}
+                    >
+                      <CloseIcon size={16} />
+                    </button>
+                  )}
+                </>
+              )}
+          </div>
         </div>
       </div>
       <div className="datatables">
