@@ -161,7 +161,7 @@ const Users = () => {
         <div className="ltr:ml-auto rtl:mr-auto">
           <button
             type="button"
-            className="btn btn-outline-info btn-sm"
+            className="btn btn-outline-primary btn-sm"
             onClick={() => setIsManageUserModal(true)}
           >
             Invite
@@ -190,7 +190,7 @@ const Users = () => {
                       c="dimmed"
                       onClick={() => setFullNameFilter("")}
                     >
-                      <CloseIcon />
+                      <CloseIcon size={24} />
                     </ActionIcon>
                   }
                   value={fullNameFilter}
@@ -216,7 +216,7 @@ const Users = () => {
                       c="dimmed"
                       onClick={() => setEmailFilter("")}
                     >
-                      <CloseIcon />
+                      <CloseIcon size={24} />
                     </ActionIcon>
                   }
                   value={emailFilter}

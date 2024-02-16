@@ -4,7 +4,7 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import { IRootState } from "../../store";
 import { toggleTheme } from "../../store/themeConfigSlice";
 import { toggleSidebar } from "../../store/themeConfigSlice";
-import Dropdown from "../Dropdown";
+import Dropdown from "../Shared/Dropdown";
 import { appPaths, authPaths } from "../../utils/common/route-paths";
 import authService from "../../pages/auth/utils/auth.service";
 import menuService from "../../utils/menu.service";

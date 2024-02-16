@@ -2,7 +2,7 @@ import { DataTable, DataTableSortStatus } from "mantine-datatable";
 import { useEffect, useState } from "react";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setPageTitle } from "../../../store/themeConfigSlice";
 import axiosInstance from "../../../utils/api.service";
 import { APIs } from "../../../utils/common/api-paths";
@@ -13,6 +13,13 @@ import { pageTitle } from "../../../utils/common/route-paths";
 import DeleteProjectModal from "../../../components/Shared/delete-modal";
 import messageService from "../../../utils/message.service";
 import ManageProjectModal from "../components/manage-project";
+import Dropdown, { IDropdownItems } from "../../../components/Shared/Dropdown";
+import { IRootState } from "../../../store";
+import { useDebouncedValue } from "@mantine/hooks";
+import CloseIcon from "../../../components/Shared/Icons/close-icon";
+import Flatpickr from "react-flatpickr";
+import "flatpickr/dist/flatpickr.css";
+import commonService from "../../../utils/common.service";
 
 const Projects = () => {
   const dispatch = useDispatch();
@@ -33,8 +40,65 @@ const Projects = () => {
   const [deletedProjectId, setdeletedProjectId] = useState<string>("");
   const [isManageProjectModal, setIsManageProjectModal] = useState<any>(false);
   const [managedProjectId, setManagedProjectId] = useState<string>("");
+  const [search, setSearch] = useState<any>("");
+  const [searchTextboxType, setSearchTextboxType] = useState<any>("text");
+  const [filterDrodown, setFilterDrodown] = useState<IDropdownItems>({
+    text: "Project Name",
+    value: "projectName",
+  });
+  const [debouncedSearch] = useDebouncedValue(search, 500);
+  const isRtl =
+    useSelector((state: IRootState) => state.themeConfig.rtlClass) === "rtl"
+      ? true
+      : false;
+  const filterDropdownDs: IDropdownItems[] = [
+    {
+      text: "Project Name",
+      value: "projectName",
+      selected: true,
+    },
+    { text: "Start Date", value: "startDate" },
+    { text: "End Date", value: "endDate" },
+    { text: "Estimated Hours", value: "estimatedHours" },
+  ];
 
   useEffect(() => {
+    if (filterDrodown.value == "estimatedHours") {
+      setSearchTextboxType("number");
+    } else if (
+      filterDrodown.value == "startDate" ||
+      filterDrodown.value == "endDate"
+    ) {
+      setSearchTextboxType("date");
+    } else {
+      setSearchTextboxType("text");
+    }
+  }, [filterDrodown]);
+
+  useEffect(() => {
+    const filterarray: any[] = [];
+
+    if (debouncedSearch) {
+      if (searchTextboxType == "date") {
+        const dates = commonService.parseDateRange(debouncedSearch);
+        filterarray.push({
+          Field: filterDrodown.value,
+          Value: parsValue(filterDrodown.value, dates.startDate),
+          Operator: "gte",
+        });
+        filterarray.push({
+          Field: filterDrodown.value,
+          Value: parsValue(filterDrodown.value, dates.endDate),
+          Operator: "lte",
+        });
+      } else {
+        filterarray.push({
+          Field: filterDrodown.value,
+          Value: parsValue(filterDrodown.value, debouncedSearch),
+          Operator: getCondition(filterDrodown.value),
+        });
+      }
+    }
     setParams({
       PageNumber: page,
       PageSize: pageSize,
@@ -43,8 +107,15 @@ const Projects = () => {
           " " +
           sortStatus.direction,
       ],
+      AdvancedFilter:
+        filterarray.length == 0
+          ? null
+          : {
+              Logic: "and",
+              Filters: filterarray,
+            },
     });
-  }, [sortStatus, page, pageSize]);
+  }, [sortStatus, page, pageSize, debouncedSearch]);
 
   useEffect(() => {
     bindProjects(params);
@@ -105,20 +176,129 @@ const Projects = () => {
     }
   };
 
+  const getCondition = (column: string) => {
+    switch (column) {
+      case "projectName":
+        return "contain";
+      default:
+        return "equal";
+    }
+  };
+
+  const parsValue = (column: string, value: any) => {
+    switch (column) {
+      case "estimatedHours":
+        return parseFloat(value);
+      default:
+        return value;
+    }
+  };
+
   return (
     <div className="panel">
-      <div className="flex md:items-center md:flex-row flex-col mb-5 gap-5">
+      <div className="flex items-center justify-between flex-wrap  mb-5 gap-5">
         <h5 className="font-semibold text-lg dark:text-white-light">
           Projects
         </h5>
-        <div className="ltr:ml-auto rtl:mr-auto">
-          <button
-            type="button"
-            className="btn btn-outline-info btn-sm"
-            onClick={() => setIsManageProjectModal(true)}
-          >
-            Add
-          </button>
+        <div className="flex sm:flex-row flex-col sm:items-center sm:gap-3 gap-4 w-full sm:w-auto">
+          <div className="flex gap-3">
+            <div>
+              <button
+                type="button"
+                className="btn btn-outline-primary btn-sm"
+                onClick={() => setIsManageProjectModal(true)}
+              >
+                Add
+              </button>
+            </div>
+            <div className="flex items-center gap-3">Search By:</div>
+            <div>
+              <div className="dropdown">
+                <Dropdown
+                  placement={`${isRtl ? "bottom-start" : "bottom-end"}`}
+                  btnClassName="btn btn-sm btn-outline-primary dropdown-toggle"
+                  button={
+                    <>
+                      {filterDrodown.text}
+                      <span>
+                        <svg
+                          className="w-4 h-4 ltr:ml-1 rtl:mr-1 inline-block"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M19 9L12 15L5 9"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </span>
+                    </>
+                  }
+                >
+                  <ul className="!min-w-[170px]">
+                    {filterDropdownDs.map((option) => {
+                      return (
+                        <li key={option.value}>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSearch("");
+                              setFilterDrodown(option);
+                            }}
+                          >
+                            {option.text}
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </Dropdown>
+              </div>
+            </div>
+          </div>
+          <div className="relative">
+            {searchTextboxType != "date" && (
+              <input
+                style={{ minWidth: "242px" }}
+                type={searchTextboxType}
+                placeholder="Search.."
+                className="form-input py-2 ltr:pr-11 rtl:pl-11 peer"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            )}
+            {searchTextboxType == "date" && (
+              <Flatpickr
+                style={{ minWidth: "242px" }}
+                id="dateRange"
+                name="dateRange"
+                placeholder="Search.."
+                value={search}
+                options={{
+                  mode: "range",
+                  dateFormat: "Y-m-d",
+                  position: isRtl ? "auto right" : "auto left",
+                }}
+                className="form-input py-2 ltr:pr-11 rtl:pl-11 peer"
+                onChange={(date: any, event: any) => {
+                  setSearch(event);
+                }}
+              />
+            )}
+            {search && (
+              <button
+                type="button"
+                className="absolute ltr:right-[11px] rtl:left-[11px] top-1/2 -translate-y-1/2 peer-focus:text-primary"
+                onClick={() => setSearch("")}
+              >
+                <CloseIcon size={16} />
+              </button>
+            )}
+          </div>
         </div>
       </div>
       <div className="datatables">
@@ -148,7 +328,7 @@ const Projects = () => {
                   <Tippy content="Edit">
                     <button
                       type="button"
-                      onClick={() => manageProjectConfirm(id)}
+                      onClick={() => manageProjectConfirm(`${id}`)}
                     >
                       <svg
                         width="24"
@@ -175,7 +355,7 @@ const Projects = () => {
                   <Tippy content="Delete">
                     <button
                       type="button"
-                      onClick={() => deleteProjectConfirm(id)}
+                      onClick={() => deleteProjectConfirm(`${id}`)}
                     >
                       <svg
                         className="text-danger"

@@ -1,6 +1,14 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { usePopper } from 'react-popper';
 
+export interface IDropdownItems {
+    text: string;
+    value: string;
+    selected?: boolean;
+    hide?: boolean;
+    disable?: boolean;
+  }
+
 const Dropdown = (props : any, forwardedRef: any) => {
     const [visibility, setVisibility] = useState<any>(false);
 
