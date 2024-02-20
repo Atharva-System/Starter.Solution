@@ -5,12 +5,11 @@ import * as Yup from "yup";
 import messageService from "../../../utils/message.service";
 import { APIs } from "../../../utils/common/api-paths";
 import axiosInstance from "../../../utils/api.service";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
 import { useDispatch } from "react-redux";
 import commonService from "../../../utils/common.service";
 import { ISelectItems } from "../../../utils/types";
 import DatePicker from "../../../components/Shared/DatePicker";
+import TextEditor from "../../../components/Shared/TextEditor";
 
 interface ManageTaskModalProps {
   manageTaskId: string;
@@ -34,7 +33,6 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
     status: string;
     priority: string;
     deadline: string;
-    description: string;
   }>({
     taskName: "",
     projectId: "",
@@ -42,8 +40,8 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
     status: "",
     priority: "",
     deadline: "",
-    description: "",
   });
+  const [description, setDescription] = useState("");
 
   const [projectsOptions, setProjectsOptions] = useState<ISelectItems[]>([]);
   const [assignToUsersOptions, setAssignToUsersOptions] = useState<
@@ -121,8 +119,10 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
           priority: response.data.data.priority,
           deadline:
             response.data.data.startDate + " to " + response.data.data.endDate,
-          description: response.data.data.description,
         });
+      setTimeout(() => {
+        setDescription(response.data.data.description);
+      }, 100);
     };
 
     if (manageTaskId) {
@@ -138,8 +138,8 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
       status: "",
       priority: "",
       deadline: "",
-      description: "",
     });
+    setDescription("");
   };
 
   const resetAndClose = () => {
@@ -159,7 +159,7 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
           priority: values.priority,
           startDate: dates.startDate,
           endDate: dates.endDate,
-          description: values.description,
+          description: description,
         })
       : await axiosInstance.post(APIs.createTaskApi, {
           taskName: values.taskName,
@@ -169,7 +169,7 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
           priority: values.priority,
           startDate: dates.startDate,
           endDate: dates.endDate,
-          description: values.description,
+          description: description,
         });
 
     if (response.data) {
@@ -251,7 +251,6 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
                       status: taskDetails.status,
                       priority: taskDetails.priority,
                       deadline: taskDetails.deadline,
-                      description: taskDetails.description,
                     }}
                     validationSchema={SubmittedForm}
                     onSubmit={() => {}}
@@ -491,16 +490,9 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
                         </div>
                         <div>
                           <label htmlFor="description">Description</label>
-                          <ReactQuill
-                            theme="snow"
-                            value={taskDetails.description}
-                            defaultValue={taskDetails.description}
-                            onChange={(content) => {
-                              values.description = content;
-                              settaskDetails({
-                                ...values,
-                              });
-                            }}
+                          <TextEditor
+                            value={description}
+                            onChange={setDescription}
                             style={{ minHeight: "150px" }}
                           />
                         </div>

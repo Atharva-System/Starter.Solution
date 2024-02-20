@@ -5,11 +5,9 @@ import * as Yup from "yup";
 import messageService from "../../../utils/message.service";
 import { APIs } from "../../../utils/common/api-paths";
 import axiosInstance from "../../../utils/api.service";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
-
 import commonService from "../../../utils/common.service";
 import DatePicker from "../../../components/Shared/DatePicker";
+import TextEditor from "../../../components/Shared/TextEditor";
 
 interface ManageProjectModalProps {
   manageProjectId: string;
@@ -26,15 +24,14 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
 }) => {
   const [projectDetails, setProjectDetails] = useState<{
     projectName: string;
-    description: string;
     deadline: string;
     estimatedHours: string;
   }>({
     projectName: "",
-    description: "",
     deadline: "",
     estimatedHours: "",
   });
+  const [description, setDescription] = useState("");
 
   useEffect(() => {
     const fetchProjectDetails = async () => {
@@ -44,11 +41,14 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
       if (response.data)
         setProjectDetails({
           projectName: response.data.data.projectName,
-          description: response.data.data.description,
           deadline:
             response.data.data.startDate + " to " + response.data.data.endDate,
           estimatedHours: response.data.data.estimatedHours,
         });
+
+      setTimeout(() => {
+        setDescription(response.data.data.description);
+      }, 100);
     };
 
     if (manageProjectId) {
@@ -59,10 +59,10 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
   const resetForm = () => {
     setProjectDetails({
       projectName: "",
-      description: "",
       deadline: "",
       estimatedHours: "",
     });
+    setDescription("");
   };
 
   const resetAndClose = () => {
@@ -76,14 +76,14 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
       ? await axiosInstance.put(APIs.updateProjectApi + manageProjectId, {
           id: manageProjectId,
           projectName: values.projectName,
-          description: values.description,
+          description: description,
           startDate: dates.startDate,
           endDate: dates.endDate,
           estimatedHours: values.estimatedHours,
         })
       : await axiosInstance.post(APIs.createProjectApi, {
           projectName: values.projectName,
-          description: values.description,
+          description: description,
           startDate: dates.startDate,
           endDate: dates.endDate,
           estimatedHours: values.estimatedHours,
@@ -160,7 +160,6 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
                   <Formik
                     initialValues={{
                       projectName: projectDetails.projectName,
-                      description: projectDetails.description,
                       deadline: projectDetails.deadline,
                       estimatedHours: projectDetails.estimatedHours,
                     }}
@@ -206,16 +205,9 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
                         </div>
                         <div>
                           <label htmlFor="description">Description</label>
-                          <ReactQuill
-                            theme="snow"
-                            value={projectDetails.description}
-                            defaultValue={projectDetails.description}
-                            onChange={(content) => {
-                              values.description = content;
-                              setProjectDetails({
-                                ...values,
-                              });
-                            }}
+                          <TextEditor
+                            value={description}
+                            onChange={setDescription}
                             style={{ minHeight: "150px" }}
                           />
                         </div>
