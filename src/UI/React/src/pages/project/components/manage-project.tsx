@@ -112,6 +112,10 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
         "Estimated hours cannot exceed " +
           FieldValidation.estimatedHoursMaxLength
       ),
+    description: Yup.string().max(
+      FieldValidation.descriptionMaxLength,
+      `Description must be at most ${FieldValidation.descriptionMaxLength} characters`
+    ),
   });
 
   return (
@@ -174,6 +178,7 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
                       projectName: projectDetails.projectName,
                       deadline: projectDetails.deadline,
                       estimatedHours: projectDetails.estimatedHours,
+                      description: description,
                     }}
                     validationSchema={SubmittedForm}
                     onSubmit={() => {}}
@@ -215,13 +220,35 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
                             ""
                           )}
                         </div>
-                        <div>
+                        <div
+                          className={
+                            submitCount
+                              ? errors.description
+                                ? "has-error"
+                                : ""
+                              : ""
+                          }
+                        >
                           <label htmlFor="description">Description</label>
                           <TextEditor
                             value={description}
-                            onChange={setDescription}
+                            onChange={(e) => {
+                              setDescription(e);
+                              setFieldValue("description", e);
+                            }}
                             style={{ minHeight: "150px" }}
                           />
+                          {submitCount ? (
+                            errors.description ? (
+                              <div className="text-danger mt-1">
+                                {errors.description}
+                              </div>
+                            ) : (
+                              ""
+                            )
+                          ) : (
+                            ""
+                          )}
                         </div>
                         <div
                           className={

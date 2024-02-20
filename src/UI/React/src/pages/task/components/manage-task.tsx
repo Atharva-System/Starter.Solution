@@ -192,6 +192,10 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
     status: Yup.string().required("This can not be empty"),
     priority: Yup.string().required("This can not be empty"),
     deadline: Yup.string().required("This can not be empty"),
+    description: Yup.string().max(
+      FieldValidation.descriptionMaxLength,
+      `Description must be at most ${FieldValidation.descriptionMaxLength} characters`
+    ),
   });
 
   return (
@@ -257,6 +261,7 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
                       status: taskDetails.status,
                       priority: taskDetails.priority,
                       deadline: taskDetails.deadline,
+                      description: description,
                     }}
                     validationSchema={SubmittedForm}
                     onSubmit={() => {}}
@@ -494,13 +499,35 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
                             ""
                           )}
                         </div>
-                        <div>
+                        <div
+                          className={
+                            submitCount
+                              ? errors.description
+                                ? "has-error"
+                                : ""
+                              : ""
+                          }
+                        >
                           <label htmlFor="description">Description</label>
                           <TextEditor
                             value={description}
-                            onChange={setDescription}
+                            onChange={(e) => {
+                              setDescription(e);
+                              setFieldValue("description", e);
+                            }}
                             style={{ minHeight: "150px" }}
                           />
+                          {submitCount ? (
+                            errors.description ? (
+                              <div className="text-danger mt-1">
+                                {errors.description}
+                              </div>
+                            ) : (
+                              ""
+                            )
+                          ) : (
+                            ""
+                          )}
                         </div>
                         <div className="flex justify-end items-center mt-8">
                           <button

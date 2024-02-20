@@ -715,3 +715,8 @@ pre.hljs {
     border: 1px solid #ccc;
     cursor: not-allowed;
 }
+
+.has-error .ql-toolbar,
+.has-error .ql-container {
+    @apply border-danger text-danger bg-danger/[0.08] placeholder-danger/70 focus:border-danger !important;
+}
