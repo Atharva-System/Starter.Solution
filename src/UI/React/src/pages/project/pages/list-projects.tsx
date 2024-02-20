@@ -17,9 +17,8 @@ import Dropdown, { IDropdownItems } from "../../../components/Shared/Dropdown";
 import { IRootState } from "../../../store";
 import { useDebouncedValue } from "@mantine/hooks";
 import CloseIcon from "../../../components/Shared/Icons/close-icon";
-import Flatpickr from "react-flatpickr";
-import "flatpickr/dist/flatpickr.css";
 import commonService from "../../../utils/common.service";
+import DatePicker from "../../../components/Shared/DatePicker";
 
 const Projects = () => {
   const dispatch = useDispatch();
@@ -272,7 +271,7 @@ const Projects = () => {
               />
             )}
             {searchTextboxType == "date" && (
-              <Flatpickr
+              <DatePicker
                 style={{ minWidth: "242px" }}
                 id="dateRange"
                 name="dateRange"
@@ -280,10 +279,8 @@ const Projects = () => {
                 value={search}
                 options={{
                   mode: "range",
-                  dateFormat: "Y-m-d",
-                  position: isRtl ? "auto right" : "auto left",
                 }}
-                className="form-input py-2 ltr:pr-11 rtl:pl-11 peer"
+                className="py-2 ltr:pr-11 rtl:pl-11 peer"
                 onChange={(date: any, event: any) => {
                   setSearch(event);
                 }}

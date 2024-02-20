@@ -7,11 +7,9 @@ import { APIs } from "../../../utils/common/api-paths";
 import axiosInstance from "../../../utils/api.service";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import Flatpickr from "react-flatpickr";
-import "flatpickr/dist/flatpickr.css";
-import { IRootState } from "../../../store";
-import { useSelector } from "react-redux";
+
 import commonService from "../../../utils/common.service";
+import DatePicker from "../../../components/Shared/DatePicker";
 
 interface ManageProjectModalProps {
   manageProjectId: string;
@@ -37,10 +35,6 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
     deadline: "",
     estimatedHours: "",
   });
-  const isRtl =
-    useSelector((state: IRootState) => state.themeConfig.rtlClass) === "rtl"
-      ? true
-      : false;
 
   useEffect(() => {
     const fetchProjectDetails = async () => {
@@ -235,17 +229,14 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
                           }
                         >
                           <label htmlFor="deadline">Deadline</label>
-                          <Flatpickr
+                          <DatePicker
                             id="deadline"
                             name="deadline"
                             placeholder="Enter Deadline"
                             options={{
                               mode: "range",
-                              dateFormat: "Y-m-d",
-                              position: isRtl ? "auto right" : "auto left",
                             }}
                             value={projectDetails.deadline}
-                            className="form-input"
                             onChange={(date: any, event: any) => {
                               setFieldValue("deadline", event);
                             }}

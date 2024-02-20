@@ -7,12 +7,10 @@ import { APIs } from "../../../utils/common/api-paths";
 import axiosInstance from "../../../utils/api.service";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import Flatpickr from "react-flatpickr";
-import "flatpickr/dist/flatpickr.css";
-import { IRootState } from "../../../store";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import commonService from "../../../utils/common.service";
 import { ISelectItems } from "../../../utils/types";
+import DatePicker from "../../../components/Shared/DatePicker";
 
 interface ManageTaskModalProps {
   manageTaskId: string;
@@ -46,10 +44,7 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
     deadline: "",
     description: "",
   });
-  const isRtl =
-    useSelector((state: IRootState) => state.themeConfig.rtlClass) === "rtl"
-      ? true
-      : false;
+
   const [projectsOptions, setProjectsOptions] = useState<ISelectItems[]>([]);
   const [assignToUsersOptions, setAssignToUsersOptions] = useState<
     ISelectItems[]
@@ -470,17 +465,14 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
                           }
                         >
                           <label htmlFor="deadline">Deadline</label>
-                          <Flatpickr
+                          <DatePicker
                             id="deadline"
                             name="deadline"
                             placeholder="Enter Deadline"
                             options={{
                               mode: "range",
-                              dateFormat: "Y-m-d",
-                              position: isRtl ? "auto right" : "auto left",
                             }}
                             value={taskDetails.deadline}
-                            className="form-input"
                             onChange={(date: any, event: any) => {
                               setFieldValue("deadline", event);
                             }}
