@@ -11,3 +11,14 @@ export const Regex = {
   noSpaceValidationPattern: /^\S*$/,
   passwordValidationPattern: /^(?=.*[A-Z])(?=.*[a-z])(?=.*[^a-zA-Z0-9]).{8,}$/,
 };
+
+export const FieldValidation = {
+  firstNameMaxLength: 20,
+  lastNameMaxLength: 20,
+  emailMaxLength: 50,
+  projectNameMaxLength: 100,
+  taskNameMaxLength: 100,
+  passwordMinLength: 6,
+  descriptionMaxLength: 500,
+  estimatedHoursMaxLength: 10,
+};

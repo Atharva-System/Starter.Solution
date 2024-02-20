@@ -9,7 +9,7 @@ import { APIs } from "../../../utils/common/api-paths";
 import messageService from "../../../utils/message.service";
 import axiosInstance from "../../../utils/api.service";
 import { useLocation } from "react-router-dom";
-import { Regex } from "../../../utils/common/constants";
+import { FieldValidation, Regex } from "../../../utils/common/constants";
 
 const ResetPassword = () => {
   const location = useLocation();
@@ -39,7 +39,10 @@ const ResetPassword = () => {
   const SubmittedForm = Yup.object().shape({
     password: Yup.string()
       .required("This can not be empty")
-      .min(6, "Confirm password must be at least 6 characters")
+      .min(
+        FieldValidation.passwordMinLength,
+        `Password must be at least ${FieldValidation.passwordMinLength} characters`
+      )
       .matches(
         Regex.passwordValidationPattern,
         "Password requirements: At least one uppercase letter (A-Z), one lowercase letter (a-z), and one non-alphanumeric character."

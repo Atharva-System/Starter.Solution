@@ -5,6 +5,7 @@ import * as Yup from "yup";
 import messageService from "../../../utils/message.service";
 import { APIs } from "../../../utils/common/api-paths";
 import axiosInstance from "../../../utils/api.service";
+import { FieldValidation, Regex } from "../../../utils/common/constants";
 
 interface ManageUserModalProps {
   manageUserId: string;
@@ -74,11 +75,27 @@ const ManageUserModal: React.FC<ManageUserModalProps> = ({
   };
 
   const SubmittedForm = Yup.object().shape({
-    firstName: Yup.string().required("This can not be empty"),
-    lastName: Yup.string().required("This can not be empty"),
+    firstName: Yup.string()
+      .required("This can not be empty")
+      .matches(Regex.noSpaceValidationPattern, "Invalid First Name")
+      .max(
+        FieldValidation.firstNameMaxLength,
+        `First name must be at most ${FieldValidation.firstNameMaxLength} characters`
+      ),
+    lastName: Yup.string()
+      .required("This can not be empty")
+      .matches(Regex.noSpaceValidationPattern, "Invalid Last Name")
+      .max(
+        FieldValidation.lastNameMaxLength,
+        `Last name must be at most ${FieldValidation.lastNameMaxLength} characters`
+      ),
     email: Yup.string()
       .email("Invalid email")
-      .required("This can not be empty"),
+      .required("This can not be empty")
+      .max(
+        FieldValidation.emailMaxLength,
+        `Email must be at most ${FieldValidation.emailMaxLength} characters`
+      ),
   });
 
   return (

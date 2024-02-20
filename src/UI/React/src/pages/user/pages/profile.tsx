@@ -9,6 +9,7 @@ import * as Yup from "yup";
 import messageService from "../../../utils/message.service";
 import { updateUserInfo } from "../../../store/userInfoSlice";
 import LocalStorageService from "../../../utils/localstorage.service";
+import { FieldValidation, Regex } from "../../../utils/common/constants";
 
 const localStorageService = LocalStorageService.getService();
 
@@ -66,11 +67,27 @@ const Profile = () => {
   };
 
   const SubmittedForm = Yup.object().shape({
-    firstName: Yup.string().required("This can not be empty"),
-    lastName: Yup.string().required("This can not be empty"),
+    firstName: Yup.string()
+      .required("This can not be empty")
+      .matches(Regex.noSpaceValidationPattern, "Invalid First Name")
+      .max(
+        FieldValidation.firstNameMaxLength,
+        `First name must be at most ${FieldValidation.firstNameMaxLength} characters`
+      ),
+    lastName: Yup.string()
+      .required("This can not be empty")
+      .matches(Regex.noSpaceValidationPattern, "Invalid Last Name")
+      .max(
+        FieldValidation.lastNameMaxLength,
+        `Last name must be at most ${FieldValidation.lastNameMaxLength} characters`
+      ),
     email: Yup.string()
       .email("Invalid email")
-      .required("This can not be empty"),
+      .required("This can not be empty")
+      .max(
+        FieldValidation.emailMaxLength,
+        `Email must be at most ${FieldValidation.emailMaxLength} characters`
+      ),
   });
 
   return (

@@ -8,6 +8,7 @@ import axiosInstance from "../../../utils/api.service";
 import commonService from "../../../utils/common.service";
 import DatePicker from "../../../components/Shared/DatePicker";
 import TextEditor from "../../../components/Shared/TextEditor";
+import { FieldValidation } from "../../../utils/common/constants";
 
 interface ManageProjectModalProps {
   manageProjectId: string;
@@ -97,9 +98,20 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
   };
 
   const SubmittedForm = Yup.object().shape({
-    projectName: Yup.string().required("This can not be empty"),
+    projectName: Yup.string()
+      .required("This can not be empty")
+      .max(
+        FieldValidation.projectNameMaxLength,
+        `Project name must be at most ${FieldValidation.projectNameMaxLength} characters`
+      ),
     deadline: Yup.string().required("This can not be empty"),
-    estimatedHours: Yup.string().required("This can not be empty"),
+    estimatedHours: Yup.string()
+      .required("This can not be empty")
+      .max(
+        FieldValidation.estimatedHoursMaxLength,
+        "Estimated hours cannot exceed " +
+          FieldValidation.estimatedHoursMaxLength
+      ),
   });
 
   return (

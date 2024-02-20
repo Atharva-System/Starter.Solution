@@ -5,7 +5,7 @@ import * as Yup from "yup";
 import messageService from "../../../utils/message.service";
 import { APIs } from "../../../utils/common/api-paths";
 import axiosInstance from "../../../utils/api.service";
-import { Regex } from "../../../utils/common/constants";
+import { FieldValidation, Regex } from "../../../utils/common/constants";
 
 interface ChangePasswordModalProps {
   isOpen: boolean;
@@ -29,7 +29,10 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
     currentPassword: Yup.string().required("This can not be empty"),
     newPassword: Yup.string()
       .required("This can not be empty")
-      .min(6, "Confirm password must be at least 6 characters")
+      .min(
+        FieldValidation.passwordMinLength,
+        `New password must be at least ${FieldValidation.passwordMinLength} characters`
+      )
       .matches(
         Regex.passwordValidationPattern,
         "Password requirements: At least one uppercase letter (A-Z), one lowercase letter (a-z), and one non-alphanumeric character."

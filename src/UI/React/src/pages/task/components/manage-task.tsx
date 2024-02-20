@@ -10,6 +10,7 @@ import commonService from "../../../utils/common.service";
 import { ISelectItems } from "../../../utils/types";
 import DatePicker from "../../../components/Shared/DatePicker";
 import TextEditor from "../../../components/Shared/TextEditor";
+import { FieldValidation } from "../../../utils/common/constants";
 
 interface ManageTaskModalProps {
   manageTaskId: string;
@@ -180,7 +181,12 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
   };
 
   const SubmittedForm = Yup.object().shape({
-    taskName: Yup.string().required("This can not be empty"),
+    taskName: Yup.string()
+      .required("This can not be empty")
+      .max(
+        FieldValidation.taskNameMaxLength,
+        `Task name must be at most ${FieldValidation.taskNameMaxLength} characters`
+      ),
     projectId: Yup.string().required("This can not be empty"),
     assignedTo: Yup.string().required("This can not be empty"),
     status: Yup.string().required("This can not be empty"),
