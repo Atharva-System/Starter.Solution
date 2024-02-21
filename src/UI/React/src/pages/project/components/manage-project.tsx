@@ -33,19 +33,32 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
     estimatedHours: "",
   });
   const [description, setDescription] = useState("");
+  const [originalObj, setOriginalObj] = useState<string>("");
 
   useEffect(() => {
     const fetchProjectDetails = async () => {
       const response = await axiosInstance.get(
         APIs.getProjectApi + manageProjectId
       );
-      if (response.data)
+      if (response.data) {
+        const dates = commonService.parseDateRange(
+          response.data.data.startDate + " to " + response.data.data.endDate
+        );
+        const dateString = dates.startDate + " to " + dates.endDate;
         setProjectDetails({
           projectName: response.data.data.projectName,
-          deadline:
-            response.data.data.startDate + " to " + response.data.data.endDate,
+          deadline: dateString,
           estimatedHours: response.data.data.estimatedHours,
         });
+        setOriginalObj(
+          JSON.stringify({
+            projectName: response.data.data.projectName,
+            deadline: dateString,
+            estimatedHours: response.data.data.estimatedHours,
+            description: response.data.data.description,
+          })
+        );
+      }
 
       setTimeout(() => {
         setDescription(response.data.data.description);
@@ -269,7 +282,17 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
                             }}
                             value={projectDetails.deadline}
                             onChange={(date: any, event: any) => {
-                              setFieldValue("deadline", event);
+                              if (
+                                date.length == 2 &&
+                                event.indexOf(" to ") === -1
+                              ) {
+                                setFieldValue(
+                                  "deadline",
+                                  event + " to " + event
+                                );
+                              } else {
+                                setFieldValue("deadline", event);
+                              }
                             }}
                           />
                           {submitCount ? (
@@ -326,6 +349,11 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
                           <button
                             type="submit"
                             className="btn btn-primary ltr:ml-4 rtl:mr-4"
+                            disabled={
+                              manageProjectId != "" &&
+                              originalObj ==
+                                JSON.stringify({ ...values, description })
+                            }
                             onClick={() => {
                               if (
                                 (manageProjectId ||

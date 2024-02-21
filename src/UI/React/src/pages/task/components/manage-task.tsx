@@ -43,6 +43,7 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
     deadline: "",
   });
   const [description, setDescription] = useState("");
+  const [originalObj, setOriginalObj] = useState<string>("");
 
   const [projectsOptions, setProjectsOptions] = useState<ISelectItems[]>([]);
   const [assignToUsersOptions, setAssignToUsersOptions] = useState<
@@ -111,16 +112,34 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
   useEffect(() => {
     const fetchtaskDetails = async () => {
       const response = await axiosInstance.get(APIs.getTaskApi + manageTaskId);
-      if (response.data)
+      if (response.data) {
+        const dates = commonService.parseDateRange(
+          response.data.data.startDate + " to " + response.data.data.endDate
+        );
+        const dateString = dates.startDate + " to " + dates.endDate;
+
         settaskDetails({
           taskName: response.data.data.taskName,
           projectId: response.data.data.projectId,
           assignedTo: response.data.data.assignedTo,
-          status: response.data.data.status,
-          priority: response.data.data.priority,
-          deadline:
-            response.data.data.startDate + " to " + response.data.data.endDate,
+          status: `${response.data.data.status}`,
+          priority: `${response.data.data.priority}`,
+          deadline: dateString,
         });
+
+        setOriginalObj(
+          JSON.stringify({
+            taskName: response.data.data.taskName,
+            projectId: response.data.data.projectId,
+            assignedTo: response.data.data.assignedTo,
+            status: `${response.data.data.status}`,
+            priority: `${response.data.data.priority}`,
+            deadline: dateString,
+            description: response.data.data.description,
+          })
+        );
+      }
+
       setTimeout(() => {
         setDescription(response.data.data.description);
       }, 100);
@@ -484,7 +503,17 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
                             }}
                             value={taskDetails.deadline}
                             onChange={(date: any, event: any) => {
-                              setFieldValue("deadline", event);
+                              if (
+                                date.length == 2 &&
+                                event.indexOf(" to ") === -1
+                              ) {
+                                setFieldValue(
+                                  "deadline",
+                                  event + " to " + event
+                                );
+                              } else {
+                                setFieldValue("deadline", event);
+                              }
                             }}
                           />
                           {submitCount ? (
@@ -540,7 +569,16 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
                           <button
                             type="submit"
                             className="btn btn-primary ltr:ml-4 rtl:mr-4"
+                            disabled={
+                              manageTaskId != "" &&
+                              originalObj ==
+                                JSON.stringify({ ...values, description })
+                            }
                             onClick={() => {
+                              console.log(originalObj);
+                              console.log(
+                                JSON.stringify({ ...values, description })
+                              );
                               if (
                                 (manageTaskId ||
                                   Object.keys(touched).length !== 0) &&

@@ -29,16 +29,25 @@ const ManageUserModal: React.FC<ManageUserModalProps> = ({
     lastName: "",
     email: "",
   });
+  const [originalObj, setOriginalObj] = useState<string>("");
 
   useEffect(() => {
     const fetchUserDetails = async () => {
       const response = await axiosInstance.get(APIs.getUserApi + manageUserId);
-      if (response.data)
+      if (response.data) {
         setUserDetails({
           firstName: response.data.data.firstName,
           lastName: response.data.data.lastName,
           email: response.data.data.email,
         });
+        setOriginalObj(
+          JSON.stringify({
+            firstName: response.data.data.firstName,
+            lastName: response.data.data.lastName,
+            email: response.data.data.email,
+          })
+        );
+      }
     };
 
     if (manageUserId) {
@@ -162,7 +171,7 @@ const ManageUserModal: React.FC<ManageUserModalProps> = ({
                     validationSchema={SubmittedForm}
                     onSubmit={() => {}}
                   >
-                    {({ errors, submitCount, values }) => (
+                    {({ errors, submitCount, touched, values }) => (
                       <Form className="space-y-5">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div
@@ -260,8 +269,16 @@ const ManageUserModal: React.FC<ManageUserModalProps> = ({
                           <button
                             type="submit"
                             className="btn btn-primary ltr:ml-4 rtl:mr-4"
+                            disabled={
+                              manageUserId != "" &&
+                              originalObj == JSON.stringify(values)
+                            }
                             onClick={() => {
-                              if (Object.keys(errors).length === 0) {
+                              if (
+                                (manageUserId ||
+                                  Object.keys(touched).length !== 0) &&
+                                Object.keys(errors).length === 0
+                              ) {
                                 submitForm(values);
                               }
                             }}

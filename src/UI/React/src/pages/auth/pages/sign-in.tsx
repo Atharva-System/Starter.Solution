@@ -42,7 +42,7 @@ const SignIn = () => {
           validationSchema={SubmittedForm}
           onSubmit={() => {}}
         >
-          {({ errors, submitCount, values }) => (
+          {({ errors, submitCount, isValid, values }) => (
             <Form className="space-y-5">
               <div
                 className={submitCount ? (errors.email ? "has-error" : "") : ""}
@@ -102,7 +102,7 @@ const SignIn = () => {
                 type="submit"
                 className="btn btn-primary w-full"
                 onClick={() => {
-                  if (Object.keys(errors).length === 0) {
+                  if (isValid && values.email && values.password) {
                     submitForm(values);
                   }
                 }}

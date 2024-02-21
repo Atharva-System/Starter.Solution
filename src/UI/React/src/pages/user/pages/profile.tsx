@@ -27,19 +27,29 @@ const Profile = () => {
     lastName: "",
     email: "",
   });
+  const [originalObj, setOriginalObj] = useState<string>("");
 
   useEffect(() => {
     dispatch(setPageTitle(pageTitle.profile));
 
     const fetchProfileDetails = async () => {
       const response = await axiosInstance.get(APIs.getProfileDetails);
-      if (response.data)
+      if (response.data) {
         setProfileDetails({
           id: response.data.data.id,
           firstName: response.data.data.firstName,
           lastName: response.data.data.lastName,
           email: response.data.data.email,
         });
+        setOriginalObj(
+          JSON.stringify({
+            id: response.data.data.id,
+            firstName: response.data.data.firstName,
+            lastName: response.data.data.lastName,
+            email: response.data.data.email,
+          })
+        );
+      }
     };
 
     fetchProfileDetails();
@@ -61,6 +71,14 @@ const Profile = () => {
       localStorageService.updateStorageUserInfo(
         values.firstName + " " + values.lastName,
         values.email
+      );
+      setOriginalObj(
+        JSON.stringify({
+          id: profileDetails.id,
+          firstName: values.firstName,
+          lastName: values.lastName,
+          email: values.email,
+        })
       );
       messageService.showMessage(response.data.data);
     }
@@ -190,6 +208,7 @@ const Profile = () => {
                   <button
                     type="submit"
                     className="btn btn-primary"
+                    disabled={originalObj == JSON.stringify(values)}
                     onClick={() => {
                       if (Object.keys(errors).length === 0) {
                         submitForm(values);
