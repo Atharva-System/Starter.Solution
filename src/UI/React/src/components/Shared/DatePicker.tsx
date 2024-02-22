@@ -7,7 +7,7 @@ import { IRootState } from "../../store";
 interface DatePickerProps {
   id: string;
   name: string;
-  placeholder: string;
+  placeholder?: string;
   options?: Record<string, any>;
   value: string | Date | undefined;
   className?: string;

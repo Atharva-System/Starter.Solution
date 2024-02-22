@@ -14,7 +14,7 @@ interface ManageProjectModalProps {
   manageProjectId: string;
   isOpen: boolean;
   onClose: () => void;
-  onSave: () => void;
+  onSave: (doClose: boolean) => void;
 }
 
 const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
@@ -23,6 +23,7 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
   onClose,
   onSave,
 }) => {
+  const [buttonClicked, setButtonClicked] = useState("");
   const [projectDetails, setProjectDetails] = useState<{
     projectName: string;
     deadline: string;
@@ -84,7 +85,11 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
     onClose();
   };
 
-  const submitForm = async (values: any) => {
+  const submitForm = async (
+    values: any,
+    actions: any,
+    doClose: boolean = true
+  ) => {
     const dates = commonService.parseDateRange(values.deadline);
     const response = manageProjectId
       ? await axiosInstance.put(APIs.updateProjectApi + manageProjectId, {
@@ -105,8 +110,9 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
 
     if (response.data) {
       messageService.showMessage(response.data.data);
+      actions.resetForm();
       resetForm();
-      onSave();
+      onSave(doClose);
     }
   };
 
@@ -194,15 +200,15 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
                       description: description,
                     }}
                     validationSchema={SubmittedForm}
-                    onSubmit={() => {}}
+                    onSubmit={(values, actions) => {
+                      if (buttonClicked == "btnCreate") {
+                        submitForm(values, actions, false);
+                      } else if (buttonClicked == "btnUpdateOrCreateAndClose") {
+                        submitForm(values, actions);
+                      }
+                    }}
                   >
-                    {({
-                      errors,
-                      submitCount,
-                      touched,
-                      values,
-                      setFieldValue,
-                    }) => (
+                    {({ errors, submitCount, values, setFieldValue }) => (
                       <Form className="space-y-5">
                         <div
                           className={
@@ -243,9 +249,11 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
                           }
                         >
                           <label htmlFor="description">Description</label>
-                          <TextEditor
+                          <Field
+                            as={TextEditor}
                             value={description}
-                            onChange={(e) => {
+                            placeholder="Enter Description"
+                            onChange={(e: any) => {
                               setDescription(e);
                               setFieldValue("description", e);
                             }}
@@ -273,14 +281,13 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
                           }
                         >
                           <label htmlFor="deadline">Deadline</label>
-                          <DatePicker
-                            id="deadline"
+                          <Field
+                            as={DatePicker}
                             name="deadline"
                             placeholder="Enter Deadline"
                             options={{
                               mode: "range",
                             }}
-                            value={projectDetails.deadline}
                             onChange={(date: any, event: any) => {
                               if (
                                 date.length == 2 &&
@@ -355,17 +362,22 @@ const ManageProjectModal: React.FC<ManageProjectModalProps> = ({
                                 JSON.stringify({ ...values, description })
                             }
                             onClick={() => {
-                              if (
-                                (manageProjectId ||
-                                  Object.keys(touched).length !== 0) &&
-                                Object.keys(errors).length === 0
-                              ) {
-                                submitForm(values);
-                              }
+                              setButtonClicked("btnUpdateOrCreateAndClose");
                             }}
                           >
-                            {manageProjectId ? "Update" : "Create"}
+                            {manageProjectId ? "Update" : "Create & Close"}
                           </button>
+                          {!manageProjectId && (
+                            <button
+                              type="submit"
+                              className="btn btn-primary ltr:ml-4 rtl:mr-4"
+                              onClick={() => {
+                                setButtonClicked("btnCreate");
+                              }}
+                            >
+                              Create
+                            </button>
+                          )}
                         </div>
                       </Form>
                     )}

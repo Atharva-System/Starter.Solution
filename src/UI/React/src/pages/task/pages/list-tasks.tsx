@@ -164,10 +164,10 @@ const Tasks = () => {
     }, 100);
   };
 
-  const onSaveManageTask = async () => {
+  const onSaveManageTask = async (doClose: boolean) => {
     setManagedTaskId("");
     bindTasks(params);
-    setIsManageTaskModal(false);
+    setIsManageTaskModal(!doClose);
   };
 
   const onCloseManageTask = async () => {

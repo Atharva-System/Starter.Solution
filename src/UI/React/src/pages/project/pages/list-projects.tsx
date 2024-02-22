@@ -153,10 +153,10 @@ const Projects = () => {
     }, 100);
   };
 
-  const onSaveManageProject = async () => {
+  const onSaveManageProject = async (doClose: boolean) => {
     setManagedProjectId("");
     bindProjects(params);
-    setIsManageProjectModal(false);
+    setIsManageProjectModal(!doClose);
   };
 
   const onCloseManageProject = async () => {

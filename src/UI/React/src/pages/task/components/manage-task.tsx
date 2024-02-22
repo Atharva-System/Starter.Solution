@@ -16,7 +16,7 @@ interface ManageTaskModalProps {
   manageTaskId: string;
   isOpen: boolean;
   onClose: () => void;
-  onSave: () => void;
+  onSave: (doClose: boolean) => void;
 }
 
 const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
@@ -27,6 +27,7 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
 }) => {
   const dispatch = useDispatch();
 
+  const [buttonClicked, setButtonClicked] = useState("");
   const [taskDetails, settaskDetails] = useState<{
     taskName: string;
     projectId: string;
@@ -167,7 +168,11 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
     onClose();
   };
 
-  const submitForm = async (values: any) => {
+  const submitForm = async (
+    values: any,
+    actions: any,
+    doClose: boolean = true
+  ) => {
     const dates = commonService.parseDateRange(values.deadline);
     const response = manageTaskId
       ? await axiosInstance.put(APIs.updateTaskApi + manageTaskId, {
@@ -194,8 +199,9 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
 
     if (response.data) {
       messageService.showMessage(response.data.message);
+      actions.resetForm();
       resetForm();
-      onSave();
+      onSave(doClose);
     }
   };
 
@@ -283,15 +289,15 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
                       description: description,
                     }}
                     validationSchema={SubmittedForm}
-                    onSubmit={() => {}}
+                    onSubmit={(values, actions) => {
+                      if (buttonClicked == "btnCreate") {
+                        submitForm(values, actions, false);
+                      } else if (buttonClicked == "btnUpdateOrCreateAndClose") {
+                        submitForm(values, actions);
+                      }
+                    }}
                   >
-                    {({
-                      errors,
-                      submitCount,
-                      touched,
-                      values,
-                      setFieldValue,
-                    }) => (
+                    {({ errors, submitCount, values, setFieldValue }) => (
                       <Form className="space-y-5">
                         <div
                           className={
@@ -494,14 +500,13 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
                           }
                         >
                           <label htmlFor="deadline">Deadline</label>
-                          <DatePicker
-                            id="deadline"
+                          <Field
+                            as={DatePicker}
                             name="deadline"
                             placeholder="Enter Deadline"
                             options={{
                               mode: "range",
                             }}
-                            value={taskDetails.deadline}
                             onChange={(date: any, event: any) => {
                               if (
                                 date.length == 2 &&
@@ -538,9 +543,11 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
                           }
                         >
                           <label htmlFor="description">Description</label>
-                          <TextEditor
+                          <Field
+                            as={TextEditor}
                             value={description}
-                            onChange={(e) => {
+                            placeholder="Enter Description"
+                            onChange={(e: any) => {
                               setDescription(e);
                               setFieldValue("description", e);
                             }}
@@ -575,21 +582,22 @@ const ManageTaskModal: React.FC<ManageTaskModalProps> = ({
                                 JSON.stringify({ ...values, description })
                             }
                             onClick={() => {
-                              console.log(originalObj);
-                              console.log(
-                                JSON.stringify({ ...values, description })
-                              );
-                              if (
-                                (manageTaskId ||
-                                  Object.keys(touched).length !== 0) &&
-                                Object.keys(errors).length === 0
-                              ) {
-                                submitForm(values);
-                              }
+                              setButtonClicked("btnUpdateOrCreateAndClose");
                             }}
                           >
-                            {manageTaskId ? "Update" : "Create"}
+                            {manageTaskId ? "Update" : "Create & Close"}
                           </button>
+                          {!manageTaskId && (
+                            <button
+                              type="submit"
+                              className="btn btn-primary ltr:ml-4 rtl:mr-4"
+                              onClick={() => {
+                                setButtonClicked("btnCreate");
+                              }}
+                            >
+                              Create
+                            </button>
+                          )}
                         </div>
                       </Form>
                     )}
