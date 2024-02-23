@@ -11,11 +11,13 @@ import saveUnsavedChanges from "../../utils/save-or-discard.service";
 import { APIs } from "../../utils/common/api-paths";
 import { updateUserInfo } from "../../store/userInfoSlice";
 import LocalStorageService from "../../utils/localstorage.service";
+import messageService from "../../utils/message.service";
+import { NotificationType } from "../../utils/common/constants";
 
 const Sidebar = () => {
   const localStorageService = LocalStorageService.getService();
   const { param } = useContext(IsFormDirtyContext);
-  const { setIsFormDirty } = useContext(IsFormDirtyContext);
+  const { resetFormDirty } = useContext(IsFormDirtyContext);
   const [isSaveOrDiscardModal, setIsSaveOrDiscardModal] =
     useState<boolean>(false);
   const [navigateTo, setNavigateTo] = useState<string>("/");
@@ -56,13 +58,20 @@ const Sidebar = () => {
   }, [location]);
 
   const onSaveChanges = async () => {
-    const response = await saveUnsavedChanges(param.apiCall);
-    if (response) {
-      stateUpdation();
-      setIsSaveOrDiscardModal(false);
-      setIsFormDirty({ isDirty: false });
-      navigate(navigateTo);
+    if (param.isFormValid) {
+      const response = await saveUnsavedChanges(param.apiCall);
+      if (response) {
+        stateUpdation();
+      }
+    } else {
+      messageService.showMessage(
+        "Failed to save changes! Invalid entries found in modified fields.",
+        NotificationType.error
+      );
     }
+    setIsSaveOrDiscardModal(false);
+    resetFormDirty();
+    navigate(navigateTo);
   };
 
   const stateUpdation = () => {
@@ -83,7 +92,7 @@ const Sidebar = () => {
 
   const onDiscardChanges = () => {
     setIsSaveOrDiscardModal(false);
-    setIsFormDirty({ isDirty: false });
+    resetFormDirty();
     navigate(navigateTo);
   };
 

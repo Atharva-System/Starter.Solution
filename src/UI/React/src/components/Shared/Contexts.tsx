@@ -3,6 +3,7 @@ import { eRequestType } from "../../utils/common/constants";
 
 export interface IFormDirtyParam {
   isDirty: boolean;
+  isFormValid: boolean;
   apiCall?:
     | {
         type: eRequestType;
@@ -12,23 +13,38 @@ export interface IFormDirtyParam {
     | undefined;
 }
 
-export const IsFormDirtyContext = createContext<{
+interface IIsFormDirtyContext {
   param: IFormDirtyParam;
   setIsFormDirty: (param: IFormDirtyParam) => void;
-}>({
-  param: { isDirty: false },
+  resetFormDirty: () => void;
+}
+
+export const IsFormDirtyContext = createContext<IIsFormDirtyContext>({
+  param: { isDirty: false, isFormValid: true },
   setIsFormDirty: () => {},
+  resetFormDirty: () => {},
 });
 
 export const GlobalContextProvider: React.FC<
   React.PropsWithChildren<object>
 > = ({ children }) => {
-  const [param, setIsFormDirty] = useState<IFormDirtyParam>({
+  const [param, setParam] = useState<IFormDirtyParam>({
     isDirty: false,
+    isFormValid: true,
   });
 
+  const setIsFormDirty = (param: IFormDirtyParam) => {
+    setParam(param);
+  };
+
+  const resetFormDirty = () => {
+    setParam({ isDirty: false, isFormValid: true });
+  };
+
   return (
-    <IsFormDirtyContext.Provider value={{ param, setIsFormDirty }}>
+    <IsFormDirtyContext.Provider
+      value={{ param, setIsFormDirty, resetFormDirty }}
+    >
       {children}
     </IsFormDirtyContext.Provider>
   );

@@ -20,7 +20,7 @@ const localStorageService = LocalStorageService.getService();
 
 const Profile = () => {
   const dispatch = useDispatch();
-  const { setIsFormDirty } = useContext(IsFormDirtyContext);
+  const { setIsFormDirty, resetFormDirty } = useContext(IsFormDirtyContext);
 
   const [profileDetails, setProfileDetails] = useState<{
     id: string;
@@ -86,7 +86,7 @@ const Profile = () => {
           email: values.email,
         })
       );
-      setIsFormDirty({ isDirty: false });
+      resetFormDirty();
       messageService.showMessage(response.data.data);
     }
   };
@@ -116,8 +116,16 @@ const Profile = () => {
   });
 
   const formModified = (values: any) => {
+    const isValid =
+      values.firstName != "" &&
+      values.lastName != "" &&
+      Regex.noSpaceValidationPattern.test(values.firstName) &&
+      Regex.noSpaceValidationPattern.test(values.lastName);
+
     const isModified = originalObj != JSON.stringify(values);
+
     setIsFormDirty({
+      isFormValid: isValid,
       isDirty: isModified,
       apiCall: isModified
         ? {

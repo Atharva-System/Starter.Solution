@@ -27,3 +27,10 @@ export enum eRequestType {
   POST,
   PUT,
 }
+
+export const NotificationType = {
+  success: "success",
+  warning: "warning",
+  info: "info",
+  error: "error",
+};

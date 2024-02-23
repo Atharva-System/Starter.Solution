@@ -5,6 +5,7 @@ import { authPaths } from "./common/route-paths";
 import authService from "../pages/auth/utils/auth.service";
 import messageService from "./message.service";
 import { APIs } from "./common/api-paths";
+import { NotificationType } from "./common/constants";
 
 const localStorageService = LocalStorageService.getService();
 const apiUrl = getApiUrl();
@@ -105,7 +106,7 @@ function handleResponseError(response: any) {
       response.data?.Messages?.[0] ||
       response.data?.Message ||
       "Something went wrong, please try again!";
-    messageService.showMessage(errorMessage, "error");
+    messageService.showMessage(errorMessage, NotificationType.error);
   }
 }
 
