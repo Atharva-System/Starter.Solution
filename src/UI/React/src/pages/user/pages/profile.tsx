@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setPageTitle } from "../../../store/themeConfigSlice";
 import { pageTitle } from "../../../utils/common/route-paths";
@@ -9,12 +9,18 @@ import * as Yup from "yup";
 import messageService from "../../../utils/message.service";
 import { updateUserInfo } from "../../../store/userInfoSlice";
 import LocalStorageService from "../../../utils/localstorage.service";
-import { FieldValidation, Regex } from "../../../utils/common/constants";
+import {
+  FieldValidation,
+  eRequestType,
+  Regex,
+} from "../../../utils/common/constants";
+import { IsFormDirtyContext } from "../../../components/Shared/Contexts";
 
 const localStorageService = LocalStorageService.getService();
 
 const Profile = () => {
   const dispatch = useDispatch();
+  const { setIsFormDirty } = useContext(IsFormDirtyContext);
 
   const [profileDetails, setProfileDetails] = useState<{
     id: string;
@@ -80,6 +86,7 @@ const Profile = () => {
           email: values.email,
         })
       );
+      setIsFormDirty({ isDirty: false });
       messageService.showMessage(response.data.data);
     }
   };
@@ -108,6 +115,20 @@ const Profile = () => {
       ),
   });
 
+  const formModified = (values: any) => {
+    const isModified = originalObj != JSON.stringify(values);
+    setIsFormDirty({
+      isDirty: isModified,
+      apiCall: isModified
+        ? {
+            type: eRequestType.PUT,
+            url: APIs.updateProfile + values.id,
+            param: values,
+          }
+        : undefined,
+    });
+  };
+
   return (
     <div className="pt-5">
       <Formik
@@ -121,7 +142,7 @@ const Profile = () => {
         validationSchema={SubmittedForm}
         onSubmit={() => {}}
       >
-        {({ errors, submitCount, values }) => (
+        {({ errors, submitCount, values, setFieldValue }) => (
           <Form className="border border-[#ebedf2] dark:border-[#191e3a] rounded-md p-4 mb-5 bg-white dark:bg-black">
             <h6 className="text-lg font-bold mb-5">My Profile</h6>
             <div className="flex flex-col sm:flex-row">
@@ -146,6 +167,13 @@ const Profile = () => {
                     id="firstName"
                     placeholder="Enter First Name"
                     className="form-input"
+                    onChange={(e: any) => {
+                      setFieldValue("firstName", e.target.value);
+                      formModified({
+                        ...values,
+                        firstName: e.target.value,
+                      });
+                    }}
                   />
                   {submitCount ? (
                     errors.firstName ? (
@@ -169,6 +197,13 @@ const Profile = () => {
                     id="lastName"
                     placeholder="Enter Last Name"
                     className="form-input"
+                    onChange={(e: any) => {
+                      setFieldValue("lastName", e.target.value);
+                      formModified({
+                        ...values,
+                        lastName: e.target.value,
+                      });
+                    }}
                   />
                   {submitCount ? (
                     errors.lastName ? (

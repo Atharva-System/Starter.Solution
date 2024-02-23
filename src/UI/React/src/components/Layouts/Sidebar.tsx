@@ -1,18 +1,31 @@
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { useDispatch, useSelector } from "react-redux";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { toggleSidebar } from "../../store/themeConfigSlice";
 import { IRootState } from "../../store";
-import { useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import menuService from "../../utils/menu.service";
+import { IsFormDirtyContext } from "../Shared/Contexts";
+import SaveOrDiscardModal from "../Shared/SaveOrDiscard";
+import saveUnsavedChanges from "../../utils/save-or-discard.service";
+import { APIs } from "../../utils/common/api-paths";
+import { updateUserInfo } from "../../store/userInfoSlice";
+import LocalStorageService from "../../utils/localstorage.service";
 
 const Sidebar = () => {
+  const localStorageService = LocalStorageService.getService();
+  const { param } = useContext(IsFormDirtyContext);
+  const { setIsFormDirty } = useContext(IsFormDirtyContext);
+  const [isSaveOrDiscardModal, setIsSaveOrDiscardModal] =
+    useState<boolean>(false);
+  const [navigateTo, setNavigateTo] = useState<string>("/");
   const themeConfig = useSelector((state: IRootState) => state.themeConfig);
   const semidark = useSelector(
     (state: IRootState) => state.themeConfig.semidark
   );
   const location = useLocation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const menuItems = menuService.getMenus();
 
   useEffect(() => {
@@ -41,6 +54,51 @@ const Sidebar = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location]);
+
+  const onSaveChanges = async () => {
+    const response = await saveUnsavedChanges(param.apiCall);
+    if (response) {
+      stateUpdation();
+      setIsSaveOrDiscardModal(false);
+      setIsFormDirty({ isDirty: false });
+      navigate(navigateTo);
+    }
+  };
+
+  const stateUpdation = () => {
+    if (param.apiCall?.url.includes(APIs.updateProfile)) {
+      const inputParam = param.apiCall.param;
+      dispatch(
+        updateUserInfo({
+          fullName: inputParam.firstName + " " + inputParam.lastName,
+          email: inputParam.email,
+        })
+      );
+      localStorageService.updateStorageUserInfo(
+        inputParam.firstName + " " + inputParam.lastName,
+        inputParam.email
+      );
+    }
+  };
+
+  const onDiscardChanges = () => {
+    setIsSaveOrDiscardModal(false);
+    setIsFormDirty({ isDirty: false });
+    navigate(navigateTo);
+  };
+
+  const doNavigate = (path: string) => {
+    if (param.isDirty) {
+      setNavigateTo(path);
+      setIsSaveOrDiscardModal(param.isDirty);
+    } else {
+      navigate(path);
+    }
+  };
+
+  const isActive = (link: any) => {
+    return location.pathname === link ? "active" : "";
+  };
 
   return (
     <div className={semidark ? "dark" : ""}>
@@ -113,8 +171,13 @@ const Sidebar = () => {
                 <ul>
                   {menuItems.map((menu) => {
                     return (
-                      <li  key={menu.label} className="nav-item">
-                        <NavLink to={menu.link} className="group">
+                      <li key={menu.label} className="nav-item">
+                        <a
+                          className={`group  cursor-pointer ${isActive(
+                            menu.link
+                          )}`}
+                          onClick={() => doNavigate(menu.link)}
+                        >
                           <div className="flex items-center">
                             {menu.label == "Users" && (
                               <svg
@@ -207,7 +270,7 @@ const Sidebar = () => {
                               {menu.label}
                             </span>
                           </div>
-                        </NavLink>
+                        </a>
                       </li>
                     );
                   })}
@@ -217,6 +280,11 @@ const Sidebar = () => {
           </PerfectScrollbar>
         </div>
       </nav>
+      <SaveOrDiscardModal
+        isOpen={isSaveOrDiscardModal}
+        onClose={onDiscardChanges}
+        onSave={onSaveChanges}
+      ></SaveOrDiscardModal>
     </div>
   );
 };

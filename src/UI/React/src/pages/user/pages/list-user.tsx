@@ -129,13 +129,13 @@ const Users = () => {
     }, 100);
   };
 
-  const onSaveManageUser = async () => {
+  const onSaveManageUser = () => {
     setManagedUserId("");
     bindUsers(params);
     setIsManageUserModal(false);
   };
 
-  const onCloseManageUser = async () => {
+  const onCloseManageUser = () => {
     setManagedUserId("");
     setIsManageUserModal(false);
   };

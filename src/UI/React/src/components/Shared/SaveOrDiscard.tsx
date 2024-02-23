@@ -1,20 +1,16 @@
 import { Fragment } from "react";
 import { Transition, Dialog } from "@headlessui/react";
 
-interface DeleteModalProps {
-  title: string;
-  message: string;
+interface SaveOrDiscardModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onDelete: () => void;
+  onSave: () => void;
 }
 
-const DeleteModal: React.FC<DeleteModalProps> = ({
-  title,
-  message,
+const SaveOrDiscardModal: React.FC<SaveOrDiscardModalProps> = ({
   isOpen,
   onClose,
-  onDelete,
+  onSave,
 }) => {
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -48,33 +44,12 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
               leaveTo="opacity-0 scale-95"
             >
               <Dialog.Panel className="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-lg text-black dark:text-white-dark">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="absolute top-4 ltr:right-4 rtl:left-4 text-gray-400 hover:text-gray-800 dark:hover:text-gray-600 outline-none"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                </button>
                 <div className="text-lg font-medium bg-[#fbfbfb] dark:bg-[#121c2c] ltr:pl-5 rtl:pr-5 py-3 ltr:pr-[50px] rtl:pl-[50px]">
-                  {title}
+                  Unsaved Changes
                 </div>
                 <div className="p-5 text-center">
-                  <div className="text-white bg-danger ring-4 ring-danger/30 p-4 rounded-full w-fit mx-auto">
+                  <div className="text-white bg-warning ring-4 ring-danger/30 p-4 rounded-full w-fit mx-auto">
                     <svg
-                      className="mx-auto"
                       width="28"
                       height="28"
                       viewBox="0 0 24 24"
@@ -83,40 +58,27 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
                     >
                       <path
                         opacity="0.5"
-                        d="M9.17065 4C9.58249 2.83481 10.6937 2 11.9999 2C13.3062 2 14.4174 2.83481 14.8292 4"
+                        d="M5.31171 10.7615C8.23007 5.58716 9.68925 3 12 3C14.3107 3 15.7699 5.58716 18.6883 10.7615L19.0519 11.4063C21.4771 15.7061 22.6897 17.856 21.5937 19.428C20.4978 21 17.7864 21 12.3637 21H11.6363C6.21356 21 3.50217 21 2.40626 19.428C1.31034 17.856 2.52291 15.7061 4.94805 11.4063L5.31171 10.7615Z"
                         stroke="currentColor"
                         strokeWidth="1.5"
-                        strokeLinecap="round"
-                      />
+                      ></path>
                       <path
-                        d="M20.5001 6H3.5"
+                        d="M12 8V13"
                         stroke="currentColor"
                         strokeWidth="1.5"
                         strokeLinecap="round"
-                      />
-                      <path
-                        d="M18.8334 8.5L18.3735 15.3991C18.1965 18.054 18.108 19.3815 17.243 20.1907C16.378 21 15.0476 21 12.3868 21H11.6134C8.9526 21 7.6222 21 6.75719 20.1907C5.89218 19.3815 5.80368 18.054 5.62669 15.3991L5.16675 8.5"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                      />
-                      <path
-                        opacity="0.5"
-                        d="M9.5 11L10 16"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                      />
-                      <path
-                        opacity="0.5"
-                        d="M14.5 11L14 16"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                      />
+                      ></path>
+                      <circle
+                        cx="12"
+                        cy="16"
+                        r="1"
+                        fill="currentColor"
+                      ></circle>
                     </svg>
                   </div>
-                  <div className="sm:w-3/4 mx-auto mt-5">{message}</div>
+                  <div className="sm:w-3/4 mx-auto mt-5">
+                    Do you want to save your changes before leaving this page?
+                  </div>
 
                   <div className="flex justify-center items-center mt-8">
                     <button
@@ -124,14 +86,14 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
                       className="btn btn-outline-danger"
                       onClick={onClose}
                     >
-                      Cancel
+                      Discard
                     </button>
                     <button
                       type="button"
                       className="btn btn-primary ltr:ml-4 rtl:mr-4"
-                      onClick={onDelete}
+                      onClick={onSave}
                     >
-                      Delete
+                      Save & continue
                     </button>
                   </div>
                 </div>
@@ -144,4 +106,4 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
   );
 };
 
-export default DeleteModal;
+export default SaveOrDiscardModal;

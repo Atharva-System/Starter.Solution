@@ -22,3 +22,8 @@ export const FieldValidation = {
   descriptionMaxLength: 500,
   estimatedHoursMaxLength: 10,
 };
+
+export enum eRequestType {
+  POST,
+  PUT,
+}
