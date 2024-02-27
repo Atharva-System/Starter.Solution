@@ -117,8 +117,10 @@ function isRequestUrlAllowAnonymous(url: string): boolean {
     APIs.refreshTokenApi,
     APIs.forgotPasswordApi,
     APIs.resetPasswordApi,
+    APIs.acceptInviteUserApi,
+    APIs.getInviteDetails,
   ];
-  return anonymousEndpoints.some((endpoint) => url.endsWith(endpoint));
+  return anonymousEndpoints.some((endpoint) => url.startsWith(endpoint));
 }
 
 export default axiosInstance;

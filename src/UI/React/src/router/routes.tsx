@@ -9,6 +9,7 @@ const ForgotPassword = lazy(
   () => import("../pages/auth/pages/forgot-password")
 );
 const ResetPassword = lazy(() => import("../pages/auth/pages/reset-password"));
+const AcceptInvite = lazy(() => import("../pages/auth/pages/accept-invite"));
 import Error404 from "../components/Error404";
 
 const authRoutes = [
@@ -25,6 +26,11 @@ const authRoutes = [
   {
     path: "/" + authPaths.resetPassword,
     element: <ResetPassword />,
+    layout: "blank",
+  },
+  {
+    path: "/" + authPaths.acceptInvitation,
+    element: <AcceptInvite />,
     layout: "blank",
   },
 ];

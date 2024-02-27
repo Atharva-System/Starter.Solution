@@ -14,7 +14,7 @@ export class APIs {
   static deleteUserApi = "/Users/";
   static getUserApi = "/Users/";
   static updateUserApi = "/users/";
-  static getInviteDetails = "/users/get-invite-details";
+  static getInviteDetails = "/users/get-invite-details/";
   static getProfileDetails = "/users/get-profile-details";
   static updateProfile = "/users/update-profile/";
 
